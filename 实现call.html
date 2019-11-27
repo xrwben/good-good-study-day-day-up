@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>call</title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+
+	<script>
+		
+		/*
+			call(): 第一个参数为this指向的对象，第二个参数为执行参数序列，call(this, 1, 2)
+		*/
+		// let foo = {
+		// 	value: 1
+		// }
+		// function bar(a, b) {
+		// 	console.log(this.value);
+		// 	console.log("params>>>", a, b);
+		// }
+		// bar(); // undefined this指向window
+		// bar.call(foo, 1, 2);  // this指向foo
+
+
+
+		/*
+			上面等同
+		*/
+		// let foo1 = {
+		// 	value: 1,
+		// 	bar: function (a, b) {
+		// 		console.log(this.value);
+		// 	}
+		// }
+		// foo.bar();
+
+		/*
+			第一版
+			1) foo.fn = bar    2) foo.fn()   3)  delete foo.fn
+		*/
+		// Function.prototype.myCall = function(context) {
+		// 	context.fn = this;
+		// 	console.log(this)
+		// 	console.log(context)
+		// 	context.fn();
+		// 	delete context.fn;
+		// }
+		// let foo = {
+		// 	value: 233
+		// }
+		// function bar () {
+		// 	console.log(this.value);
+		// }
+
+		// bar.myCall(foo);
+
+		/*
+			第二版
+			上面的没有处理参数问题 使用es6的函数剩余参数
+		*/
+		// Function.prototype.myCall = function(context, ...args) {
+		// 	context.fn = this;
+		// 	context.fn(...args);
+		// 	delete context.fn;
+		// }
+		// let foo = {
+		// 	value: 555
+		// }
+		// function bar(a, b) {
+		// 	console.log("a b >>>>>", a, b);
+		// 	console.log(this.value);
+		// }
+		// bar.myCall(foo, 1, 2);
+
+
+		/*
+			第三版
+			call(null)和函数有返回的问题没有处理
+		*/
+		Function.prototype.myCall = function(context, ...args) {
+			// console.log(typeof context);
+			context = context || window;
+			console.log("context>>", context);
+			console.log("this>>", this);
+			context.fn = this;
+			let result = context.fn(...args);
+			delete context.fn;
+			return result;
+		}
+		var value = 9999; // 注意let、const等声明的变量不会挂在window 所以这里用var声明
+		let foo = {
+			value: 7788
+		}
+		function bar(a, b) {
+			console.log("a b >>>>>", a, b);
+			console.log(this);
+			return {
+				a,
+				b,
+				value: this.value
+			}
+		}
+		let result = bar.myCall(null, 1, 2);
+		console.log(result);
+ 
+	</script>
+	
+</body>
+</html>
