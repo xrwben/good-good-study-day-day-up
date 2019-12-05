@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>vue-extend</title>
+	<link rel="stylesheet" href="">
+	<style>
+		[v-cloak]{display: none;}
+	</style>
+</head>
+<body>
+	<div id="app" v-cloak>
+	  <p>{{ message }}</p>
+	  <button @click="reverse">逆转</button>
+	  <p><input type="text" v-model="message"></p>
+
+	  <hr>
+
+	  <ul>
+	  	<todo-item v-for="item in todoList" :todo="item" :key="item.id"></todo-item>		
+	  </ul>
+
+	  <hr>
+
+	  <p v-for="item in obj1">测试对象添加属性是否更新视图：{{ item }}</p>
+	  <button @click="addObj">添加属性</button>
+		
+	  <hr>
+
+	  <p v-for="item in arr">测试数组利用索引修改数组值是否更新视图：{{ item }}</p>
+	  <button @click="changValue">利用索引修改数组值</button>
+
+	  <hr>
+	  <p>extend属性 =></p>
+	  <div class="extend"></div>
+
+	  <hr>
+	  <p>自定义directive指令</p>
+	  <input class="directive" type="text" v-model="directive" v-focus v-uppercase>
+
+	  <hr>
+	  <p>过滤器 加个=--=</p>
+	  <p>{{ message | adad("7788") | bbll("不要跟我在这里逼逼赖赖") }}</p>
+	</div>
+	
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	<script>
+		Vue.directive("uppercase", {
+			inserted: function (el, binding, vnode, oldVnode) {
+				console.log("el>>>", typeof el.value)
+				console.log("binding>>>", binding)
+				console.log("vnode>>>", vnode)
+				console.log("oldVnode>>>", oldVnode)
+				el.value = el.value.toUpperCase();
+			},
+			update: function (el, binding, vnode, oldVnode) {
+				console.log("el>>>", el.value)
+				console.log("binding>>>", binding)
+				console.log("vnode>>>", vnode)
+				console.log("oldVnode>>>", oldVnode)
+				el.value = el.value.toUpperCase();
+			}
+		})
+		Vue.component("todo-item", {
+			props: ['todo'],
+			template: "<li>{{ todo.text }}</li>"
+		})
+		Vue.filter("bbll", function(value, arg="逼逼赖赖") {
+			return value + arg
+		})
+		new Vue({
+			el: "#app",
+			directives: {
+				focus: {
+					inserted: function (el) {
+						el.focus();
+					}
+				}
+			},
+			data () {
+				return {
+					message: "儿白",
+					todoList: [
+				      { id: 0, text: '蔬菜' },
+				      { id: 1, text: '奶酪' },
+				      { id: 2, text: '随便其它什么人吃的东西' }
+				    ],
+				    obj1: {
+				    	value1: "我是第二层"
+				    },
+				    arr: [0, 1, 2, 3],
+				    directive: "abcd"
+				}
+			},
+			methods: {
+				reverse () {
+					console.log(this)
+					this.message = this.message.split('').reverse().join('');
+				},
+				addObj () {
+					console.log(this);
+					// this.obj1.value22 = "第三层"
+					// this.$set(this.obj1, "value22", "我也是第二层");
+					Vue.set(this.obj1, "value22", "我也是第二层");
+				},
+				changValue () {
+					// this.arr[4] = 4;
+					// this.arr[3] = 33;
+					// this.$set(this.arr, 3, 33)
+
+					this.arr[3] = 33;
+					this.arr.push(4);
+				}
+			},
+			filters: {
+				adad: function (value, arg) {
+					return value + "=--=" + arg
+				}
+			}
+		})
+
+		let Toast = Vue.extend({
+			template: "<div>{{ message }}</div>",
+			data: function () {
+				return {
+					message: "正在加载"
+				}
+			}
+		})
+		new Toast().$mount(".extend");
+		
+	</script>
+</body>
+</html>

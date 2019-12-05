@@ -85,6 +85,7 @@
 			console.log("context>>", context);
 			console.log("this>>", this);
 			context.fn = this;
+			console.log("...args>>>", args)
 			let result = context.fn(...args);
 			delete context.fn;
 			return result;
