@@ -78,6 +78,7 @@
 					}
 				}
 			},
+			myProperty: "自定义属性",
 			data () {
 				return {
 					message: "儿白",
@@ -92,6 +93,9 @@
 				    arr: [0, 1, 2, 3],
 				    directive: "abcd"
 				}
+			},
+			mounted () {
+				console.log("Vue版本号：", Vue.version)
 			},
 			methods: {
 				reverse () {
