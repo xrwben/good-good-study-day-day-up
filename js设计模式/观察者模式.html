@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>观察者模式</title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+
+	<div id="app">
+		<h3>双向绑定(观察者模式)</h3>
+		<div class="con">
+			<b>模板语法-{{myText}}</b>
+			<div class="text" v-text="myText"></div>
+			<input type="text" class="input" v-model="myText">
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		
+		class MyVue {
+
+			constructor (options={}) {
+				this.$el = document.querySelector(options.el);
+				this.$data = options.data;
+
+				this._watherTask = {};
+				this._observe(this.$data);
+				this._compile(this.$el);
+			}
+
+			_observe(data) {
+				console.log("_observe>>this", this)
+				let val;
+				for(let key in data) {
+					if (data.hasOwnProperty(key)) {
+						this._watherTask[key] = [];
+					}
+					val = data[key];
+					if (typeof val === 'object') {
+						this._observe(val);
+					}
+
+					let _task = this._watherTask[key];
+
+					Object.defineProperty(data, key, {
+						enumerable: true,
+						configurable: true,
+						get: function () {
+							return val;
+						},
+						set (newVal) {
+							console.log(">>>>>>>>>>>>", newVal)
+							if (val !== newVal) {
+								val = newVal;
+								// 批量更新视图  注意this指向 data对象
+								console.log("set>>>this", this); 
+								_task.forEach(function (item) {
+									item._update();
+								})
+							}
+						}
+					})
+				}
+			}
+
+			_compile(el) {
+				let nodes = el.children;
+				for(let i = 0; i < nodes.length; i++) {
+					let node = nodes[i];
+					console.log("node", node);
+					// debugger
+					if (node.children.length) {
+						this._compile(node);
+					}
+
+					if(node.hasAttribute("v-text")) {
+						let attrValue = node.getAttribute("v-text");
+						this._watherTask[attrValue].push(new Watcher("text", node, this, attrValue, "innerHTML"));
+					}
+					if (node.hasAttribute("v-model") && (node.tagName === "INPUT" || node.tagName === "TEXTAREA")) {
+						// let _this = this;
+						node.addEventListener("input", (() => {
+							let attrValue = node.getAttribute("v-model");
+							console.log("--",attrValue);
+							this._watherTask[attrValue].push(new Watcher("input", node, this, attrValue, "value"));
+							return () => {
+								console.log(">>>this.$data[attrValue]", this.$data[attrValue], node.value)
+								this.$data[attrValue] = node.value;
+							}
+						})())
+					}
+					this._compileText(node,'innerHTML')
+				}
+			}
+
+			_compileText (node, type) {
+				let reg = /\{\{(.*?)\}\}/g;
+				if (reg.test(node.textContent)) {
+					console.log("node.textContent>>>", node.textContent)
+					node.textContent = node.textContent.replace(reg, (matched, value) => {
+						let tpl = this._watherTask[value] || [];
+						tpl.push(new Watcher("模板语法", node, this, value, type));
+						// debugger
+						if (value.split(".").length > 1) {
+							let v = null;
+							value.split(".").forEach((val, i) => {
+								let v = !v ? this[val] : v[val];
+							})
+							return v;
+						} else {
+							return this[value]
+						}
+					})
+				}
+			}
+		}
+
+
+		class Watcher {
+			constructor (name, el, vm, exp, attr) {
+				this.name = name;
+				this.el = el;
+				this.vm = vm;
+				this.exp = exp;
+				this.attr = attr;
+
+				this._update();
+			}
+
+			_update () {
+				this.el[this.attr] = this.vm.$data[this.exp];
+			}
+		}
+
+		const app  = new MyVue({
+			el: "#app",
+			data: {
+				myText: "hello"
+			}
+		})
+	</script>
+	
+</body>
+</html>
