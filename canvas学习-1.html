@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>圣诞雪花图</title>
+	<link rel="stylesheet" href="">
+	<style>
+		#snow {
+			/*width: 100%;
+			height: 900px;*/
+			border: 1px solid green;
+			background: green;
+		}
+	</style>
+</head>
+<body>
+	<canvas id="snow" width="1500" height="900"></canvas>
+
+	<script>
+		// console.log(document.getElementById('snow'))
+		let canvas = document.querySelector("#snow");
+		let ctx = canvas.getContext("2d");
+
+		/*
+			绘制矩形 （x, y, width, height）
+			设置透明度 ctx.globalAlpha 0-1
+		*/
+		ctx.fillStyle = "blue";
+		ctx.fillRect(10, 10, 100, 100);
+
+		ctx.strokeStyle = "yellow";
+		ctx.strokeRect(120, 10, 50, 50);
+
+		ctx.clearRect(20, 20, 20, 20);
+
+		ctx.fillStyle = "yellow"
+		ctx.rect(400, 10, 100, 100);
+
+
+		// ctx.globalAlpha = 0.5; 
+		for (var i=0;i<6;i++){
+		    for (var j=0;j<6;j++){
+		      ctx.fillStyle = 'rgb(' + Math.floor(255-42.5*i) + ',' + 
+		                       Math.floor(255-42.5*j) + ',0)';
+		      ctx.fillRect(400+j*25,10+i*25,25,25);
+		    }
+		}
+
+		
+		/*
+			绘制路径
+			1、lineTo(x, y) lineWidth、lineCap(butt、round、square) lineJoin(miter、round、bevel)
+			2、arc(x, y, radius, startAngle, endAngle, anticlockwise) 以x,y为圆心，radius为半径，开始角度，结束角度，顺时针默认false
+		*/
+		ctx.beginPath();
+		ctx.fillStyle = "red";
+		ctx.moveTo(200, 10);
+		ctx.lineTo(200, 40);
+		ctx.lineTo(225, 25);
+		ctx.fill();
+		ctx.closePath();
+
+		ctx.beginPath();
+		ctx.strokeStyle = "blue"
+		ctx.arc(300, 300, 100, 0, Math.PI*2, true);
+		ctx.moveTo(375, 300);
+		ctx.arc(300, 300, 75, 0, Math.PI, false);
+		ctx.moveTo(260, 280);
+		ctx.arc(250, 280, 10, 0, Math.PI*2, true);
+		ctx.moveTo(350, 280);
+		ctx.arc(340, 280, 10, 0, Math.PI*2, true);
+		ctx.stroke();
+		ctx.closePath();
+
+		/*
+			虚线 
+			setLineDash([])
+			lineDashOffset = 10
+		*/
+		ctx.globalAlpha = 1; 
+		ctx.setLineDash([10, 5]);
+		ctx.lineDashOffset = 10;
+		ctx.strokeStyle = "orange"
+		ctx.strokeRect(600,10, 100, 100);
+
+		var offset = 0;
+		function march() {
+		    offset = offset + 2;
+		    if (offset > 16) {
+		      offset = 0;
+		    }
+		    ctx.clearRect(740, 5, 120, 120);
+		    ctx.setLineDash([10, 6]);
+		    ctx.lineDashOffset = -offset;
+		    ctx.strokeStyle = "blue"
+		    ctx.strokeRect(750, 10, 100, 100);
+
+		    setTimeout(march, 300);
+		}
+		march();
+
+
+
+		function snow() {
+			let canvas = document.getElementById('snow');
+	        let w = canvas.clientWidth,
+	            h = canvas.clientHeight,
+	            ctx = canvas.getContext("2d"),
+	            rate = 20,
+	            arc = 200,
+	            time,
+	            count,
+	            size = 2,
+	            speed = 10,
+	            lights = [],
+	            colors = ['#eee'];
+
+	        // // 设置 canvas 宽高和 banner 图一致
+	        // canvas.setAttribute('width', w); 
+	        // canvas.setAttribute('height', h);
+
+	        function init() {
+	            time = 0;
+	            count = 0;
+
+	            for (var i = 0; i < arc; i++) {
+	                lights[i] = {
+	                    x: Math.ceil(Math.random() * w),
+	                    y: Math.ceil(Math.random() * h),
+	                    toX: Math.random() * 5 + 1,
+	                    toY: Math.random() * 5 + 1,
+	                    c: colors[Math.floor(Math.random() * colors.length)],
+	                    size: Math.random() * size
+	                }
+	            }
+	        }
+
+	        function bubble() {
+	            ctx.clearRect(0, 0, w, h);
+	            for (var i = 0; i < arc; i++) {
+	                var li = lights[i];
+	                ctx.beginPath();
+	                ctx.arc(li.x, li.y, li.size, 0, Math.PI * 2, false);
+	                ctx.fillStyle = li.c;
+	                ctx.fill();
+
+	                li.x = li.x + li.toX * (time * 0.05);
+	                li.y = li.y + li.toY * (time * 0.05);
+	                if (li.x > w) { li.x = 0; }
+	                if (li.y > h) { li.y = 0; }
+	                if (li.x < 0) { li.x = w; }
+	                if (li.y < 0) { li.y = h; }
+	            }
+	            if (time < speed) {
+	                time++;
+	            }
+	            timerID = setTimeout(bubble, 1000 / rate);
+	        }
+
+	        init();
+	        bubble();
+	    };
+	    window.onload = function () {
+	    	// snow();
+	    }
+	</script>
+</body>
+</html>
