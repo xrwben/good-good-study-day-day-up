@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>BeterScroll</title>
+	<link rel="stylesheet" href="">
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+		.wrapper {
+			width: 500px;
+			height: 500px;
+			border: 1px solid black;
+			margin: 50px auto;
+			overflow: hidden;
+			position: relative;
+		}
+		li {
+			list-style: none;
+			line-height: 25px;
+			padding: 0 30px;
+		}
+	</style>
+</head>
+<body>
+	<div class="wrapper">
+		<ul class="content">
+		    <li>我是滚动内容</li>
+		    <li>我是滚动内容</li>
+		    <li>我是滚动内容</li>
+		    <li>我是滚动内容</li>
+		    <li>我是滚动内容</li>
+		    <li>我是滚动内容</li>
+		    <li>我是滚动内容</li>
+		    <li>我是滚动内容</li>
+		    <li>我是滚动内容</li>
+		    <li>我是滚动内容</li>
+		    <li>我是滚动内容</li>
+		    <li>我是滚动内容</li>
+		    <li>我是滚动内容</li>
+		    <li>我是滚动内容</li>
+		    <li>我是滚动内容</li>
+		    <li>我是滚动内容</li>
+		    <li>我是滚动内容</li>
+		    <li>我是滚动内容</li>
+		    <li>我是滚动内容</li>
+		    <li>我是滚动内容</li>
+		    <li>我是滚动内容</li>
+		    <li>我是滚动内容</li>
+		    <li>我是滚动内容</li>
+		    <li>我是滚动内容</li>
+		    <li>我是滚动内容</li>
+		    <li>我是滚动内容</li>
+		    <li>我是滚动内容</li>
+		    <li>我是滚动内容</li>
+		    <li>我是滚动内容</li>
+		    <li>我是滚动内容</li>
+		    <li>我是滚动内容</li>
+		    <li>我是滚动内容</li>
+		    <li>我是滚动内容</li>
+		    <li>我是滚动内容</li>
+		    <li>我是滚动内容</li>
+		    <li>我是滚动内容</li>
+		    <li>我是滚动内容</li>
+		    <li>我是滚动内容</li>
+		    <li>我是滚动内容</li>
+		    <li>我是滚动内容</li>
+		    <li>我是滚动内容</li>
+		    <li>我是滚动内容</li>
+		    <li>我是滚动内容</li>
+		</ul>
+	</div>
+
+	<script src="https://cdn.jsdelivr.net/npm/better-scroll"></script>
+	<script>
+		let wrapper = document.querySelector('.wrapper')
+		let scroll = new BScroll(wrapper, {
+			probeType: 1,
+			mouseWheel: {
+				speed: 20,
+				invert: false,
+				easeTime: 300
+			},
+			scrollbar: {
+				fade: false, // 是否隐藏滚动条
+				interactive: true // 滚动条能够拖动
+			},
+			pullDownRefresh:{
+                threshold: -10   //当下拉长度距离盒子顶部的高度超过10px的时候,就派发一个下拉刷新的事件
+            },
+			pullUpLoad: {
+			    threshold: 50 //当上拉距离超过盒子高度的50px的时候,就派发一个上拉加载的事件
+			},
+			useTransition:false  // 防止iphone微信滑动卡顿
+		})
+
+		scroll.on('pullingUp', function () {
+			console.log("加载数据");
+			scroll.finishPullUp()
+		})
+		scroll.on('finishPullUp', function () {
+			console.log("上拉完成");
+		})
+		scroll.on("pullingDown",function(){  //下拉刷新事件
+	        console.log('下拉刷新数据');
+	        scroll.finishPullDown()//可以多次执行下拉刷新，没有这段代码下只会刷新一次
+	    });
+	    scroll.refresh();  //初始化demo  当异步加载数据的时候，重新渲染页面，这段代码非常重要
+
+	    const resData = []
+		for (let i = 0; i < 100; i++) {
+			resData.push({
+				index: i,
+				text: `我是滚动内容${i}`
+			})
+		}
+
+		let listData　
+		let pageNum = 1;
+	    function loadData (pagenum = 0) {
+	    	const res = resData.slice(pagenum, pagenum + 10);
+	    }
+
+	</script>
+</body>
+</html>
