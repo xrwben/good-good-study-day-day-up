@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>闭包</title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+	<script>
+		/*var d = {
+			fn: function () {
+				console.log(fn)
+			}
+		}
+		d.fn()  // fn未声明 报错*/
+
+		/*var d = {
+			fn: function () {
+				console.log(d.fn)
+			}
+		}
+		d.fn()  // 打印出函数体*/
+
+		/*var d1 = function () {
+			console.log(d1)
+		}
+		d1(); // 打印出函数体*/
+
+		// function d1 () {
+		// 	console.log(d1)
+		// }
+		// d1(); // 打印出函数体
+
+
+		// 明源云面试时遇到的一道关于闭包的题目(中级)
+
+		function fun (a, b) {
+			// debugger
+			console.log(b)
+			return {
+				fun: function (c) {
+					console.log("return fun>>>>>>>>>", fun)
+					return fun(c, a)
+				}
+			}
+		}
+
+		// var d = fun(0); // undefine 
+		// d.fun(1);       // 0
+		// d.fun(2);       // 0
+		// d.fun(3);       // 0
+
+		// var d1 = fun(0).fun(1).fun(2).fun(3);  // undefine 0 1 2
+
+		// var d2 = fun(0).fun(1);  // undefine 0
+		// d2.fun(2);               // 1
+		// d2.fun(3);				 // 1
+
+
+
+
+		function test(a, b){
+		  	//debugger
+		  	console.log(b);
+		  	return {
+			    test: function(c) {
+			     	return test(c,a);
+			    }
+		  	}
+		}
+
+		var a = test(100);  // undefine
+		a.test(101);		// 100
+		a.test(102);		// 100
+		// var b = test(200).test(201).test(202);
+		// var c = test(300).test(301);c.test(302);
+	</script>
+</body>
+</html>
