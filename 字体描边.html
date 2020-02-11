@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>字体描边</title>
+	 <style>
+        .demo {
+            text-align: center;
+            font-family: Verdana;
+            font-size: 30px;
+            font-weight: bold;
+            color: yellow;
+        }
+        
+        .stroke {
+        	/*
+				text-shadow:color||length||length||opacity。
+				color:指定颜色。
+				length:第一个length指定阴影在水平方向上的延伸距离，第二个length指定阴影在垂直方向上的延伸距离，可以为负值。
+				opacity:指定阴影模糊效果的作用距离。
+				用逗号分隔的4个属性值代表的方向顺序为右下左上。
+				为了兼容多浏览器而加上前缀-webkit-和-moz-。
+        	*/
+            text-shadow: #000 1px 0 0, #000 0 1px 0, #000 -1px 0 0, #000 0 -1px 0;
+            -webkit-text-stroke: 1px greenyellow
+        }
+        .stroke-1 {
+        	color: white;
+        	text-shadow: 0 0 2px #000;
+        }
+        .stroke-2 {
+        	color: white;
+        	text-shadow: 1px 1px 2px #000, -1px -1px 2px #000;
+        }
+        .stroke-3 {
+        	color: white;
+        	text-shadow: 1px 0px 2px #000, 0px 1px 2px #000, -1px 0px 2px #000, 0px -1px 2px #000;
+        }
+   </style>
+</head>
+<body>
+    <div class="demo">
+        <p>没有添加描边</p>
+        <p class="stroke">添加了字体描边</p>
+        <p class="stroke-1">stroke-1描边</p>
+        <p class="stroke-2">stroke-2描边</p>
+        <p class="stroke-3">stroke-3描边</p>
+    </div>
+</body>
+</html>
