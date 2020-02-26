@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>h5复制</title>
+	<style>
+		input {
+			/*display: none;*/
+		}
+		textarea {
+			margin: 50px 0;
+		}
+	</style>
+</head>
+<body>
+	<!-- h5的点击一键复制功能 -->
+	<h2>h5一键复制功能</h2>
+	<!-- Target -->
+	<input id="foo" value="我是被复制的内容abc123">
+	<!-- Trigger -->
+	<button class="btn" data-clipboard-target="#foo">复制</button> <br />
+
+
+
+	<!-- 粘贴复制的内容 -->
+	<textarea cols="30" rows="10"></textarea> <br />
+
+
+	<!-- 实现原理 -->
+	<input type="text" id="copyString" value="复制我你怕了吗？">
+	<button class="copy-btn">复制</button> <br />
+
+
+	<script src="https://cdn.bootcss.com/clipboard.js/2.0.4/clipboard.js"></script>
+	<script type="text/javascript">
+		/*
+			clipboard.js  => https://clipboardjs.com/
+			github => https://github.com/zenorocha/clipboard.js/
+			浏览器支持情况：（Chrome 42+ / Edge 12+ / Firefox 41+  / IE 9+ / Opera 29+ / Safari 10+）
+
+			注意：复制内容必须放在input、textarea等表单属性中，input不能display:none/hidden
+				可以position定位脱离文档流，然后移出屏幕
+		*/
+		var clipboard = new ClipboardJS('.btn');
+
+		clipboard.on('success', function(e) {
+		    console.info('Action:', e.action);
+		    console.info('Text:', e.text);
+		    console.info('Trigger:', e.trigger);
+		    alert('复制成功')
+		    e.clearSelection();
+		});
+
+		clipboard.on('error', function(e) {
+		    console.error('Action:', e.action);
+		    console.error('Trigger:', e.trigger);
+		    alert('失败或不支持')
+		});
+
+
+		/*
+			实现原理 document.execCommand('copy')实现复制到粘贴板功能   tip:必须手动触发
+
+			select()方法只支持input和textarea元素
+
+			ios下不能执行document.execCommand('copy'),不支持select()方法,使用textbox.createTextRange方法选中输入框的文字 readOnly
+		*/
+		const copyBtn = document.querySelector(".copy-btn");
+		const input = document.querySelector("#copyString");
+		const copyFunc = () => {
+			if (input) {
+				console.log(input.value)
+				if (document.execCommand("copy")) {
+					input.select();
+					document.execCommand("copy");
+					alert('已复制到粘贴板');
+				} else {
+					console.error("不支持execCommand>>>>>", document.execCommand("copy"))
+					if (input.createTextRange) {  // IE
+						const range = input.createTextRange();
+						range.collapse(true);
+						range.moveStart('character', startIndex);//起始光标
+				        range.moveEnd('character', stopIndex - startIndex);//结束光标
+				        range.select();//不兼容苹果
+					} else { // firefox/chrome
+						input.setSelectionRange(0, input.value.length);
+						input.focus()
+					}
+				}
+				input.blur();
+			}
+		}
+		copyBtn.onclick = () => {
+			copyFunc()
+		}
+	</script>
+</body>
+</html>
