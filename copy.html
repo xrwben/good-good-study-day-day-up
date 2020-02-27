@@ -80,8 +80,8 @@
 					if (input.createTextRange) {  // IE
 						const range = input.createTextRange();
 						range.collapse(true);
-						range.moveStart('character', startIndex);//起始光标
-				        range.moveEnd('character', stopIndex - startIndex);//结束光标
+						range.moveStart('character', 0);//起始光标
+				        range.moveEnd('character', input.value.length);//结束光标
 				        range.select();//不兼容苹果
 					} else { // firefox/chrome
 						input.setSelectionRange(0, input.value.length);
