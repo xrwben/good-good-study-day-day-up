@@ -68,7 +68,7 @@
 		*/
 		const copyBtn = document.querySelector(".copy-btn");
 		const input = document.querySelector("#copyString");
-		const copyFunc = () => {
+		function copyFunc() {
 			if (input) {
 				console.log(input.value)
 				if (document.execCommand("copy")) {
@@ -77,23 +77,39 @@
 					alert('已复制到粘贴板');
 				} else {
 					console.error("不支持execCommand>>>>>", document.execCommand("copy"))
-					if (input.createTextRange) {  // IE
+					if (input.createTextRange) {  // IE 这个方法好像只有IE支持?
 						const range = input.createTextRange();
 						range.collapse(true);
 						range.moveStart('character', 0);//起始光标
 				        range.moveEnd('character', input.value.length);//结束光标
 				        range.select();//不兼容苹果
 					} else { // firefox/chrome
-						input.setSelectionRange(0, input.value.length);
+						input.setSelectionRange(0, input.value.length);  // 全选 或(0, -1)
 						input.focus()
 					}
 				}
 				input.blur();
 			}
 		}
-		copyBtn.onclick = () => {
+		copyBtn.onclick = function() {
 			copyFunc()
 		}
+
+
+		/*
+			Document.createRange()  MDN => https://developer.mozilla.org/zh-CN/docs/Web/API/Range
+			createRange()方法 返回一个 Range 对象
+			setStart() => 设置 Range 的起点
+			setEnd() => 设置 Range 的终点
+		*/
+		const range = document.createRange();
+		console.log(range);
+
+		/*
+			Document.createTextRange()  只有IE能?????为什么不用createRange()呢??????
+		*/
+		const textRange = document.body.createTextRange();
+		console.log(textRange);
 	</script>
 </body>
 </html>
