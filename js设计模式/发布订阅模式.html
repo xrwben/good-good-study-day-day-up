@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>发布订阅模式</title>
+</head>
+<body>
+	<button class="btn1">订阅80平的房子</button>
+	<button class="btn2">订阅200平的房子</button>
+
+	<script>
+		/*
+			DOM事件
+		*/
+		/*document.body.addEventListener('click', function () {
+			alert(2);
+		}, true);
+		document.body.addEventListener('click', function () {
+			alert(3);
+		}, false);
+		document.body.addEventListener('click', function () {
+			alert(4);
+		}, false);
+	
+		document.body.click(); // 模拟用户点击*/
+
+
+		/*
+			发布订阅（类似Vue子组件给父组件通信？）
+			一为时间上的解耦,二为对象之间的解耦
+			订阅者会始终存在于内存中,得手动销毁
+		*/
+		
+		class E {
+
+			constructor() {
+				this.list = {}
+			}
+			// 订阅
+			on(type, listener) {
+				if (!this.list[type]) {
+					this.list[type] = []
+				}
+				this.list[type].push(listener)
+			}
+			// 发布
+			emmit(type) {
+				this.list[type].forEach(listener => {
+					listener()
+				})
+			}
+			// 移除订阅事件
+			remove(type, fn) {
+				if (!this.list[type]) {
+					return
+				}
+				let _index = this.list[type].findIndex(listener => {
+					return listener === fn
+				})
+				console.log(_index)
+				if (_index < 0) return
+				this.list[type].splice(_index, 1)
+			}
+	
+		}
+		
+		let e = new E()
+		console.log(e)
+
+		const fn1 = () => {
+			alert("80平的房300万哦")
+		}
+		const fn2 = () => {
+			console.log("有80平的通知我")
+			alert("80平的房子到了")
+		}
+
+		e.on("80平", fn1)
+		e.on("80平", fn2)
+		e.on("200平", () => {
+			console.log("200平的房子到了")
+			alert("200平的房子到了")
+		})
+
+		e.remove("80平", fn2)
+
+		document.querySelector(".btn1").onclick = function() {
+			e.emmit("80平")
+		}
+		document.querySelector(".btn2").onclick = function() {
+			e.emmit("200平")
+		}
+	</script>
+</body>
+</html>
