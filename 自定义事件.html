@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>自定义事件</title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+	<h2>自动触发事件</h2>
+	<button class="btn">自定义事件按钮</button>
+	<button id="eventButton">案例三按钮</button>
+	<button id="start">案例四开始按钮</button>
+	<script>
+		console.log(document.body)
+
+		/*
+			js自动触发事件
+		*/
+		/*document.body.onclick = function() {
+			alert("hello");
+		}
+
+		let event = document.createEvent("MouseEvents");
+		event.initEvent("click", false, true);
+
+		document.body.dispatchEvent(event);*/
+
+
+		/*
+			自定义事件 例一
+		*/
+		document.body.addEventListener("liben", function(e) {
+			alert("自定义事件");
+			console.log(e);
+		})
+		let event = document.createEvent("HTMLEvents");
+		event.initEvent("liben", false, true);
+		event.eventType = "i love liben";
+		document.body.dispatchEvent(event); // 分发事件  IE9以下使用fireEvent()
+
+		/*
+			例二
+		*/
+		let myEvent = new CustomEvent("pingan", {
+			detail: {name: "平安科技"}
+		});
+		window.addEventListener("pingan", (e) => {
+			console.log(e);
+			alert(e.detail.name);
+		});
+		document.querySelector(".btn").addEventListener("click", () => {
+			dispatchEvent(myEvent);
+		})
+
+		/*
+			例三 场景1： 微博列表点击关注派发事件，粉丝列表页和微博首页收到后进行其它操作
+		*/
+		// user.js
+		document.addEventListener("focusUser", e => {
+			console.log("【粉丝列表页】 监听到自定义事件触发，event：", e)
+		})
+
+		// home.js
+		document.addEventListener("focusUser", e => {
+			console.log("【微博首页】 监听到自定义事件触发，event：", e)
+		})
+
+		// list.js
+		const eventButton = document.getElementById("eventButton")
+		eventButton.addEventListener("click", e => {
+			const focusUser = new Event("focusUser");
+			document.dispatchEvent(focusUser);
+		})
+
+		/*
+			例四  场景2： 解耦多模块协作，原型和UI设计完成开发才能开始
+		*/
+		// index.js
+		const start = document.getElementById("start");
+		start.addEventListener("click", e => {
+			console.log("------开始执行任务------")
+			const startTask = new Event("startTask");
+			document.dispatchEvent(startTask);
+		})
+		// production.js
+		document.addEventListener("startTask", () => {
+			console.log("产品开始设计...");
+			setTimeout(() => {
+				console.log("产品设计完成！");
+				document.dispatchEvent(new Event("productionSuccess"));
+			}, 2000)
+		})
+		// ui.js
+		document.addEventListener("productionSuccess", () => {
+			console.log("UI开始设计...");
+			setTimeout(() => {
+				console.log("UI设计完成！");
+				document.dispatchEvent(new Event("designSuccess"));
+			}, 2000)
+		})
+		// code.js
+		document.addEventListener("designSuccess", () => {
+			console.log("程序猿开始coding...");
+			setTimeout(() => {
+				console.log("coding完成！");
+			}, 2000)
+		})
+	</script>
+</body>
+</html>
