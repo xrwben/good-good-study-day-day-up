@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>line-height属性</title>
+	<style>
+		* {
+			margin: 0; padding: 0;
+		}
+		.box {
+			border: 1px solid red;
+		}
+		.text {
+			border: 1px solid green;
+			font-size: 14px;
+		}
+		i {
+			font-style: normal;
+			border: 1px solid blue;
+			content: '';
+			/*width: 10px;
+			height: 10px;*/
+			/*border: 10px solid transparent;*/
+			border-top: 10px solid red;
+			display: inline-block;
+		}
+	</style>
+</head>
+<body>
+	<!-- 
+		属性值 => normal(默认并不是一个固定的值，而是会受font-family的影响)、 number、 length(px)、 %、 inherit
+
+		number、百分比都是相对于本身font-size来计算的
+
+		行距可以表示为：line-height - font-size，假设line-height为1.5，font-size为20，则行距为：1.5*20 - 20 = 10，则最终行距为10，而这个行距会平均作用于文字的上边和下边。
+		
+	 -->
+	<div class="box">
+		<span class="text">我是一段文本</span>
+		<i></i>
+	</div>
+
+	<style>
+		.box-1 {
+			width: 400px;
+			border: 1px solid red;
+			margin: 20px auto;
+			line-height: 400px;
+		}
+		.text-1 {
+			display: inline-block;
+			line-height: 1.5;
+			vertical-align: middle;
+		}
+	</style>
+	<p class="box-1">
+	    <span class="text-1">这是一段很长很长的文字，这是一段很长很长的文字，这是一段很长很长的文字，这是一段很长很长的文字，这是一段很长很长的文字</span>
+	</p>
+
+</body>
+</html>
