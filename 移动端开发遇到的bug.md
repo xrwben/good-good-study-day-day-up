@@ -9,3 +9,5 @@
 5、swiper在loop模式下会复制第一个和最后一个，但是复制只会复制页面不会复制点击事件，解决方法就是在swiper的回调事件函数中去处理
 
 6、clipboard在移动端复制失败，发现是要复制的标签元素加了readonly属性或者hidden等，于是用高级函数用法，Android没问题后发现ios特别恶心，iphone xr一直失败，然后无意中发现要点击两次才能成功，最后发现是和fastClick冲突，解决办法就是点击的目标元素添加类needsclick来单独解除点击延迟事件
+
+7、ios某些型号输入框textarea/input必须重压或长按才能唤起软键盘，是fastclick.js 引起的冲突，方法一：输入框事假@click="focus"，focus(e) { e.target.focus() }, 方法二：改fastClick.js源码中的focus方法
