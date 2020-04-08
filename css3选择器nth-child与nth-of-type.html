@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>nth-child与nth-of-type的区别</title>
+	<style>
+		/*
+			p:nth-child(2) => 选择属于其父元素的第二个子元素的每个 <p> 元素。 （选择父元素下的第几个子元素）
+
+			p:nth-of-type(2) => 选择属于其父元素第二个 <p> 元素的每个 <p> 元素。 （选择父元素下某类元素的第几个）
+
+			当.box下的子元素都是一样时，nth-child与nth-of-type一样的效果
+
+			当子元素不一样时，nth-of-type选择的是一个类别的第几个，nth-child选择不分类别，通常情况下建议用nth-of-type吧
+		*/
+		p:nth-of-type(1) {
+			color: red;  // 第一个p标签红色
+		}
+		p:nth-child(1) {
+			color: green;  // 选择不会覆盖，因为第一个元素不是p标签，如果是2则会覆盖成绿色
+		}
+		span:nth-child(1) {
+			color: blue;    // 第一个span标签变成蓝色
+		}
+	</style>
+</head>
+<body>
+	<div class="box">
+		<span>我是span元素</span>
+		<p>第1项p元素</p>
+		<p>第2项p元素</p>
+		<p>第3项p元素</p>
+		<p>第4项p元素</p>
+		<p>第5项p元素</p>
+	</div>
+</body>
+</html>
