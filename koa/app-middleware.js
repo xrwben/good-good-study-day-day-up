@@ -1,5 +1,6 @@
 const Koa = require("Koa");
 const app = new Koa();
+const loggerAsync = require("./middleware.js");
 
 app.use((ctx, next) => {
 	next(); // 执行中间件时，没有next()则不会往下执行中间件
@@ -55,11 +56,11 @@ app.use((ctx, next) => {
 })
 
 /*
-	中间件的使用
+	中间件的使用 当遇到await next()时 则跳出当前中间件执行下一个中间件，当后面所有的中间件执行后再回来
 */
 app.use(async (ctx, next) => {
-	await next();
 	console.log(`${ctx.request.method} ${ctx.request.url}`);
+	await next();
 })
 
 app.use(async (ctx, next) => {
@@ -72,10 +73,11 @@ app.use(async (ctx, next) => {
 app.use(async (ctx, next) => {
 	await next();  // 最后一个中间件是否需要执行next()
 	ctx.response.type = "text/html";
-	ctx.response.body = "<h3>Hello Liben</h3>";
+	ctx.response.body = "<h2>Hello Liben</h2>";
 })
 
-
+// 自定义的日志中间件
+// app.use(loggerAsync())
 
 app.listen(3000, () => {
 	console.log("app运行在3000端口...")

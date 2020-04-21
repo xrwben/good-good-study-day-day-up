@@ -110,6 +110,7 @@ app.use(async (ctx, next) => {
 	await next();
 })
 router.get("/", async (ctx, next) => {
+	console.log(ctx.request.url)
 	ctx.response.body = "<h2>Index</h2>";
 })
 router.get("/user/:name", async (ctx, next) => {
