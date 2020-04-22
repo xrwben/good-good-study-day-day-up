@@ -32,13 +32,41 @@ app.use(async (ctx, next) => {
 		})*/
 
 
+
 		// koa-bodyparser插件
 		ctx.body = ctx.request.body
 	}
 })
 
+// 获取post传过来的数据
+function postData (ctx) {
+	return new Promise((resolve, reject) => {
+		try {
+			let postData = "";
+			ctx.req.addListener('data', (data) => {
+				postData += data
+			})
+			ctx.req.addListener("end", () => {
+				console.log("postData>>>>>>>", postData)
+				resolve(postData)
+			})
+		} catch (err) {
+			reject(err)
+		}
+	}) 
+}
 
-
+// 将POST请求参数字符串解析成JSON
+function parseQueryStr( queryStr ) {
+  let queryData = {}
+  let queryStrList = queryStr.split('&')
+  console.log( queryStrList )
+  for (  let [ index, queryStr ] of queryStrList.entries()  ) {
+    let itemList = queryStr.split('=')
+    queryData[ itemList[0] ] = decodeURIComponent(itemList[1])
+  }
+  return queryData
+}
 
 
 app.listen(3000, () => {
