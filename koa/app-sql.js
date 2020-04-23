@@ -9,6 +9,22 @@ const app = new Koa();
 
 
 // 初始化sql
+let basePath = path.join(__dirname, './sql');
+let sqlFiles = fs.readdirSync(basePath);
+console.log(sqlFiles);
+for (let key of sqlFiles) {
+	console.log(path.join(__dirname, './sql', key));
+	let sqlContent = fs.readFileSync(path.join(__dirname, './sql', key));
+	console.log(sqlContent.toString())
+
+	mysql(sqlContent.toString()).then((rows) => {
+		// console.log(rows)
+		console.log(key + "脚本执行成功...")
+	}).catch((error) => {
+		console.log(error)
+		console.log(key + "脚本执行失败...")
+	})
+}
 
 
 // 静态资源加载中间件 路径和配置参数
