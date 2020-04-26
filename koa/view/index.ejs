@@ -11,5 +11,16 @@
 	<img src="./avatar.png" alt="">
 	<p>I LIKE <%= name %></p>
 	<h3><%= session.data %></h3>
+
+
+	<!-- <script type="text/javascript" src=" https://m.lcfarm.com/mapi/user/ssoJsonpInfo.htm?method_callback=getResult"></script> -->
+	<script type="text/javascript">
+		function getResult(data) {
+			console.log("jsonp>>>>", data)
+			alert(data)
+		}
+	</script>
+	<script src="http://127.0.0.1:3000/jsonp?callback=getResult" type="text/javascript"></script>
+
 </body>
 </html>
