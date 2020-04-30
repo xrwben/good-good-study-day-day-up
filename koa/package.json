@@ -1,5 +1,9 @@
 {
+  "scripts": {
+    "test": "./node_modules/.bin/mocha"
+  },
   "dependencies": {
+    "chai": "^4.2.0",
     "ejs": "^3.0.2",
     "koa": "^2.11.0",
     "koa-bodyparser": "^4.3.0",
@@ -8,6 +12,8 @@
     "koa-session-minimal": "^4.0.0",
     "koa-static": "^5.0.0",
     "koa-views": "^6.2.1",
-    "mysql": "^2.18.1"
+    "mocha": "^7.1.2",
+    "mysql": "^2.18.1",
+    "supertest": "^4.0.2"
   }
 }
