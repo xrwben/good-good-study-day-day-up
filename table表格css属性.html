@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>CSS 表格属性（Table）</title>
+	<style>
+		.table-1 {
+			border: 2px solid green;
+			border-collapse: collapse;
+			border-spacing: 10px;
+			caption-side: bottom;
+		}
+		.table-1 th, .table-1 td {
+			border: 1px solid green;
+		}
+	</style>
+</head>
+<body>
+	<!-- 
+		border-collapse => 是否合并边框 值为边框分开separate（默认）或边框合并为一个单一边框collapse 
+
+		border-spacing => 单元格间的距离 border-spacing: 5px 5px (第一个水平间隔 第二个是垂直间隔) 值可以合为一个表示	
+						注：border-collapse值为collapse时该属性无效
+
+		caption-side => 表格标题的位置 值为top（默认）或bottom, 一般情况这个没啥意义
+
+		empty-cells => 是否显示表格中的空单元格 值为show（默认）或hide
+						注：border-collapse值为collapse时该属性无效
+
+		table-layout => 布局算法(意义不大) 值为automatic或fixed automatic为自动计算列宽
+	 -->
+	<table class="table-1">
+		<caption>This is a caption</caption>
+		<tr>
+			<th>名字</th>
+			<th>性别</th>
+			<th>年龄</th>
+		</tr>
+		<tr>
+			<td width="200px">liben</td>
+			<td>male</td>
+			<td>28</td>
+		</tr><tr>
+			<td>czb</td>
+			<td>female</td>
+			<td>26</td>
+		</tr>
+	</table>
+</body>
+</html>
