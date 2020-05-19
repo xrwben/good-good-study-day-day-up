@@ -1,0 +1,40 @@
+@font-face {
+    font-family: 'SourceHanSerifSC-Heavy-Alphabetic';
+    src: url('SourceHanSerifSC-Heavy-Alphabetic.woff2') format('woff2'),
+        url('SourceHanSerifSC-Heavy-Alphabetic.woff') format('woff'),
+        url('SourceHanSerifSC-Heavy-Alphabetic.ttf') format('truetype'),
+        url('SourceHanSerifSC-Heavy-Alphabetic.svg#SourceHanSerifSC-Heavy-Alphabetic') format('svg');
+    font-weight: 900;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'SourceHanSerifSC-Heavy-Alphabetic';
+    src: url('SourceHanSerifSC-Heavy-Alphabetic_1.woff2') format('woff2'),
+        url('SourceHanSerifSC-Heavy-Alphabetic_1.woff') format('woff'),
+        url('SourceHanSerifSC-Heavy-Alphabetic_1.ttf') format('truetype'),
+        url('SourceHanSerifSC-Heavy-Alphabetic_1.svg#SourceHanSerifSC-Heavy-Alphabetic') format('svg');
+    font-weight: 900;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'SourceHanSerifSC-Heavy-Alphabetic';
+    src: url('SourceHanSerifSC-Heavy-Alphabetic_2.woff2') format('woff2'),
+        url('SourceHanSerifSC-Heavy-Alphabetic_2.woff') format('woff'),
+        url('SourceHanSerifSC-Heavy-Alphabetic_2.ttf') format('truetype'),
+        url('SourceHanSerifSC-Heavy-Alphabetic_2.svg#SourceHanSerifSC-Heavy-Alphabetic') format('svg');
+    font-weight: 900;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'SourceHanSerifSC-Heavy-Alphabetic';
+    src: url('SourceHanSerifSC-Heavy-Alphabetic_3.woff2') format('woff2'),
+        url('SourceHanSerifSC-Heavy-Alphabetic_3.woff') format('woff'),
+        url('SourceHanSerifSC-Heavy-Alphabetic_3.ttf') format('truetype'),
+        url('SourceHanSerifSC-Heavy-Alphabetic_3.svg#SourceHanSerifSC-Heavy-Alphabetic') format('svg');
+    font-weight: 900;
+    font-style: normal;
+}
+
