@@ -53,6 +53,17 @@
 			font-size: 36px;
 		}
 
+		.txt-of {
+			width: 200px;
+			height: 80px;
+			border: 1px solid red;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			overflow: hidden;
+		    text-overflow: ellipsis;
+		    white-space: nowrap;
+		}
 
 	</style>
 </head>
@@ -60,5 +71,7 @@
 	<div>青梅竹马 9999克拉/个</div>
 	<p>青梅竹马 9999克拉/个</p>
 	<span>青梅竹马 9999克拉/个</span>
+
+	<div class="txt-of">测试一下ellipse + flex</div>
 </body>
 </html>

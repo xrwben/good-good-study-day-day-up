@@ -14,4 +14,6 @@
 
 8、video属性定义了宽高，但是播放的时候video尺寸变化了，处理方法是给video样式加上 object-fit:fill; 属性，但这个属性不支持IE
 
-9、table+border-radius无效，原因是设置了 border-collapse:collapse 样式，方法是collapse改为separate + border-spacing:0，但是这样table边框要处理一下 
+9、table+border-radius无效，原因是设置了 border-collapse:collapse 样式，方法是collapse改为separate + border-spacing:0，但是这样table边框要处理一下
+
+10、flex与ellipsis共存在一个元素上失效，解决方法为嵌套一层元素，这个方法简直垃圾，并没有解决问题。（这个bug太傻比了）
