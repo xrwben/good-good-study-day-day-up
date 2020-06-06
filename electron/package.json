@@ -4,12 +4,19 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-  	"dev": "electron .",
+    "dev": "electron .",
+    "packager": "electron-packager . XingGuang --win --out ./packager --overwrite --arch=x64 --icon=./logo.ico --app-version=0.0.1 --electron-version=9.0.0",
+    "build": "electron-packager . XingGuang --overwrite --win --out ./grunt --arch=x64 --icon=./logo.ico --app-version=1.0.0 --electron-version=9.0.0 ",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "liben",
   "license": "ISC",
   "dependencies": {
-    "electron": "^9.0.0"
+    
+  },
+  "devDependencies": {
+    "asar": "^3.0.3",
+    "electron": "^9.0.0",
+    "electron-packager": "^14.2.1"
   }
 }

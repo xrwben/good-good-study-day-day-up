@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>渲染进程</title>
+	<style>
+		webview {
+            width: 300px;
+            height: 300px;
+            display: flex;
+        }
+	</style>
+</head>
+<body>
+	<h2>我是渲染的页面</h2>
+	
+	<button class="ipcRenderer-close">使用ipcRenderer通信关闭程序</button>
+	
+	<button class="remote-close">使用remote关闭程序</button>
+
+	<webview src="https://www.baidu.com"></webview>
+
+	<button class="dialog-input">dialog选择文件</button>
+
+
+	<script>
+		console.log(window)
+
+		/*
+			一、在这里引入 
+			二、在主进程中把使用到的对象挂载到window对象
+		*/
+		const { ipcRenderer, remote } = require('electron')
+
+		console.log("remote>>>>", remote);
+
+		console.log(ipcRenderer.sendSync('synchronous-message', 'ping')) // prints "pong"
+
+		ipcRenderer.on('asynchronous-reply', (event, arg) => {
+		  console.log(arg) // prints "pong"
+		})
+		ipcRenderer.send('asynchronous-message', 'ping')
+
+		// 通知主进程退出
+		const ipcRendererClose = document.querySelector('.ipcRenderer-close');
+		ipcRendererClose.addEventListener("click", (e) => {
+			ipcRenderer.send("closeWindow", true);
+		})
+
+		// 利用remote使用主进程模块直接退出
+		const remoteClose = document.querySelector('.remote-close');
+		remoteClose.addEventListener("click", (e) => {
+			remote.app.exit()
+		})
+
+		// dialog对话框
+		const dialogInput = document.querySelector(".dialog-input");
+		dialogInput.addEventListener("click", () => {
+			// 文件选择
+			remote.dialog.showOpenDialogSync({
+				title: '小可爱要选择文件',
+				properties: ['openFile', 'openDirectory'],
+				filters: [
+				    { name: 'Images', extensions: ['jpg', 'png', 'gif'] },
+				    { name: 'Movies', extensions: ['mkv', 'avi', 'mp4'] },
+				    { name: 'Custom File Type', extensions: ['as'] },
+				    { name: 'All Files', extensions: ['*'] }
+				]
+			})
+
+			// 确认保存 一般用不到
+			// remote.dialog.showSaveDialog()
+
+			// 消息对话框 太丑一般不用
+			// remote.dialog.showMessageBox({
+			// 	type: "info",
+			// 	title: "消息对话框",
+			// 	message: "我是一个提示标语, 明白了吗？",
+			// 	icon: "./logo.png",
+			// 	buttons: ["取消", "确定"]
+			// })
+
+			// 一般用不到
+			// remote.dialog.showCertificateTrustDialog({
+			// 	message: "7788"
+			// })
+		})
+	</script>
+</body>
+</html>
