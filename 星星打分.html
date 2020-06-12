@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>星星评分</title>
+	<style>
+		body {
+		  /*background: #262829;*/
+		  color: #95a5a6;
+		  text-align: center;
+		}
+		.star-rating {
+		  margin: 50px auto;
+		  display: flex;
+		  justify-content: center;
+		  align-items: center;
+		}
+		.star-rating input {
+			display: none;
+		}
+		.star-rating label {
+			font-size: 50px;
+			margin: 0 10px;
+		}
+		.star-rating input:not(input:checked) ~ label {
+			color: green;
+		}
+	</style>
+</head>
+<body>
+	<h3>纯css实现</h3>
+	<div class="star-rating">
+        <input type="radio" id="star5" name="rating" value="1" /><label for="star5">&#9733;</label>
+        <input type="radio" id="star4" name="rating" value="2" /><label for="star4">&#9733;</label>
+        <input type="radio" id="star3" name="rating" value="3" /><label for="star3">&#9733;</label>
+        <input type="radio" id="star2" name="rating" value="4" /><label for="star2">&#9733;</label>
+        <input type="radio" id="star1" name="rating" value="5" /><label for="star1">&#9733;</label>
+	</div>
+
+	<script>
+		
+		/*
+
+			https://www.cnblogs.com/sxs161028/p/7278219.html
+
+			使用unicode字符集，文档需要申明为UTF-8;
+		    下面符号列表后面有两列编号，第一列是用于HTML的，用的时候在前面加上&#;
+		    第二列用于css文件中，需要用\来转义;也可以用于js中，和css用法一样，但要用\u来转义;
+
+
+		*/
+
+
+	</script>
+</body>
+</html>
