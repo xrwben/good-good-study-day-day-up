@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>数字格式化</title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+	<h3>数字格式化： 123456789 => 123,456,789</h3>
+
+	<p>注意：所有的方法都没有考虑小数</p>
+
+	<b>小数解决方案：以小数点为界限先切割，再处理</b>
+
+	<script>
+
+		
+		/*
+			方法一： 利用splice()函数插入
+
+			js的number类型有个最大值（安全值）。即2的53次方，为9007199254740992
+		*/
+		let num = 1234567890987654321; // ? 如果超了怎么处理？？？
+
+		let strArr = num.toString().split('').reverse(); // 反转是因为要从后计算添加的","符号
+		console.log(strArr.length)
+
+		let splitLen = Math.ceil(strArr.length / 3) -1; // 要增加几个逗号
+		console.log(strArr)
+		console.log(splitLen)
+
+		// 要在原数组反序的3,6,9位置添加“,”符号，splice会改变原数组，相应的添加位置就变成了了3,7,11,15....
+		for (let i=1; i<=splitLen; i++) {
+			console.log("添加位置：", i * 3 + i - 1) // 得出公式 i * 4 -1
+			strArr.splice(i*4-1, 0, ","); // splice会改变原数组
+			console.log("添加后的数组变为>>", strArr)
+		}
+		let result = strArr.reverse().join("")
+		console.log(result)
+
+		console.log("------------------------------------------------");
+
+		/*
+			方法二： 利用slice()方法把字符串切成三个一组，然后再拼接
+
+		*/
+		let str2 = "1234567890987654321000001";
+		let arr2 = [];
+		let splitLen2 = Math.ceil(str2.length / 3) -1; // 要增加几个逗号
+		let count = str2.length;
+
+		while (count >= 3) {
+			arr2.unshift(str2.slice(count-3, count));
+			count -= 3;
+		}
+		(str2.length % 3) && arr2.unshift(str2.slice(0, str2.length % 3))
+
+		console.log(arr2)
+
+		let result2 = arr2.toString(); // 等同于 arr2.join(",")
+		console.log(result2)
+
+		console.log("------------------------------------------------");
+
+		/*
+			方法三： 正则表达式
+		*/
+		let str3 = "12345678901122334455";
+		let result3 = str3.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+		console.log(result3);
+
+		console.log("------------------------------------------------");
+
+
+		/*
+			方法四：利用reduce()函数
+		*/
+		let str4 = "12345678900011223344";
+		let strArr4 = str4.split("").reverse();
+		console.log(strArr4);
+		let result4 = strArr4.reduce((preve, next, index) => {
+			console.log(preve)
+			return (index % 3 ? next : next + ",") + preve;
+		})
+		console.log(result4);
+
+
+		console.log("------------------------------------------------");
+
+		/*
+			方法五： toLocaleString()  IE兼容性问题
+		
+		*/
+		let num5 = 1234567899000001;
+		let result5 = num5.toLocaleString();
+		console.log(result5);
+
+	</script>
+</body>
+</html>
