@@ -33,11 +33,49 @@
 			border: 5px solid red;
 			margin: 0 20px;
 		}
+		h3 {
+			color: blue;
+			text-align: center;
+			margin: 500px auto;
+		}
+		.popup-layer {
+			background: rgba(55, 55, 55, 0.6);
+			position: fixed;
+			left: 0;
+			right: 0;
+			top: 0;
+			bottom: 0;
+			margin: auto;
+			z-index: 99;
+			display: none;
+		}
+		.popup-layer .container {
+			width: 500px;
+			height: 300px;
+			background: rgba(255, 255, 255, 0.9);
+			color: green;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			position: absolute;
+			left: 0;
+			right: 0;
+			top: 0;
+			bottom: 0;
+			margin: auto;
+		}
 	</style>
 </head>
 <body>
 	<div class="wrap">
 		<div class="content"></div>
+	</div>
+
+	<h3>我是一个有高度的话<button class="show">显示弹窗</button></h3>
+
+
+	<div class="popup-layer">
+		<div class="container">我是一个弹窗，测试一下body hide<button class="close">关闭弹窗</button></div>
 	</div>
 
 	<script>
@@ -123,6 +161,26 @@
 
 		let currentBarWidth = getScrollBarSize();
 		console.log(currentBarWidth);
+
+		/*
+			案列： 有滚动条是，遮罩层显示隐藏body闪动问题
+		*/
+		const showBtn = document.querySelector(".show");
+		const colseBtn = document.querySelector(".close");
+		const popupLayer = document.querySelector(".popup-layer");
+
+		// 点击显示弹窗
+		showBtn.addEventListener("click", (e) => {
+			popupLayer.style.display = 'block';
+			document.body.style.paddingRight = currentBarWidth + 'px';
+			document.body.style.overflow = 'hidden';
+		});
+
+		// 点击关闭弹窗
+		colseBtn.addEventListener("click", (e) => {
+			popupLayer.style.display = 'none';
+			document.body.style = '';
+		});
 
 	</script>
 </body>
