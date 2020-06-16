@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>获取滚动条宽度</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+		html {
+			height: 1000px;
+		}
+		/**::-webkit-scrollbar {
+            width: 10px;
+            background-color: #999;
+        }
+	    *::-webkit-scrollbar-thumb {
+	        background-color: yellowgreen;
+	     }*/
+		.wrap {
+			width: 500px;
+			height: 600px;
+			border: 5px solid green;
+			margin: 50px auto;
+			padding: 0 20px;
+			overflow-y: scroll;
+		}
+		.content {
+			height: 1700px;
+			border: 5px solid red;
+			margin: 0 20px;
+		}
+	</style>
+</head>
+<body>
+	<div class="wrap">
+		<div class="content"></div>
+	</div>
+
+	<script>
+		
+		/*
+			原理： offsetWidth=>、clientWidth
+
+			offsetWidth: width + padding + border
+
+			clientWidth: width + padding (不包括滚动条和border)
+
+		*/
+
+		const wrap = document.querySelector(".wrap");
+		const content = document.querySelector(".content");
+
+		console.log(wrap.offsetWidth, wrap.offsetHeight, wrap.offsetLeft, wrap.offsetTop)
+
+		console.log(wrap.clientWidth)
+
+		console.log(wrap.getBoundingClientRect())
+
+		console.log(content.offsetWidth)
+
+		console.log(content.clientWidth)
+
+		console.log("滚动条宽度>>>>>>", wrap.offsetWidth - wrap.clientWidth);
+
+
+		/*
+			获取滚动条的方法封装
+
+			问题： 如何判断是否有滚动条呢？？
+			答案： window.innerWidth - document.body.clientWidth
+
+			window.innerWidth 返回以像素为单位的窗口的内部宽度。如果垂直滚动条存在，则这个属性将包括它的宽度。
+
+			如果你需要获取除去滚动条和边框的窗口宽度，请使用根元素 <html>  的clientWidth 属性。
+		*/
+
+		console.log(window.innerWidth, document.body.clientWidth)
+
+		function getScrollBarSize () {
+			// 如果大于0说明有滚动条
+			if (window.innerWidth - document.body.clientWidth > 0) {
+				const inner = document.createElement('div');
+		        inner.style.width = '100%';
+		        inner.style.height = '200px';
+
+		        const outer = document.createElement('div');
+		        const outerStyle = outer.style;
+
+		        outerStyle.position = 'absolute';
+		        outerStyle.top = 0;
+		        outerStyle.left = 0;
+		        // outerStyle.pointerEvents = 'none';
+		        // outerStyle.visibility = 'hidden';
+		        outerStyle.width = '200px';
+		        outerStyle.height = '150px';
+		        outerStyle.overflow = 'hidden';
+
+		        outer.appendChild(inner);
+
+		        document.body.appendChild(outer);
+
+		        const widthContained = inner.offsetWidth;
+		        outer.style.overflow = 'scroll';
+		        let widthScroll = inner.offsetWidth;
+
+		        if (widthContained === widthScroll) {
+		            widthScroll = outer.clientWidth;
+		        }
+
+		        // document.body.removeChild(outer);
+
+		        return widthContained - widthScroll;
+
+			} else {
+				return 0;
+			}
+	        
+		}
+
+		let currentBarWidth = getScrollBarSize();
+		console.log(currentBarWidth);
+
+	</script>
+</body>
+</html>
