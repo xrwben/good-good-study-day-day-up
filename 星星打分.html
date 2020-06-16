@@ -6,7 +6,7 @@
 	<title>星星评分</title>
 	<style>
 		body {
-		  /*background: #262829;*/
+		  background: #262829;
 		  color: #95a5a6;
 		  text-align: center;
 		}
@@ -20,11 +20,27 @@
 			display: none;
 		}
 		.star-rating label {
+			/*color: green;*/
 			font-size: 50px;
 			margin: 0 10px;
 		}
 		.star-rating input:not(input:checked) ~ label {
 			color: green;
+		}
+
+		#star-rating-con {
+			margin: 50px auto;
+		  	display: flex;
+		  	justify-content: center;
+		  	align-items: center;
+		}
+		#star-rating-con .star-item {
+			font-size: 50px;
+			margin: 0 10px;
+			cursor: pointer;
+		}
+		#star-rating-con .star-item.selected {
+			color: orange;
 		}
 	</style>
 </head>
@@ -38,6 +54,12 @@
         <input type="radio" id="star1" name="rating" value="5" /><label for="star1">&#9733;</label>
 	</div>
 
+	<h3>Vue实现</h3>
+	<div id="star-rating-con">
+		<div class="star-item" :class="{selected: currentScore>=item.score}" v-for="(item, index) in starList" @click="selected(item)">&#9733;</div>
+	</div>
+
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 	<script>
 		
 		/*
@@ -48,9 +70,29 @@
 		    下面符号列表后面有两列编号，第一列是用于HTML的，用的时候在前面加上&#;
 		    第二列用于css文件中，需要用\来转义;也可以用于js中，和css用法一样，但要用\u来转义;
 
-
 		*/
 
+		new Vue({
+			el: "#star-rating-con",
+			data () {
+				return {
+					currentScore: 0,
+					starList: [
+						{ txt: '非常不满意', score: 1 },
+						{ txt: '不满意', score: 2 },
+						{ txt: '一般', score: 3 },
+						{ txt: '满意', score: 4 },
+						{ txt: '非常满意', score: 5 }
+					]
+				}
+			},
+			methods: {
+				selected (info) {
+					this.currentScore = info.score
+					console.log("当前分数>>>>>", this.currentScore)
+				}
+			}
+		})
 
 	</script>
 </body>
