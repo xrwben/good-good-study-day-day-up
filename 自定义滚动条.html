@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>自定义滚动条</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+		.move-box {
+			width: 100px; 
+			height: 100px; 
+			background: skyblue; 
+			color: #fff;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			position: absolute;
+		}
+		.scroll-wrapper {
+			width: 500px;
+			height: 600px;
+			border: 2px solid green;
+			margin: 20px 200px 700px;
+			overflow: hidden;
+			position: relative;
+		}
+		.content {
+			background: #eee;
+			padding: 10px;
+			border: 1px solid red;
+			position: relative;
+		}
+		.content div {
+			height: 200px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			border: 1px solid green;
+		}
+		.scroll-bar {
+			height: 100%;
+			/*border: 1px solid red;*/
+			/*background: rgba(0, 0, 0 , 0.4);*/
+			box-shadow: 0 0 5px rgba(0, 0, 0, 0.3) inset;
+			border-radius: 5px;
+			position: absolute;
+			right: 0;
+			top: 0;
+			overflow: hidden;
+		}
+		.scroll-thumb {
+			width: 10px;
+			min-height:50px;
+			border-radius: 5px;
+			background-color: #F90;
+			background-image: -webkit-linear-gradient(bottom left, rgba(255, 255, 255, .2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, .2) 75%, transparent 75%, transparent);
+			/*margin-top: 100px;*/
+		}
+	</style>
+</head>
+<body>
+	<div class="move-box">可移动</div>
+
+	<div class="scroll-wrapper">
+		<div class="content">
+			<div style="">内容1</div>
+			<div>内容2</div>
+			<div>内容3</div>
+			<div>内容4</div>
+			<div>内容5</div>
+		</div>
+		<div class="scroll-bar">
+			<div class="scroll-thumb"></div>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+	
+		/*
+			先重温一波DOM元素位置与大小
+
+			offsetWidth、offsetHeight、offsetLeft、offsetTop  用于描述元素外尺寸
+
+			clientWidth、clientHeight  用于描述元素内尺寸
+
+			scrollWidth、scrollHeight、scrollLeft、scrollTop
+
+			getBoundingClientRect()
+
+			pageY 鼠标点击位置距离顶部距离 包括滚动的高度
+
+			clientY 鼠标点击坐标 不包括滚动距离
+		*/	
+		const scrollWrapper = document.querySelector(".scroll-wrapper");
+		const content = document.querySelector(".content");
+		const scrollBar = document.querySelector(".scroll-bar");
+		const scrollThumb = document.querySelector(".scroll-thumb");
+
+		console.log(scrollWrapper)
+
+		/*
+			偏移量
+
+			offsetHeight/offsetWidth => 表述元素的外尺寸：元素内容+内边距+边框(不包括外边距)
+
+			offsetLeft/offsetTop => 表示该元素的左上角（边框外边缘）与已定位的父容器（offsetParent对象）左上角的距离
+									offsetParent元素是指元素最近的定位（relative,absolute）祖先元素,可递归上溯
+
+		*/
+		console.log("offsetWidth:", scrollWrapper.offsetWidth, content.offsetWidth, scrollBar.offsetWidth)
+		// offsetWidth: 500 496 10
+		console.log("offsetHeight:", scrollWrapper.offsetHeight, content.offsetHeight, scrollBar.offsetHeight)
+		// offsetHeight: 600 1000 596
+		console.log("offsetLeft:", scrollWrapper.offsetLeft, content.offsetLeft, scrollBar.offsetLeft)
+		// offsetLeft: 200 0 486
+		console.log("offsetTop:", scrollWrapper.offsetTop, content.offsetTop, scrollBar.offsetTop)
+		// offsetTop: 20 0 0
+
+
+		/*
+			客户区大小     不包含border
+
+			clientWidth/clientHeight => 用于描述元素的内尺寸：元素内容+两边内边距 
+
+			innerWidth/innerHeight => 该属性只挂在window对象
+		*/
+		console.log("clientWidth:", scrollWrapper.clientWidth, content.clientWidth, scrollBar.clientWidth)
+		// clientWidth: 496 476 10
+		console.log("clientHeight:", scrollWrapper.clientHeight, content.clientHeight, scrollBar.clientHeight)
+		// clientHeight: 596 1020 596
+		console.log("innerWidth:", window.innerWidth, scrollWrapper.innerWidth, content.innerWidth, scrollBar.innerWidth)
+		// innerWidth: 1194 undefined undefined undefined
+		console.log("innerHeight:", window.innerHeight, scrollWrapper.innerHeight, content.innerHeight, scrollBar.innerHeight)
+		// innerHeight: 937 undefined undefined undefined
+
+
+		/*
+			滚动大小
+
+			scrollHeight/scrollWidth => 元素内容的总高度或宽度
+
+			scrollLeft/scrollTop => 是指元素滚动条位置
+		*/
+		console.log("scrollWidth:", scrollWrapper.scrollWidth, content.scrollWidth, scrollBar.scrollWidth)
+		// scrollWidth: 496 476 10
+		console.log("scrollHeight:", scrollWrapper.scrollHeight, content.scrollHeight, scrollBar.scrollHeight)
+		// scrollHeight: 1040 1020 596
+		console.log("scrollTop:", scrollWrapper.scrollTop, content.scrollTop, scrollBar.scrollTop)
+		// scrollTop: 0 0 0
+		console.log("scrollLeft:", scrollWrapper.scrollLeft, content.scrollLeft, scrollBar.scrollLeft)
+		// scrollLeft: 0 0 0
+
+
+		/*
+			getBoundingClientRect()方法
+		*/
+		console.log("getBoundingClientRect-scrollWrapper:", scrollWrapper.getBoundingClientRect())
+		console.log("getBoundingClientRect-content:", content.getBoundingClientRect())
+		console.log("getBoundingClientRect-scrollThumb:", scrollThumb.getBoundingClientRect())
+
+
+		/*
+			案例一： 移动盒子 clientX/clientY => 鼠标在可视化区域的坐标 滚动条加document.documentElement.scrollTop
+		*/
+		const boxCon = document.querySelector(".move-box");
+		let _gapX = 0;
+		let _gapY = 0;
+		boxCon.onmousedown = (ev) => {
+			_gapX = ev.clientX - boxCon.offsetLeft;
+			_gapY = ev.clientY - boxCon.offsetTop;
+			console.log(_gapX, _gapY)
+			document.onmousemove = (ev) => {
+				console.log(ev.clientX, ev.clientY);
+				boxCon.style.left = `${ev.clientX - _gapX + document.documentElement.scrollLeft }px`;
+				boxCon.style.top = `${ev.clientY - _gapY + document.documentElement.scrollTop}px`;
+			}
+		}
+		boxCon.onmouseup = (ev) => {
+			// 鼠标抬起解除绑定事件
+			document.onmousedown = null;
+			document.onmousemove = null;
+		}
+
+		/*
+			案列二： 自定义滚动条
+
+			滚动条的高度： 容器的高度/内容的高度 = 滚动条的高度/滚动条容器的高度
+		*/
+
+		// scrollThumb.style.height = "80px"
+		scrollThumb.style.height =  (scrollWrapper.offsetHeight / content.offsetHeight * scrollBar.offsetHeight) + "px"
+		console.log(scrollThumb.offsetHeight, scrollThumb.offsetTop, content.clientHeight, content.offsetHeight, content.scrollHeight)
+
+		let candrag = false; // 是否可以拖动的标志
+		let _gapTop; // 鼠标点击的相对位置
+		let thumbMaxHeight = scrollBar.offsetHeight - scrollThumb.offsetHeight; // 滚动条滚动最大高度
+		let thumbTop = 0; // 滚动条当前的滚动高度
+
+		scrollThumb.onmousedown = (e) => {
+			// 防止选中 什么也不做
+			if (e.preventDefault) {
+	            e.preventDefault();
+	        } else {
+	            e.returnValue=false;
+	        }
+			candrag = true;
+			// console.log(e.clientY, e.pageY)
+			_gapTop = e.pageY - scrollThumb.offsetTop;
+			console.log(_gapTop)
+			document.onmousemove = (e) => {
+				if (!candrag) {
+					return
+				}
+				// console.log(e.pageY)
+				thumbTop = e.pageY - _gapTop;
+				if (thumbTop <= 0) {
+					thumbTop = 0;
+				}
+				if (thumbTop >= scrollBar.offsetHeight - scrollThumb.offsetHeight) {
+					thumbTop = scrollBar.offsetHeight - scrollThumb.offsetHeight;
+				}
+				console.log(thumbTop)
+				scrollThumb.style.marginTop = `${thumbTop}px`;
+				// 计算内容滚动
+				let scale = thumbTop / (scrollBar.offsetHeight - scrollThumb.offsetHeight);
+				let contentTop = scale * (content.offsetHeight - scrollWrapper.offsetHeight);
+				console.log(contentTop)
+				content.style.transform = `translateY(${-contentTop}px)`;
+			}
+			document.onmouseup = (e) => {
+				candrag = false;
+				// console.log("鼠标松开了...", e.clientY, e.pageY);
+				document.onmousemove = null;
+			}
+		}
+
+	</script>
+</body>
+</html>
