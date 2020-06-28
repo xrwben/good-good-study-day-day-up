@@ -58,7 +58,7 @@
 			border-radius: 5px;
 			background-color: #F90;
 			background-image: -webkit-linear-gradient(bottom left, rgba(255, 255, 255, .2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, .2) 75%, transparent 75%, transparent);
-			/*margin-top: 100px;*/
+			cursor: pointer;
 		}
 	</style>
 </head>
@@ -193,12 +193,19 @@
 
 		// scrollThumb.style.height = "80px"
 		scrollThumb.style.height =  (scrollWrapper.offsetHeight / content.offsetHeight * scrollBar.offsetHeight) + "px"
+		if (scrollThumb.offsetHeight <= 40) {
+			scrollThumb.style.height = "40px";
+		}
+		if (scrollWrapper.offsetHeight >= content.offsetHeight) {
+			scrollBar.style.display = "none";
+		}
 		console.log(scrollThumb.offsetHeight, scrollThumb.offsetTop, content.clientHeight, content.offsetHeight, content.scrollHeight)
 
 		let candrag = false; // 是否可以拖动的标志
 		let _gapTop; // 鼠标点击的相对位置
 		let thumbMaxHeight = scrollBar.offsetHeight - scrollThumb.offsetHeight; // 滚动条滚动最大高度
 		let thumbTop = 0; // 滚动条当前的滚动高度
+		let contentTop = 0; // 内容当前滚动距离
 
 		scrollThumb.onmousedown = (e) => {
 			// 防止选中 什么也不做
@@ -227,9 +234,9 @@
 				scrollThumb.style.marginTop = `${thumbTop}px`;
 				// 计算内容滚动
 				let scale = thumbTop / (scrollBar.offsetHeight - scrollThumb.offsetHeight);
-				let contentTop = scale * (content.offsetHeight - scrollWrapper.offsetHeight);
+				contentTop = scale * (content.offsetHeight - scrollWrapper.clientHeight);
 				console.log(contentTop)
-				content.style.transform = `translateY(${-contentTop}px)`;
+				content.style.top = `${-contentTop}px`;
 			}
 			document.onmouseup = (e) => {
 				candrag = false;
@@ -238,6 +245,44 @@
 			}
 		}
 
+		/*
+			滚轮事件 
+
+			IE、chrome监听的是wheelDelta 向下滚动其值为-120 向上滚动其值为120
+
+			FF监听的是detail 向下滚动其值为3 向上滚动其值为-3
+		*/
+		scrollWrapper.addEventListener("mousewheel", _wheelFunc, false);
+		scrollWrapper.addEventListener("DOMMouseScroll", _wheelFunc, false);
+
+		function _wheelFunc (e) {
+			e = e || window.event;
+			e.preventDefault();//阻止窗口默认的滚动事件
+
+			// console.log(e)
+			let delta = 0; // 判断上or下滚动
+
+			if (e.wheelDelta) {
+				delta = e.wheelDelta / 120;
+			} else if (e.detail) {
+				delta = -e.detail / 3;
+			}
+			console.log(delta, scrollWrapper.scrollTop, content.offsetTop)
+			contentTop = contentTop + (delta * 30);
+			console.log(contentTop)
+			if (contentTop >= 0) {
+				contentTop = 0;
+			}
+			if (contentTop <= scrollWrapper.clientHeight - content.offsetHeight) {
+				contentTop = scrollWrapper.clientHeight - content.offsetHeight;
+			}
+			content.style.top = `${contentTop}px`;
+
+			// 计算滚动条距离
+			let scale = contentTop / (scrollWrapper.clientHeight - content.offsetHeight);
+			thumbTop = scale * (scrollBar.offsetHeight - scrollThumb.offsetHeight);
+			scrollThumb.style.marginTop = `${thumbTop}px`;
+		}
 	</script>
 </body>
 </html>
