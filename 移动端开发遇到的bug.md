@@ -17,3 +17,9 @@
 9、table+border-radius无效，原因是设置了 border-collapse:collapse 样式，方法是collapse改为separate + border-spacing:0，但是这样table边框要处理一下
 
 10、flex与ellipsis共存在一个元素上失效，解决方法为嵌套一层元素，这个方法简直垃圾，并没有解决问题。（这个bug太傻比了）
+
+11、iphone某些机型(iphone6)使用flex布局align-item属性让元素上下居中时失效，解决方法是给居中元素一个padding值，让其上下撑开到父元素高度
+
+12、ios某个机型(iphone6)使用flex布局自动计算flex:1会显示为大小0，让子元素无法滑动，解决办法是不使用flex，给个定高或百分比计算高度
+
+13、在less中使用calc(100% - 200px)语法时无法解析，解决方法是加个calc(~"100% - 200px")，但是如果有变量时就不能这么写，可以先声明个变量 @diff: 215/@bf，然后height: calc(~"100% - @{diff}")这样写就能够解析
