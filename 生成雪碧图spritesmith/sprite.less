@@ -1,0 +1,35 @@
+.getSprite (@w, @h, @posx, @posy) {
+	background-position: @posx/@bf @posy/@bf;
+	width: @w/@bf;
+	height: @h/@bf;
+}
+	
+.set_sprite-icon_sprite () {
+	.sprite-icon-s {
+		background: url('./images/sprite-icon.png') no-repeat;
+		background-size: 263/@bf 162/@bf;
+		font-size: 0px;
+		display: block;
+	}
+	.first { .getSprite(78, 74, -0, -88); }
+	.live { .getSprite(85, 41, -178, -0); }
+	.second { .getSprite(80, 78, -0, -0); }
+	.third { .getSprite(78, 75, -90, -0); }
+	.triangle { .getSprite(43, 36, -178, -51); }
+}
+.set_sprite-icon_sprite();
+	
+	
+.set_sprites_sprite () {
+	.sprites-s {
+		background: url('./images/sprites.png') no-repeat;
+		background-size: 564/@bf 360/@bf;
+		font-size: 0px;
+		display: block;
+	}
+	.avatar { .getSprite(194, 194, -370, -0); }
+	.git { .getSprite(360, 360, -0, -0); }
+	.triangle { .getSprite(43, 36, -370, -204); }
+}
+.set_sprites_sprite();
+	
