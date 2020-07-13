@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>layout模板文件</title>
+	<link rel="stylesheet" href="">
+	<style>
+		.tip {
+			color: blue;
+			cursor: pointer;
+		}
+	</style>
+	<script src="./include.js"></script>
+</head>
+<body>
+	<!-- 
+		目前很多浏览器不支持本地file协议使用XMLHttpRequest对象了 方法是有很多 自行网上搜
+		windows: 设置Chrome的快捷方式属性，在“目标”后面加上–allow-file-access-from-files，注意前面有个空格
+
+		我干 这种方法亲测没卵用 网上有些东西别太信 得亲自尝试  最后还是得用http-server起一个服务
+	 -->
+
+
+	<!-- 第一种 include.js -->
+	<h2>第一种方法：include.js</h2>
+	<header class="header">头部</header>
+	<include src="main.html"></include>
+	<footer class="footer">底部</footer>
+
+	<!-- 第二种 jq load()方法 -->
+	<h2>第二种方法：jQuery load方法</h2>
+	<header class="header">头部</header>
+	<div class="mixin"></div>
+	<footer class="footer">底部</footer>
+
+	<script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function() {
+			$(".mixin").load("./main.html");
+
+			/*
+				问题： 怎么给引入的html加事件？？？？？？
+			*/
+			$(".tip").click(function() {
+				alert("inlude文件方法")
+			})
+		})
+	</script>
+
+</body>
+</html>
