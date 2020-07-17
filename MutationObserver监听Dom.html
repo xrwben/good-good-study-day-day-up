@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>MutationObserver</title>
+</head>
+<body>
+	<h2>MutationObserver监听Dom</h2>
+
+	<textarea id="textarea" cols="30" rows="10"></textarea>
+
+	<script>
+		/*
+			MutationObserver构造函数接口 提供了监视对DOM树所做更改的能力 异步，等所有DOM操作完成才触发
+
+			回调函数接受两个参数，第一个是变动数组，第二个是观察器实例
+
+			observe()方法启动监听 两个参数 所要观察的DOM节点和一个配置对象(childList/attributes/characterData)
+
+			disconnect()停止观察
+
+			takeRecords()清除变动记录，返回变动记录数组
+		*/
+		const observer = new MutationObserver((mutations, obser) => {
+			mutations.map(item => {
+				console.log(item)
+			})
+		});
+
+		const textarea = document.querySelector("#textarea");
+
+		const options = {
+			"attributes": true, // 属性的变动
+			"attributeOldValue": true, // 是否需要记录变动前的属性值
+			"childList": true, // 子节点的变动（指新增，删除或者更改）
+			"characterData": true,  // 节点内容或节点文本的变动
+			"characterDataOldValue": true,  // 是否需要记录变动前的值
+			"subtree": true, // 是否将该观察器应用于该节点的所有后代节点
+			// "attributeFilter": ['class','src'], // 需要观察的特定属性
+		};
+
+		observer.observe(textarea, options);
+
+		setTimeout(() => {
+			textarea.style.width = "300px"
+		}, 1000)
+		setTimeout(() => {
+			textarea.style.height = "300px"
+		}, 3000)
+
+
+	</script>
+</body>
+</html>
