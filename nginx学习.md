@@ -1,3 +1,10 @@
+## 常用命令
+
+* start nginx 启动
+* nginx -s quit 关闭
+* nginx -s reload 重新加载
+* nginx -t 检查配置是否语法错误
+
 ## locatin匹配规则 https://segmentfault.com/a/1190000009237425
 
 > 语法：location [ = | ~ | ~* | ^~ ] uri { ... }
@@ -8,9 +15,54 @@
 
 - 如果有这个“^\~”修饰符，停止匹配
 
-- 如果无“^\~”， 最终使用正则匹配到的路径
+- 如果无“^\~”， 最终使用正则匹配到的路径，正则顺序匹配到第一个后就停止
 
 - 字符串匹配，如果有正则也匹配到则使用正则，如果正则匹配不到，使用字符串前缀匹配最长的
+
+### 常用配置指令
+
+- **`alias` —— 别名配置，在匹配到location配置的url路径后，指向alias配置的路径**
+
+如：
+```
+location /test/ {
+    alias /usr/local/;
+}
+```
+请求/test/1.jpg（省略了协议和域名），将会返回文件/usr/local/1.jpg
+
+
+如果使用了正则，则alias配置也要引用正则捕获的值，如：
+```
+location ~ /dist/vmaker/(.*) {
+	alias /guojiang/xg-tpl/dist/mobile/html/$1;
+}
+```
+请求/dist/vmaker/2020/2/modCommemorationDay.html，返回/guojiang/xg-tpl/dist/mobile/html/2020/2/modCommemorationDay.html
+
+- **`root` —— 根路径配置，匹配到location配置的URL路径后，指向root配置的路径，并把请求路径附加到其后**
+
+如：
+```
+location /test/ {
+    root /usr/local/;
+}
+```
+请求/test/1.jpg（省略了协议和域名），将会返回文件/usr/local/test/1.jpg
+
+>> **alias与root区别：root真实路径是root指定的值加上location指定的值，alias真实路径是alias指定的值替换，不包含location指定的值了**
+
+- **`proxy_pass` —— 方向代理配置，用于代理请求**
+
+如：
+```
+location /test/ {
+   proxy_pass http://127.0.0.1:8080/;
+}
+```
+请求/test/1.jpg，将会被nginx转发请求到http://127.0.0.1:8080/1.jpg（未附加/test/路径，如果 proxy_pass http://127.0.0.1:8080;则附加）
+
+
 
 ---
 
