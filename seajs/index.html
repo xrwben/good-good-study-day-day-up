@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Sea.js学习</title>
+</head>
+<body>
+	<h2 class="title">sea.js</h2>
+	<button class="btn">按钮</button>
+	<script type="text/javascript" src="./js/sea.js"></script>
+	<!-- <script type="text/javascript" src="./jquery.min.js"></script> -->
+	<script type="text/javascript">
+		console.log("seajs>>>", seajs.data);
+
+		// $(".btn").click(function() {
+		// 	console.log(123)
+		// });
+
+		seajs.config({
+			// base: 'base/', // base就是sea.js文件所在的路径
+			alias: {
+				"jq": "./js/jquery.min.js",
+				"a": "./a.js"
+			}
+		});
+
+		seajs.use(["./hello.js"], function(hello) {
+			console.log(hello)
+			hello.sayHello()
+		});
+	</script>
+</body>
+</html>

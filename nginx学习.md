@@ -106,7 +106,7 @@ location /test/ {
 
 ---
 
-## if语句判断
+## if语句判断 https://www.cnblogs.com/dadonggg/p/7797281.html
 
 > nginx并未提供逻辑运算，所以我们这时候只有通过**设置变量的值**来变相的实现逻辑运算了
 
