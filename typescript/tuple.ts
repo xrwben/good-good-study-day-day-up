@@ -1,0 +1,10 @@
+// 数组合并了相同类型的对象，而元组（Tuple）合并了不同类型的对象。
+
+let li: [string, number, any] = ['liben', 27, false];
+
+let tom: [string, number];
+// tom = ['Tom'] 报错
+
+li.push('123')
+
+li.push(true)
