@@ -6,7 +6,7 @@
   <style>
     #wrapper {
       height: 400px;
-      width: 700px;
+      width: 100%;
       position: relative;
       /*overflow: hidden;*/
       color: #ffffff82;
@@ -19,11 +19,12 @@
       position: absolute;
       /*visibility: hidden;*/
       white-space: nowrap;
-      /*left: 700px;*/
-      transform: translateX(700px);
+      left: 100%;
+      /*transform: translateX(700px);*/
     }
     .left {
       position: absolute;
+      left: 100%;
       white-space: nowrap;
       user-select: none;
       transition: transform 7s linear; /* 时间相同 越长的弹幕滑动距离越长 所以越快~ */
@@ -62,11 +63,11 @@
  * 设置 弹幕DOM池 每一个通道最多六条弹幕
 **/
 
-const MAX_DM_COUNT = 2; // 船只
-const CHANNEL_COUNT = 3; // 航道数
+const MAX_DM_COUNT = 3; // 船只
+const CHANNEL_COUNT = 4; // 航道数
 
 let domPool = [];
-let danmuPool = [
+let danmuPoolResource = [
   '前方大量弹幕来袭，请做好准备！',
   '浔阳江头夜送客',
   '主人', '醉不成欢惨将别， 别时茫茫江浸月', '忽闻水上琵琶声， 主人忘归客不发。', 
@@ -83,6 +84,7 @@ let danmuPool = [
   '浔阳地僻无音乐， 终岁不闻丝竹声。', '住近湓江地低湿， 黄芦苦竹绕宅生。', '其间旦暮闻何物？ 杜鹃啼血猿哀鸣。',
   '春江花朝秋月夜， 往往取酒还独倾。'*/
 ];
+let danmuPool = [].concat(danmuPoolResource);
 let hasPosition = [];
 
 /**
@@ -137,13 +139,14 @@ function getChannel() {
  */
 function shootDanmu(dom, text, channel) {
   console.log('biu~ [' + text + ']');
+  let wrapperWidth = document.getElementById('wrapper').clientWidth
   dom.innerText = text;
   // 如果为每个弹幕设置 transition 可以保证每个弹幕的速度相同 这里没有保证速度相同
   // dom.style.transition = `transform ${7 + dom.clientWidth / 100}s linear`;
 
   // dom.style.left = '-' + dom.clientWidth + 'px';
   // 设置弹幕的位置信息 性能优化 left -> transform
-  dom.style.transform = `translateX(${-dom.clientWidth}px)`;
+  dom.style.transform = `translateX(${-(dom.clientWidth+wrapperWidth)}px)`;
   dom.className = 'left';
   
   hasPosition[channel] = false;
@@ -174,10 +177,14 @@ window.onload = function() {
   setInterval(() => {
     let channel = getChannel();
     if (danmuPool.length && channel != -1) {
+      console.log('航道>>', channel, hasPosition)
       let dom = domPool[channel].shift();
       let danmu = danmuPool.shift();
-      console.log(danmuPool)
+      // console.log(danmuPool)
       shootDanmu(dom, danmu, channel);
+      if (danmuPool <= 0) {
+      	danmuPool = danmuPool.concat(danmuPoolResource)
+      }
     }
   }, 1);
 
