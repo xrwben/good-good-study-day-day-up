@@ -127,5 +127,51 @@
 		<p>块级元素grid布局水平居中</p>
 	</div>
 
+	<hr>
+
+	<h3>双飞翼布局</h3>
+	<span>
+		三个部分都设定为左浮动，然后设置center的宽度为100%，此时，left和right部分会跳到下一行；<br>
+		通过设置margin-left为负值让left和right部分回到与center部分同一行；<br>
+		center部分增加一个内层div，并设margin: 0 200px；
+	</span>
+	<style>
+		.sfy {
+			width: 900px;
+			border: 1px solid black;
+		}
+		.sfy div {
+			margin: 0;
+			box-sizing: border-box;
+		}
+		.sfy .left {
+			width: 200px;
+			border: 1px solid red;
+			float: left;
+			margin-left: -100%;
+		}
+		.sfy .center {
+			width: 100%;
+			border: 1px solid green;
+			float: left;
+		}
+		.sfy .center .inner {
+			width: auto;
+			margin: 0 200px;
+		}
+		.sfy .right {
+			width: 200px;
+			border: 1px solid blue;
+			float: left;
+			margin-left: -200px;
+		}
+	</style>
+	<div class="sfy">
+		<div class="center">
+			<div class="inner">inner</div>
+		</div>
+		<div class="left">left</div>
+		<div class="right">right</div>
+	</div>
 </body>
 </html>
