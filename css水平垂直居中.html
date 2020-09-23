@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>水平垂直居中方法</title>
+	<link rel="stylesheet" href="">
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+		}
+		div {
+			width: 400px;
+			height: 150px;
+			border: 1px solid red;
+			margin: 10px 0 0 10px;
+		}
+		p {
+			border: 1px solid green;
+		}
+		.inline-1 {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+		.inline-2 {
+			text-align: center;
+			line-height: 150px;
+		}
+		.inline-3 {
+			display: table;
+			text-align: center;
+		}
+		.inline-3 span {
+			display: table-cell;
+			vertical-align: middle;
+		}
+
+		.block-1 {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+		.block-1 p {
+			width: 100px;
+			height: 100px;
+		}
+		.block-2 {
+			position: relative;
+		}
+		.block-2 p {
+			width: 100px;
+			height: 100px;
+			position: absolute;
+			left: 0;
+			right: 0;
+			top: 0;
+			bottom: 0;
+			margin: auto;
+		}
+		.block-3 p {
+			width: 100px;
+			height: 100px;
+			margin-left: 150px;
+			margin-top: 25px;
+		}
+		.block-4 {
+			position: relative;
+		}
+		.block-4 p {
+			width: 100px;
+			height: 100px;
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			transform: translate3d(-50%, -50%, 0);
+		}
+		.block-5 {
+			display: table;
+		}
+		.block-5 p {
+			width: 100px;
+			height: 100px;
+			display: table-cell;
+			text-align: center;
+			vertical-align: middle;
+		}
+		.block-6 {
+			display: grid;
+			justify-content: center;
+			align-content: center;
+		}
+	</style>
+</head>
+<body>
+	<h3>行内元素</h3>
+	<div class="inline-1">
+		行内元素flex水平居中<br>行内元素flex水平居中
+	</div>
+	<div class="inline-2">
+		单行text-align、ine-height水平垂直居中
+	</div>
+	<div class="inline-3">
+		<span>单行text-align、table、table-cell水平垂直居中</span>
+	</div>
+
+	<h3>块级元素</h3>
+	<div class="block-1">
+		<p>块级元素flex水平居中</p>
+	</div>
+	<div class="block-2">
+		<p>块级元素position、margin水平居中</p>
+	</div>
+	<div class="block-3">
+		<p>块级元素margin计算水平居中</p>
+	</div>
+	<div class="block-4">
+		<p>块级元素position、translate水平居中</p>
+	</div>
+	<div class="block-5">
+		<p>块级元素table、table-cell水平居中</p>
+		<p>块级元素table、table-cell水平居中</p>
+	</div>
+	<div class="block-6">
+		<p>块级元素grid布局水平居中</p>
+		<p>块级元素grid布局水平居中</p>
+	</div>
+
+</body>
+</html>
