@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>JS内存空间管理</title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+	<p>JS内存空间管理</p>
+	<!-- 
+		
+		记住一个原则： 先声明、后执行
+		
+		堆栈分配： 基本数据类型存在栈，引用数据类型数据放在堆、引用地址存放在栈，常量放入常量池
+
+		等号赋值的方向是从右至左
+
+	 -->
+	<script>
+	    console.log(fun)
+
+	    console.log(person)
+	</script>
+
+	<script>
+	    console.log(person)
+
+	    console.log(fun)
+
+	    var person = "Eric";
+
+	    console.log(person)
+
+	    function fun() {
+	        console.log(person)
+	        var person = "Tom";
+	        console.log(person)
+	    }
+
+	    fun()
+
+	    console.log(person)
+	</script>
+
+	<!-- <script>
+		
+		// 案例一
+		let a = 20;
+		let b = a;
+		b = 30;
+
+		// 请问a的值为多少？  a=>20 b=>30
+
+
+		// 案例二
+		let a = { name: 'liben' };
+		let b = a;
+		b.name = "lb";
+
+		// 请问a.name的值？  a.name=>'lb'
+
+
+		// 案例三
+		let a = { name: 'liben' };
+		let b = a;
+		a = null;
+
+		// 请问b的值？  b => { name: 'libe' }
+
+
+		// 案例四
+		let a = { n: 1 };
+		let b = a;
+		a.x = a = { n: 2 };
+
+		// 请问a.x, b.x 的值？ a.x => undefinde  b.x = { n: 2 }
+
+		/*
+			解析： a.x = a = { n: 2 } =>  由于. 运算符优先级高于=，所以先运行 a.x => a={n:1, x:undefined}
+
+			执行： a = { n: 1 }, b = { n: 1 }, a.x = { n: 2 }, 此时b的值为：{n:1, x:{n:2}},  a = { n: 2 }, 此时a的值为：{n:2}
+		*/
+
+	</script> -->
+</body>
+</html>
