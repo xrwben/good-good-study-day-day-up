@@ -4,8 +4,52 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>BFC块级格式上下文</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+		.outer {
+			width: 320px;
+			border: 1px solid red;
+		}
+		.inner {
+			width: 200px;
+			height: 200px;
+			/*border: 1px solid red;*/
+			margin: 0 auto;
+		}
+		.con {
+			width: 100px;
+			height: 100px;
+			border: 1px solid blue;
+			margin: 30px auto;
+		}
+	</style>
 </head>
 <body>
+	<!-- 
+		一个盒子如果没有上补白(padding-top)和上边框(border-top)，那么这个盒子的上边距会和其内部文档流中的第一个子元素的上边距重叠
+
+		解决ff:
+		
+		1. 给父元素增加属性：overflow:hidden;
+
+		2. 给父元素增加边框，如果不需要边框则加一个透明边框，不会影响到样式
+
+		3. 可以用父元素的padding-top来代替子元素的margin-top
+
+		4. 给父元素添加属性 position：absolute
+
+		例子如下：
+	 -->
+	<div class="outer">
+		<div class="inner">
+			<div class="con"></div>
+		</div>
+	</div>
+
 	<!-- 
 		BFC布局规则：
 		
