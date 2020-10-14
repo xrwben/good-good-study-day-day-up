@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>deepCopy</title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+	<script>
+		/*
+			说起深浅拷贝那必须说道数据类型（基本数据类型、引用数据类型）
+
+			基本数据类型：赋值，赋值之后两个变量互不影响，存在栈中
+			引用数据类型：赋址，两个变量的引用相同，指向同一个对象，数据存在堆，引用地址存在栈中
+
+			浅拷贝只解决了第一层的问题，拷贝第一层的基本类型值，以及第一层的引用类型地址
+
+			浅拷贝：Object.assign()对象合并，...展开运算符, 普通赋值等
+
+		*/
+
+		let a = {
+			name: 'liben',
+			age: 22,
+			sex: null,
+			parterner: undefined,
+			like: ['czb', 'lol', 'money'],
+			school: {
+				addr: '湖南',
+				email: '123'
+			}
+		}
+
+		// 方法一：JSON.parse(JSON.stringify(obj))  缺点： 会忽略属性值undefined和symbol，值为正则会转为{}
+		let copyA1 = JSON.parse(JSON.stringify(a))
+		a.school.addr = '深圳'
+		console.log(a, copyA1)
+
+		// 方法二：普通递归
+		function deepCopy (obj) {
+			let _obj = Array.isArray(obj) ? [] : {};
+
+			for(let key in obj) {
+				console.log(key, Object.prototype.toString.call(obj[key]))
+				if (typeof obj[key] === 'object') {
+					_obj[key] = deepCopy(obj[key])
+				} else {
+					_obj[key] = obj[key]
+				}
+			}
+			return _obj;
+		}
+
+		let copyA2 = deepCopy(a);
+		console.log(copyA2)
+
+
+	</script>
+</body>
+</html>

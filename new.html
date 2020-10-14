@@ -15,7 +15,7 @@
     }
 
     let ins = new Test("liben");
-    console.log(ins);
+    console.log("ins>>>", ins);
 
     let test1 = Test("111");
     console.log(test1);
@@ -29,9 +29,9 @@
     }
 
     let ins1 = new Test1("cxk");
-    console.log(ins1);
+    console.log("ins1>>", ins1, ins1.age, ins1.name);
 
-
+    console.log("-----------------");
 
 
     // 手写一个new操做符
@@ -44,7 +44,7 @@
       obj.__proto__ = Ob.prototype;
 
       //注意可以合并1、2步 创建一个基于Ob原型的新对象（原型式继承）
-      let obj = Object.create(Ob);
+      // let obj = Object.create(Ob);
 
       // 3、将this指向新对象
       let result = Ob.apply(obj, arg);
