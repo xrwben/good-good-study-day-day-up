@@ -24,15 +24,23 @@
 			name: 'liben',
 			age: 22,
 			sex: null,
-			parterner: undefined,
+			partner: undefined,
 			like: ['czb', 'lol', 'money'],
 			school: {
 				addr: '湖南',
 				email: '123'
 			}
 		}
+		// 浅拷贝Object.assign()
+		let copy_1 = Object.assign({}, a);
+		console.log(copy_1)
 
-		// 方法一：JSON.parse(JSON.stringify(obj))  缺点： 会忽略属性值undefined和symbol，值为正则会转为{}
+		// ...展开运算符
+		let copy_2 = {...a};
+		console.log("copy_2>>>", copy_2)
+
+
+		// 方法一：JSON.parse(JSON.stringify(obj))  缺点： 会忽略属性值undefined和symbol，值为正则会转为{}，无法深拷贝循环引用
 		let copyA1 = JSON.parse(JSON.stringify(a))
 		a.school.addr = '深圳'
 		console.log(a, copyA1)
@@ -53,8 +61,31 @@
 		}
 
 		let copyA2 = deepCopy(a);
-		console.log(copyA2)
+		console.log("copyA2>>>", copyA2)
 
+		/*
+			上面普通递归存在的问题：
+
+			1.传入null时的参数检验
+			2.判断不严谨 typeof null==='object'
+		*/ 
+		function deep_copy (obj) {
+			let _obj = Array.isArray(obj) ? [] : {};
+
+			for(let key in obj) {
+				console.log(key, Object.prototype.toString.call(obj[key]))
+				if (typeof obj[key] === 'object' && obj[key] !== null) {
+					_obj[key] = deep_copy(obj[key])
+				} else {
+					_obj[key] = obj[key]
+				}
+			}
+			return _obj;
+		}
+
+		let copyA3 = deep_copy(a);
+		a.like[0] = 'csb'
+		console.log("copyA3>>>", a, copyA3)
 
 	</script>
 </body>
