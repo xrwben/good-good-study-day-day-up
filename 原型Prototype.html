@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>prototype</title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+	<script type="text/javascript">
+		
+		function Person(name) {
+			this.name = name
+		}
+		let p1 = new Person('liben')
+		console.log(p1.constructor === Person) // true
+		console.log(p1.constructor === Object) // false
+
+
+		function parent2(age) {
+		    this.age = age;
+		}
+		let p2 = parent2(50);
+		console.log(parent2)
+
+
+		/*
+			虽然是基本数据类型，但 Symbol(123) 实例可以获取 constructor 属性值
+		*/
+
+		// new Symbol(2) Symbol is not a constructor
+
+		let sym = Symbol(2)
+		console.log(sym.constructor)
+		console.log(Symbol.prototype)
+
+
+		console.log('------------------')
+		/**/
+
+		function Foo () {
+			this.value = 27;
+		}
+		Foo.prototype = {
+			method: function () {}
+		}
+		function Bar () {}
+
+		Bar.prototype = new Foo()
+
+		let ba = new Bar()
+		console.log(ba)
+
+		console.log('----------构造函数与原型及实例的关系------------')
+
+		/*
+			__proto__ 是每个实例上都有的属性
+			prototype 是构造函数的属性，在实例上并不存在
+			所以这两个并不一样，但 p.__proto__ 和 Parent.prototype 指向同一个对象
+
+			Parent.prototype => {constructor: Parent, __proto__: ...}
+
+			p.__proto__ === Parent.prototype
+		*/
+
+		function Parent() {}
+		let pa = new Parent();
+		console.log(Parent)
+		console.log(Parent.prototype)
+		console.log(Parent.prototype.__proto__)
+		console.log('------pa------')
+		console.log(pa)
+		console.log(pa.__proto__)
+		console.log(Parent.prototype === pa.__proto__)  // true
+
+
+		/*
+
+			修改或者读取原型的方法：
+				Object.getPrototypeOf()、Object.setPrototypeOf()
+				Reflect.getPrototypeOf()、Reflect.setPrototypeOf()
+
+			如果要创建一个新对象，并且同时继承另一个对象，推荐使用Object.create()
+		*/
+
+		function Parent1 () {
+			this.age = 50
+		}
+		let pp = new Parent1()
+		let child = Object.create(pp) // 等同=> child={} child.__proto__ = pp
+		console.log(pp)
+		console.log(child)  // child.__proto__指向pp实例，并继承pp实例的所有属性
+		console.log(child.__proto__ === pp)
+		console.log(child.__proto__.__proto__ === Parent1.prototype)
+
+		console.log("----------原型链----------")
+		/*
+			原型链 (prototype chain)
+
+			定义：每个对象拥有一个原型对象，通过 __proto__ 指针指向上一个原型 ，并从中继承方法和属性，同时原型对象也可能拥有原型，这样一层一层，最终指向 null，这种关系被称为原型链
+			
+		*/
+
+		function Parent2 () {
+			this.age = 27
+		}
+		let pp2 = new Parent2()  // 相当于 pp2.__proto__ = Parent.prototype
+
+		console.log(pp2)
+		console.log(Parent2.prototype)
+		console.log(pp2.__proto__ === Parent2.prototype)
+		console.log(pp2.__proto__.__proto__ === Object.prototype)
+		console.log(pp2.__proto__.__proto__.__proto__ === null)
+
+
+		console.log("-------原型链继承----------")
+		/*
+			原型链继承的本质是重写原型对象，代之以一个新类型的实例
+
+			原型链继承方案中，原型实际上会变成另一个类型的实例
+
+			如下代码，Cat.prototype 变成了 Animal 的一个实例，所以 Animal 的实例属性 names 就变成了 Cat.prototype 的属性
+
+			八种继承方法： https://github.com/yygmind/blog/issues/7
+
+			缺点： 
+
+			多个实例对引用类型的操作会被篡改
+
+			子类型的原型上的 constructor 属性被重写了
+
+			给子类型原型添加属性和方法必须在替换原型之后
+
+			创建子类型实例时无法向父类型的构造函数传参
+
+		
+		*/
+		function Animal () {
+			this.value = "animal"
+		}
+		Animal.prototype.run = function () {
+			return this.value + " is running"
+		}
+		function Cat () {
+
+		}
+
+		Cat.prototype = new Animal() // 这里是关键，创建 Animal 的实例，并将该实例赋值给 Cat.prototype
+
+		let catIns = new Cat()
+		catIns.value = "cat"
+		// catIns.__proto__ = new Animal() // 作用相当于上面的
+		console.log(catIns)
+		console.log(catIns.run())
+
+
+		console.log("-----------借用构造函数继承-------------")
+		/*
+			使用父类的构造函数来增强子类实例，等同于复制父类的实例给子类
+
+			核心代码是SuperType.call(this)
+
+			缺点：
+
+			只能继承父类的实例属性和方法，不能继承原型属性
+
+			无法实现复用，每个子类都有父类实例函数的副本，影响性能
+		*/
+
+		function SuperType () {
+			this.colors = ['red', 'blue', 'green']
+		}
+		SuperType.prototype.getColors = function () {
+			console.log(this.colors)
+		}
+		function SubType () {
+			SuperType.call(this)  // 继承自SuperType
+		}
+
+		let instance = new SubType()
+
+		instance.colors.push("black")
+		console.log(instance)
+		console.log(instance.colors) // [red,green,blue,black]
+
+		// instance.getColors() // 报错getColors方法不存在
+
+		let instance2 = new SubType()
+		console.log(instance2.colors) // [red,green,blue]
+
+
+		console.log("---------组合继承方式----------")
+		/*
+			用原型链实现对原型属性和方法的继承，用借用构造函数技术来实现实例属性的继承
+
+			缺点：
+
+			组合模式的缺点就是在使用子类创建实例对象时，其原型中也会存在两份相同的属性/方法
+		*/
+		function SuperType1 (name) {
+			this.name = name
+			this.colors = ['red', 'blue', 'green']
+		}
+		SuperType1.prototype.sayName = function(){
+		  console.log(this.name);
+		};
+
+		function SubType1 (name, age) {
+			SuperType1.call(this, name)  // 继承属性
+			this.age = age
+		}
+		SubType1.prototype = new SuperType1() // 继承原型
+
+		SubType1.prototype.constructor = SubType1; // 重写SubType1.prototype的constructor属性，指向自己的构造函数SubType1
+
+		SubType1.prototype.sayAge = function () {
+			console.log(this.age)
+		}
+
+		let instance1 = new SubType1("liben", 27)
+		console.log(instance1)
+
+
+
+		console.log("-----------原型式继承-------------")
+		/*
+			利用一个空对象作为中介，将某个对象直接赋值给空对象构造函数的原型
+
+			缺点：
+
+			原型链继承多个实例的[引用类型]属性指向相同，存在篡改的可能
+
+			无法传递参数
+		*/
+		function _Object (obj) {  // ES5中存在Object.create()的方法，能够代替_Object方法
+			function F () {}
+			F.prototype = obj
+			return new F();
+		}
+		let Person1 = {
+			name: 'liben',
+			friends: ["a", 'b', 'c']
+		}
+		let anotherPerson = _Object(Person1)  // 对传入其中的对象执行了一次浅复制，将构造函数F的原型直接指向传入的对象
+		console.log(anotherPerson)
+		console.log(anotherPerson.name)
+
+		let yetPerson = _Object(Person1)
+		console.log(yetPerson)
+		yetPerson.friends.push("d")
+		console.log(anotherPerson.friends)  // ["a", "b", "c", "d"]
+
+
+		console.log("-----------寄生式继承-------------")
+		/*
+			在原型式继承的基础上，增强对象，返回构造函数
+
+			缺点： 同原型式继承
+		*/
+		function createAnother (original) {
+			let clone = _Object(original)
+			clone.sayHi = function () {
+				console.log("hi")
+			}
+			return clone
+		}
+		let Person2 = {
+			name: '大大大'
+		}
+		let anotherPerson1 = createAnother(Person2)
+		console.log(anotherPerson1)
+
+
+		console.log("--------寄生组合式继承（主要方法）---------")
+		/*
+			借用构造函数传递参数 + 寄生模式实现继承
+
+			这是最成熟的方法，也是现在库实现的方法
+		*/
+		function inheritPrototype (subType, superType) {
+			let _prototype = Object.create(superType.prototype) // 创建对象，创建父类原型的一个副本
+			_prototype.constructor = subType // 增强对象，弥补因重写原型而失去的默认的constructor 属性
+			subType.prototype = _prototype  // 指定对象，将新创建的对象赋值给子类的原型
+		}
+
+		function SuperTypeFunc (name) {
+			this.name = name
+			this.colors = ['a', 'b', 'c']
+		}
+		SuperTypeFunc.prototype.sayName = function () {
+			console.log(this.name)
+		}
+		function SubTypeFunc (name, age) {
+			SuperTypeFunc.call(this, name)
+			this.age = age
+		}
+
+		// 将父类原型指向子类
+		inheritPrototype(SubTypeFunc, SuperTypeFunc)
+
+		SubTypeFunc.prototype.syaAge = function () {
+			console.log(this.age)
+		}
+		let ins1 = new SubTypeFunc('ll', 27)
+		console.log(ins1)
+		let ins2 = new SubTypeFunc('bb', 22)
+		console.log(ins2)
+
+
+		console.log("-----------混入方式继承多个对象-------------")
+		/*
+			Object.assign会把 OtherSuperClass原型上的函数拷贝到 MyClass原型上，使 MyClass 的所有实例都可用 OtherSuperClass 的方法
+		*/
+		// function MyClass () {
+		// 	SuperClass.call(this)
+		// 	OtherClass.call(this)
+		// }
+		// MyClass.prototype = Object.create(SuperClass.prototype)
+		// Object.assign(MyClass.prototype, OtherClass.prototype)
+		// MyClass.prototype.constructor = MyClass
+		// MyClass.prototype.myMethod = function () {}
+
+
+
+		console.log("---------ES6 extends------------")
+		/*
+			extends关键字
+		*/
+		class Rectangle {
+			constructor (width, height) {
+				this.width = width
+				this.height = height
+			}
+			// get area () {
+			// 	return this.calcArea()
+			// }
+
+			calcArea () {
+				return this.width * this.height
+			}
+
+		}
+
+		const rectangle = new Rectangle(3, 2)
+		console.log(rectangle.calcArea())
+		// console.log(rectangle.area)
+
+		class Square extends Rectangle {
+			constructor (length) {
+				super(length, length)
+				this.name = "Square"
+			}
+			calcSquare () {
+				return this.width * this.height
+			}
+		}
+
+		const square = new Square(10)
+		console.log(square)
+
+
+	</script>
+</body>
+</html>
