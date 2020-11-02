@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>import、export</title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+	<script type="module">
+
+		/*
+			如果script标签不带type=“module”属性，则会报错（Uncaught SyntaxError: Cannot use import statement outside a module）
+
+			module默认等同于defer 顺序加载
+
+			<script>标签打开defer或async属性，脚本就会异步加载。渲染引擎遇到这一行命令，就会开始下载外部脚本，但不会等它下载和执行，而是直接执行后面的命令
+
+			defer是“渲染完再执行”，async是“下载完就执行”。另外，如果有多个defer脚本，会按照它们在页面出现的顺序加载，而多个async脚本是不能保证加载顺序的
+
+			ES6模块是编译时加载，export、import命令可以出现在模块的任何位置，只要处于模块顶层就可以，如果处于块级作用域内，就会报错
+
+			ES2020提案 引入import()函数，支持动态加载模块，同步加载
+		
+		*/
+		
+		// import { a } from "./a.js";
+		// import a from "./a.js";
+		// import { liben as lb } from "./a.js";
+
+		// console.log(a)
+		// a()
+		// lb()
+
+		import {b} from "./b.js";
+		import * as aa from "./b.js";
+		console.log(b)
+		b()
+		console.log(aa)
+		aa.liben()
+
+		/*
+			循环加载如何处理？？ https://es6.ruanyifeng.com/#docs/module-loader
+
+			ES6 循环加载是怎么处理的。首先，执行a.mjs以后，引擎发现它加载了b.mjs，因此会优先执行b.mjs，然后再执行a.mjs。接着，执行b.mjs的时候，已知它从a.mjs输入了foo接口，这时不会去执行a.mjs，而是认为这个接口已经存在了，继续往下执行。执行到第三行console.log(foo)的时候，才发现这个接口根本没定义，因此报错
+
+			方法：就是让b.mjs运行的时候，foo已经有定义了，这可以通过将foo写成函数来解决
+
+		*/
+
+		// a.mjs
+		// import {bar} from './b';
+		// console.log('a.mjs');
+		// console.log(bar());
+		// function foo() { return 'foo' }
+		// export {foo};
+
+		// b.mjs
+		// import {foo} from './a';
+		// console.log('b.mjs');
+		// console.log(foo());
+		// function bar() { return 'bar' }
+		// export {bar};
+
+	</script>
+</body>
+</html>
