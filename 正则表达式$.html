@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>正则表达式$</title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+	<script>
+		/*
+			正则表达式中的$1-$9 => $1,$2...是表示的小括号里的内容 
+			
+			在replace()方法中 => $1、$2、...、$99 与 regexp 中的第 1 到第 99 个子表达式相匹配的文本
+		*/
+
+		// 例一
+		name = "Doe, John";
+		console.log(name.replace(/(\w+)\s*, \s*(\w+)/, "$2 $1"));
+		// John Doe
+
+		let str = 'lb520czb'
+		console.log(str.replace(/([a-z]+)520([a-z]+)/g, '$2 like $1'))
+	</script>
+</body>
+</html>
