@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>节流防抖</title>
+	<link rel="stylesheet" href="">
+	<style>
+		input {
+			margin-bottom: 2000px;
+		}
+	</style>
+</head>
+<body>
+	<input type="text" name="" class="search">
+
+	<script type="text/javascript">
+		
+		/*
+			节流定义：指的是某个函数在一定时间间隔内（例如 3 秒）只执行一次，在这 3 秒内 无视后来产生的函数调用请求，也不会延长时间间隔
+
+			应用场景：scroll事件、mousemove事件、上传进度等情况
+
+			方法：定时器、时间戳
+
+			可视化对比： http://demo.nimius.net/debounce_throttle/
+		*/
+
+		// 方法一：使用定时器
+		function throttle_timeout (fn, wait, immediate) {
+			let flag = true;
+			return function () {
+				if (!flag) {
+					return;
+				}
+				flag = false;
+				setTimeout(() => {
+					fn();
+					flag = true;
+				}, wait)
+			}
+		}
+		function showTop () {
+			let scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
+　　			console.log('滚动条位置：' + scrollTop);
+		}
+		// document.body.onscroll = throttle_timeout(showTop, 1000);
+
+		// 方法二： 使用时间戳
+		function throttle_times (fn, wait) {
+			let previous = 0;
+			return function () {
+				let now = +new Date();
+				if (now - previous > wait) {
+					fn();
+					previous = now;
+				}
+			}
+		}
+		function showTop () {
+			let scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
+　　			console.log('滚动条位置：' + scrollTop);
+		}
+		document.body.onscroll = throttle_times(showTop, 1000);
+
+
+		/*
+			防抖定义： 指的是某个函数在某段时间内，无论触发了多少次回调，都只执行最后一次
+
+			应用场景： 页面resize事件、input搜索输入框等
+
+			方法：定时器
+
+			可视化对比： http://demo.nimius.net/debounce_throttle/
+		*/
+
+		function debounce(fn, wait = 50) {
+			let timer = null;
+			return function () {
+				if (timer) {
+					clearTimeout(timer)
+				}
+				timer = setTimeout(() => {
+					fn();
+				}, wait)
+			}
+		}
+		let search = document.querySelector('.search');
+		function showValue () {
+			console.log(search, search.value)
+		}
+		search.oninput = debounce(showValue, 1000)
+	</script>
+</body>
+</html>
