@@ -30,6 +30,19 @@
     arr.sort(ArrSort("name"));
     console.log(arr);
     console.log(arr[0].name);
+
+    console.log("----------------------------")
+
+    let arr = [1, 2, 3, 1, 4]
+    let arr2 = []
+
+    for (let i = 0; i < arr.length; i++) {
+      if (arr2.indexOf(arr[i]) === -1) {
+        arr2.push(arr[i])
+      }
+    }
+    console.log(arr2)
+    
   </script>
 </body>
 </html>

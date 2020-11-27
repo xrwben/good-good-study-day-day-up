@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>svg解决小于12px字号</title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+	<!-- 
+		使用 transform: scale() 设置后占位区域并没有改变，难以调节对齐方式。
+
+		使用 canvas 无法选中文字（也可以解决，但不如 svg 简洁）
+	 -->
+	<p style="font-size: 12px">12px</p>
+	<svg width="" height="14">
+	  <text
+	    dominant-baseline="baseline"
+	    font-size="12"
+	    y="12.00"
+	    style="line-height: 1; vertical-align: middle;"
+	  >
+	    千山鸟飞绝 - from hill to hill no bird in flight
+	  </text>
+	</svg>
+
+	<p style="font-size: 10px">10px</p>
+	<svg width="" height="11.52">
+	  <text
+	    dominant-baseline="baseline"
+	    font-size="10"
+	    y="9.52"
+	    style="line-height: 1; vertical-align: middle;"
+	  >
+	    千山鸟飞绝 - from hill to hill no bird in flight
+	  </text>
+	</svg>
+
+	<p style="font-size: 8px">8px</p>
+	<svg width="" height="9.14">
+	  <text
+	    dominant-baseline="baseline"
+	    font-size="8"
+	    y="7.14"
+	    style="line-height: 1; vertical-align: middle;"
+	  >
+	    千山鸟飞绝 - from hill to hill no bird in flight
+	  </text>
+	</svg>
+</body>
+</html>
