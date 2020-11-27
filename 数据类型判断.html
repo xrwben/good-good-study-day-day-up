@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>数据类型的判断</title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+	<script type="text/javascript">
+		
+		/*
+			typeof
+
+			obj instanceof Object 对象在其原型链中是否存在一个构造函数的 prototype 属性
+
+			Object.prototype.toString.call()
+		*/
+
+		/*
+			typeof
+
+		    对于基本类型，除 null 以外，均可以返回正确的结果
+		    对于引用类型，除 function 以外，一律返回 object 类型
+		    对于 null ，返回 object 类型
+		    对于 function 返回  function 类型
+		
+		*/
+		console.log(typeof 'abc') // 'string'
+		console.log(typeof 123)  // 'number'
+		console.log(typeof true) // 'boolean'
+		console.log(typeof undefined)  // 'undefined'
+		console.log(typeof Symbol()) // symbol
+		console.log(typeof null)  // 'object'
+		console.log(typeof function(){})  // 'function'
+		console.log(typeof [])  // 'object'
+		console.log(typeof new Date())  // 'object'
+
+		console.log("---------------------")
+		/*
+			instanceof
+
+			返回为布尔值，instanceof检测的是原型
+
+			Object,Function,Array,Date...
+
+		*/
+		console.log([] instanceof Array)  // true
+		console.log({} instanceof Object)  // true
+		console.log(new Date instanceof Date)  // true
+		console.log(new Function instanceof Function)  // true
+
+		console.log("---------------------")
+		/*
+			Object.prototype.toString.call()
+
+			toString() 是 Object 的原型方法，调用该方法，默认返回当前对象的 [[Class]] 。这是一个内部属性，其格式为 [object Xxx] ，其中 Xxx 就是对象的类型
+		*/
+		console.log(Object.prototype.toString.call(''))   // [object String]
+		console.log(Object.prototype.toString.call(1))    // [object Number]
+		console.log(Object.prototype.toString.call(true)) // [object Boolean]
+		console.log(Object.prototype.toString.call(Symbol())) //[object Symbol]
+		console.log(Object.prototype.toString.call(undefined)) // [object Undefined]
+		console.log(Object.prototype.toString.call(null)) // [object Null]
+		console.log(Object.prototype.toString.call(new Function())) // [object Function]
+		console.log(Object.prototype.toString.call(new Date())) // [object Date]
+		console.log(Object.prototype.toString.call([])) // [object Array]
+		console.log(Object.prototype.toString.call(new RegExp())) // [object RegExp]
+		console.log(Object.prototype.toString.call(new Error())) // [object Error]
+		console.log(Object.prototype.toString.call(document)) // [object HTMLDocument]
+		console.log(Object.prototype.toString.call(window)) //[object global] window 是全局对象 global 的引用
+
+
+
+		// 判断方法
+		const getType = (value) => {
+			return Object.prototype.toString.call(value).slice(8, -1)
+		}
+		console.log(getType(""))
+	</script>
+</body>
+</html>
