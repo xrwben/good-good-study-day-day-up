@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>setTimeout</title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+	<div>
+		<h3>倒计时一：</h3>
+		<p class="timer" data-leftTime="20"></p>
+	</div>
+	<div>
+		<h3>倒计时二：</h3>
+		<p class="timer" data-leftTime="10"></p>
+	</div>
+	<div>
+		<h3>倒计时三：</h3>
+		<p class="timer" data-leftTime="60"></p>
+	</div>
+	<script type="text/javascript">
+		// 多个定时器
+		let pkNodeList = document.querySelectorAll(".timer")
+		console.log(pkNodeList)
+		let allTimerIns = {}
+		// for (let i = 0; i < pkNodeList.length; i++) {
+		// 	countDown(allTimerIns[pkNodeList[i]], pkNodeList[i], parseInt(pkNodeList[i].getAttribute('data-leftTime')))
+		// }
+		pkNodeList.forEach(item => {
+			console.log(item)
+			countDown(allTimerIns[item], item, parseInt(item.getAttribute('data-leftTime')))
+		})
+		// console.log(allTimerIns)
+
+		function countDown (currentTimerIns, element, time) {
+			// debugger
+			console.log(currentTimerIns, element, time)
+			// currentTimerIns && clearTimeout(currentTimerIns)
+	        
+	        let minutes = Math.floor(time / 60)
+	        let seconds = time % 60
+	        minutes = minutes < 10 ? '0' + minutes : minutes
+	        seconds = seconds < 10 ? '0' + seconds : seconds
+
+	        element.innerHTML = `${minutes}:${seconds}`
+	        element.setAttribute("data-leftTime", time)
+
+	        if (time <= 0) {
+	        	clearTimeout(currentTimerIns)
+	            currentTimerIns = null
+	            return
+	        }
+
+	        currentTimerIns = setTimeout(() => {
+	            time--
+	            countDown(currentTimerIns, element, time)
+	        }, 1000)
+		}
+
+		// 一个定时器
+		/*let timerIns = null
+
+		let time = document.querySelector(".timer").getAttribute('data-leftTime')
+		time = parseInt(time)
+		console.log(time)
+
+
+		function startPkCountDown (time) {
+	        timerIns && clearTimeout(timerIns)
+	        if (time <= 0) {
+	            timerIns = null
+	            return
+	        }
+	        
+	        let minutes = Math.floor(time / 60)
+	        let seconds = time % 60
+	        minutes = minutes < 10 ? '0' + minutes : minutes
+	        seconds = seconds < 10 ? '0' + seconds : seconds
+
+	        document.querySelector(".timer").innerHTML = `${minutes}:${seconds}`
+	        document.querySelector(".timer").setAttribute("data-leftTime", time)
+
+	        timerIns = setTimeout(() => {
+	            time--
+	            startPkCountDown(time)
+	        }, 1000)
+	        console.log(timerIns)
+	    }
+
+	    startPkCountDown(time)
+
+	    setTimeout(() => {
+	    	time = 10
+	    	startPkCountDown(time)
+	    }, 5000)*/
+	</script>
+</body>
+</html>
