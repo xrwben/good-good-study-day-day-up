@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>手写promise</title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+	<script>
+		let promiseIns = new Promise((resolve, reject) => {
+			const random = Math.ceil(Math.random() * 10);
+			setTimeout(() => {
+				if (random > 5) {
+					resolve(random)
+				} else {
+					reject(random)
+				}
+			}, 0)
+		})
+		console.log(promiseIns)
+
+		promiseIns.then(res => {
+			console.log("res>>>", res)
+			return res
+		}).catch(errs => {
+			console.log("catch>>>", errs)
+		}).finally(() => {
+			console.log("finally>>>")
+		}).then(datas => {  // finally之后还可以继续then方法
+			console.log("then>>>", datas)
+		})
+	</script>
+	<!-- 
+		实现原理： Promise 也还是使用回调函数，只不过是把回调封装在了内部，使用上一直通过 then方法的链式调用，使得多层的回调嵌套看起来变成了同一层的，书写上以及理解上会更直观和简洁一些
+
+		失败成功的回调
+		then()方法
+		reject()方法
+		catch()方法
+		all()方法
+		race()方法
+		finally()方法 
+
+		new promise((resolve, reject) => {
+			resolve();
+			reject();
+		})
+		
+		https://www.cnblogs.com/xinggood/p/11836096.html
+	 -->
+	<script>
+		// 实现一个通用构造函数
+		// class MyPromise {
+		// 	constructor (executor) {
+		// 		this.status = "pending";
+		// 		this.value = "";
+
+		// 		// 成功和失败的回调
+		// 		this.onResolvedCallbacks = [];
+		// 		this.onRejectedCallbacks = [];
+
+		// 		const resolve = (value) => {
+		// 			if (this.status === 'pending') {
+		// 				this.status = 'fulfilled';
+		// 				this.value = value;
+		// 				this.onResolvedCallbacks.forEach(fn => fn());
+		// 			}
+		// 		}
+
+		// 		const reject = (value) => {
+		// 			if (this.status === 'pending') {
+		// 				this.status = 'rejected';
+		// 				this.value = value;
+		// 				this.onRejectedCallbacks.forEach(fn => fn())
+		// 			}
+		// 		}
+
+		// 		try {
+		// 			executor(resolve, reject)
+		// 		} catch (err) {
+		// 			reject(err)
+		// 		}
+		// 	}
+		// }
+
+		// const p = new MyPromise((resolve, reject) => {
+		// 	setTimeout(() => {
+		// 		const random = Math.ceil(Math.random() * 10);
+		// 		if (random > 5) {
+		// 			resolve(random)
+		// 		} else {
+		// 			reject(random)
+		// 		}
+		// 	}, 2000)
+		// })
+		// console.log(p)
+
+		console.log("-----------------------")
+
+		// 实现then()方法及链式调用
+		class MyPromise {
+			constructor (executor) {
+				// debugger
+				this.status = "pending";
+				this.value = "";
+
+				// 成功和失败的回调
+				this.onResolvedCallbacks = [];
+				this.onRejectedCallbacks = [];
+
+				const resolve = (value) => {
+					if (this.status === 'pending') {
+						this.status = 'fulfilled';
+						this.value = value;
+						this.onResolvedCallbacks.forEach(fn => fn());
+					}
+				}
+
+				const reject = (value) => {
+					if (this.status === 'pending') {
+						this.status = 'rejected';
+						this.value = value;
+						this.onRejectedCallbacks.forEach(fn => fn())
+					}
+				}
+
+				try {
+					executor(resolve, reject)
+				} catch (err) {
+					reject(err)
+				}
+			}
+
+			// then方法 传入两个函数参数
+			then (onFulfilled, onRejected) {
+				//防止值得穿透 没有会报错
+		        onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : y => y;
+		        onRejected = typeof onRejected === 'function' ? onRejected : err => {throw err;}
+
+				let promise2 = new MyPromise((resolve, reject) => { //作为下一次then方法的promise
+					// 如果状态为fulfilled则执onFulfilled函数
+					if (this.status === 'fulfilled') {
+						setTimeout(() => {
+							try {
+								let x = onFulfilled(this.value);
+								resolvePromise(promise2, x, resolve, reject)
+							} catch (e) {
+								reject(e)
+							}
+						}, 0)
+					}
+					if (this.status === 'rejected') {
+						setTimeout(() => {
+							try {
+								let x = onRejected(this.value);
+								resolvePromise(promise2, x, resolve, reject)
+							} catch (e) {
+								reject(e)
+							}
+						}, 0)
+					}
+					// 异步
+					if(this.status === 'pending') {
+						this.onResolvedCallbacks.push(() => {
+							setTimeout(() => {
+								try {
+									let x = onFulfilled(this.value);
+									resolvePromise(promise2, x, resolve, reject)
+								} catch (e) {
+									reject(e)
+								}
+							}, 0)
+						})
+						this.onRejectedCallbacks.push(() => {
+							setTimeout(() => {
+								try {
+									let x = onRejected(this.value);
+									resolvePromise(promise2, x, resolve, reject)
+								} catch (e) {
+									reject(e)
+								}
+							}, 0)
+						})
+					}
+				})
+				return promise2; //调用then后返回一个新的promise
+			}
+
+			//  catch() 方法
+			catch (onRejected) {
+				console.log(this)
+				return this.then(null, onRejected)
+			}
+
+			// finally() 方法
+			finally (callback) {
+				return this.then(res => {
+					return MyPromise.resolve(callback()).then(() => res)
+				}, err => {
+					return MyPromise.resolve(callback()).then(() => {throw err})
+				})
+			}
+		}
+		// p2指的是上一次返回的promise，res表示运行promise返回的结果，resolve和reject是p2的方法
+		function resolvePromise(p2, x, resolve, reject) {
+			if (p2 === x) {
+				return reject(new TypeError("Error>>>>"))
+			}
+			if (x && (typeof x === 'object' || typeof x ==='function')) {
+				let used; //判断是否调用过了
+				try {
+					let then = x.then;
+					if (typeof then === 'function') {
+						then.call(x, y => {
+							if (used) return;
+							used = true;
+							resolvePromise(p2, y, resolve, reject)
+						}, z => {
+							if (used) return;
+							used = true;
+							reject(z)
+						})
+					} else {
+						resolve(x)
+					}
+				} catch (err) {
+					if(used) return;
+		            used = true;
+		            reject(e)
+				}
+			} else {
+				resolve(x)
+			}
+		}
+
+		let pThen = new MyPromise((resolve, reject) => {
+			const random = Math.ceil(Math.random() * 10);
+			// debugger
+			setTimeout(() => {
+				if (random > 5) {
+					resolve(random)
+				} else {
+					reject(random)
+				}
+			}, 1000)
+		})
+		console.log(pThen)
+		// pThen.then(res => {
+		// 	console.log("resolve>>>", res)
+		// 	return res;
+		// }, err => {
+		// 	console.error("reject>>>", err)
+		// }).then(data => {
+		// 	console.log("then2>>>>", data)
+		// })
+		pThen.then(res => {
+			console.log("resolve>>>", res)
+		}).catch(err => {
+			console.error("catch>>>>", err)
+		}).finally(() => {
+			console.log("finally()>>>")
+		})
+
+
+
+		// Promise.all() 方法 所有promise成功才返回成功
+		MyPromise.all = (promises) => {
+			return new MyPromise((resolve, reject) => {
+				let resArr = [];
+				let i = 0;
+				for (let i = 0; i < promises.length; i++) {
+					promises[i].then(res => {
+						resArr[i] = res;
+						if (++i === promises.length) {
+							resolve(resArr)
+						}
+					}, reject)
+				}
+			})
+		}
+		// 测试all方法
+		let all1 = new MyPromise((resolve, reject) => {
+			const random = Math.ceil(Math.random() * 10);
+			setTimeout(() => {
+				if (random > 5) {
+					resolve(random)
+				} else {
+					reject(random)
+				}
+			}, 0)
+		})
+		let all2 = new MyPromise((resolve, reject) => {
+			const random = Math.ceil(Math.random() * 10);
+			setTimeout(() => {
+				if (random > 5) {
+					resolve(random)
+				} else {
+					reject(random)
+				}
+			}, 0)
+		})
+		MyPromise.all([all1, all2]).then(res => {
+			console.log("all>>>", res)
+		}).catch(err => {
+			console.error(err)
+		})
+
+
+		// Promise.race() 方法 只要一个promise成功就成功
+		MyPromise.race = (promises) => {
+			return new MyPromise((resolve, reject) => {
+				for (let i = 0; i < promises.length; i++) {
+					promises[i].then(resolve, reject)
+				}
+			})
+		}
+		// 测试
+		let race1 = new MyPromise((resolve, reject) => {
+			const random = Math.ceil(Math.random() * 10);
+			setTimeout(() => {
+				if (random > 5) {
+					resolve(random)
+				} else {
+					reject(random)
+				}
+			}, 0)
+		})
+		let race2 = new MyPromise((resolve, reject) => {
+			const random = Math.ceil(Math.random() * 10);
+			setTimeout(() => {
+				if (random > 5) {
+					resolve(random)
+				} else {
+					reject(random)
+				}
+			}, 0)
+		})
+		MyPromise.race([race1, race2]).then(res => {
+			console.log("race>>>", res)
+		}).catch(err => {
+			console.error(err)
+		})
+
+
+		// Promise.resovle() 方法
+		MyPromise.resolve = (value) => {
+			return new MyPromise((resolve, reject) => {
+				resolve(value)
+			})
+		}
+		// 测试
+		MyPromise.resolve("resolve").then(res => {
+			console.log("resolve====", res)
+		})
+
+
+		// Promise.reject() 方法
+		MyPromise.reject = (value) => {
+			return new MyPromise((resolve, reject) => {
+				reject(value)
+			})
+		}
+		// 测试
+		MyPromise.reject("reject").then(res => {
+			console.log("resolve====", res)
+		}).catch(err => {
+			console.log("reject====", err)
+		})
+	</script>
+</body>
+</html>
