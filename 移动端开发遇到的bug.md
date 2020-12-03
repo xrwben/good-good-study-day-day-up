@@ -33,3 +33,5 @@
 17、一个盒子如果没有上补白(padding-top)和上边框(border-top)，那么这个盒子的上边距会和其内部文档流中的第一个子元素的上边距重叠，解决方法: 1. 给父元素增加属性：overflow:hidden 2. 给父元素增加边框，如果不需要边框则加一个透明边框，不会影响到样式 3. 可以用父元素的padding-top来代替子元素的margin-top 4. 给父元素添加属性 position：absolute
 
 18、父元素设置属性max-height，子元素设置height:100无法生效，原因是max-height是动态计算的，解决方法：在父元素和子元素再加一层div,将原有的父元素设置为flex布局，而新加的这层div设置flex:1，这样子元素就能生效不会超出高度
+
+19、app内嵌h5页面请求http协议图片资源，oppo某些型号手机不显示图片资源，解决方法：给页面head标签里加<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">，自动将网页上所有加载外部资源的 HTTP 链接换成 HTTPS 协议
