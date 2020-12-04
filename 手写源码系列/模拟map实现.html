@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>实现map方法</title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+	<script type="text/javascript">
+		
+		/*
+			Array.prototype.map(callbackfn, [thisArg])
+
+			map 方法的主要功能就是把原数组中的每个元素按顺序执行一次 callbackfn 函数，并且把所有返回的结果组合在一起生成一个新的数组，map 方法的返回值就是这个新数组
+
+		*/
+		let arr = [1, 2, 3];
+		let arr2 = arr.map((item, index, arr) => {
+			console.log(item, index, arr)
+			return item * 2
+		})
+		console.log(arr2) // [2, 4, 6]
+
+
+		// 手动实现
+		Array.prototype._map = function (callback) {   // 注意这里不能用箭头函数 否则找this指向window
+			console.log(this)
+			let tempArr = [];
+			for (let i = 0; i < this.length; i++) {
+				tempArr.push(callback(this[i], i, this))
+			}
+			return tempArr;
+		}
+		// console.log(Array.prototype)
+		let arr3 = arr._map((item, index, curr) => {
+			console.log("curr>>>>>", curr)
+			return item * index
+		})
+		console.log("arr3>>>", arr3)
+
+	</script>
+</body>
+</html>
