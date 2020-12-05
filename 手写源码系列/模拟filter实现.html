@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>手写filter方法</title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+	<script text="text/javascript">
+		/** 
+			Array.prototype.filter(callbackfn[, thisArg])
+
+			filter 字如其名，它的主要功能就是过滤，callbackfn 执行结果如果是 true 就返回当前元素，false 则不返回，返回的所有元素组合在一起生成新数组，并返回。如果没有任何元素通过测试，则返回空数组。
+
+		*/
+
+		let arr = [1, 2, 3, 4, 5]
+		let arr1 = arr.filter((item, index, curr) => {
+			if (item >= 3) {
+				return item
+			}
+		})
+		console.log(arr1)
+
+
+		// 实现
+		Array.prototype._filter = function (callback) {
+			// 可以先判断下this是不是数组
+			if (!Array.isArray(this)) {
+				return
+			}
+			let temArr = []
+			for (let i = 0; i < this.length; i++) {
+				let temVal = callback(this[i], i, this)
+				if (temVal) {
+					temArr.push(temVal)
+				}
+			}
+			return temArr
+		}
+		let arr2 = arr._filter((item, index, curr) => {
+			if (item % 2 === 0) {
+				return item
+			}
+		})
+		console.log(arr2)
+
+	</script>
+</body>
+</html>
