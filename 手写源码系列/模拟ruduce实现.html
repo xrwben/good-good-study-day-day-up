@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>reduce实现</title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+	<script type="text/javascript">
+
+		/**
+			Array.prototype.reduce(callback(accumulator, currentValue[, index[, array]])[, initialValue])
+
+			callbackfn 函数接收4个参数:
+
+			    Accumulator (acc) (累计器)
+			    Current Value (cur) (当前值)
+			    Current Index (idx) (当前索引)
+			    Source Array (src) (源数组)
+	
+			注意点：数组为空可以调用？如果有初始值可以，否则报错Uncaught TypeError: Reduce of empty array with no initial value
+
+		*/
+		let arr = [1, 2, 3, 4, 5]
+		let ar = [{x: 1}, {x:2}, {x:3}]
+		let arrr = [
+			{ name: '香蕉', num: 1 },
+			{ name: '苹果', num: 2 },
+			{ name: '葡萄', num: 3 }
+		]
+		let arr1 = arr.reduce((total, curr, index, arr) => {
+			console.log(arr[index])
+			return total + curr
+		}, 5)
+		console.log(arr1)
+		let arr11 = ar.reduce((total, curr, index, arr) => {
+			console.log(curr)
+			return total + curr.x
+		}, 0)
+		console.log(arr11)
+
+
+		Array.prototype._reduce = function (callback, initValue) {
+			// 如果不是数组或则回调不是一个方法则报错
+			if (!Array.isArray(this) || typeof callback !== 'function') {
+                return
+            }
+            // 要么数组有值，要么有初始值，否则报错 这里的初始值判断是否有问题？
+            if (!this.length && !initValue) {
+            	return
+            }
+			let accumulator = initValue ? initValue : this[0]
+			for (let i = initValue ? 0 : 1; i < this.length; i++) {
+				accumulator = callback(accumulator, this[i], i, this) // 迭代
+			}
+			return accumulator
+		}
+		let arr2 = arr._reduce((pre, next) => {
+			return pre + next
+		}, 5)
+		console.log("---------", arr2)
+
+		
+		let arr4 = arrr._reduce((pre, curr, index, arr) => {
+			console.log(pre)
+			console.log(index)
+			console.log(curr)
+			return pre + curr.num
+		}, 5)
+		console.log(arr4)
+
+		let arr5 = [[0, 1], [2, 3], [4, 5]]._reduce((pre, curr) => {
+			return pre.concat(curr)
+		})
+		console.log(arr5)
+
+	</script>
+</body>
+</html>
