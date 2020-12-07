@@ -6,22 +6,85 @@
 	<title>圣诞雪花图</title>
 	<link rel="stylesheet" href="">
 	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
 		#snow {
-			/*width: 100%;
-			height: 900px;*/
-			border: 1px solid green;
-			background: green;
+			width: 100%;
+			height: 100vh;
+			/*background: #121214;*/
+			display: block;
 		}
 	</style>
 </head>
 <body>
-	<canvas id="snow" width="1500" height="900"></canvas>
+	<canvas id="snow"></canvas>
 
-	<script>
+	<script type="text/javascript">
+		/*
+			矩形：
+			fillRect(x, y, width, height)
+			strokeRect(x, y, width, height)
+			clearRect(x, y, width, height)
+
+			路径：
+			步骤 => 创建起点 -> 绘制路径 -> 封闭 -> 描边填充等渲染 
+			beginPath()  开始
+			moveTo(x, y) 移动
+			lineTo(x, y) 绘制直线
+			arc(x, y, radius, startAngle, endAngle, anticlockwise)   x,y圆心 radius半径 startAngle到endAngle anticlockwise方向（默认为顺时针）
+			arcTo(x1, y1, x2, y2, radius)  // 
+			quadraticCurveTo(cp1x, cp1y, x, y)  // 二次贝塞尔曲线，cp1x,cp1y为一个控制点，x,y为结束点
+			bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y)  // 三次贝塞尔曲线
+			closePath()  闭合路径
+			stroke()     通过线条绘制轮廓
+			fill()       填充绘制
+
+			颜色和样式：
+			fillStyle = color // 填充颜色
+			strokeStyle = color  // 轮廓颜色
+
+			透明度：
+			globalAlpha = 0到1  // 影响怎个canvas
+
+			渐变：
+			createLinearGradient(x1, y1, x2, y2)  // 线性渐变形状位置
+			createRadialGradient(x1, y1, radius1, x2, y2, radius2)  // 圆形渐变形状位置
+			gradient.addColorStop(position, color)  // 上色 position 0-1 颜色所在的相对位置
+
+			图片引用：
+			createPattern(image, type) Image: 图像的引用或canvas type: 重复属性(repeat,no-repeat,repeat-x,repeat-y)
+
+			阴影： shadow(x, y, value, color)
+			shadowOffsetX = float
+			shadowOffsetY = float
+			shadowBlur = float
+			shadowColor = color
+
+			绘制文本：
+			fillText(text, x, y [, maxWidth])
+			strokeText(text, x, y [, maxWidth])
+	
+
+
+		*/
 		let canvas = document.querySelector("#snow");
+		// 设置canvas大小 如有用css可能会模糊
+		canvas.setAttribute("width", canvas.clientWidth);
+		canvas.setAttribute("height", canvas.clientHeight);
+
 		let ctx = canvas.getContext("2d");
 
+		ctx.fillStyle = "rgb(200,0,0)";
+        ctx.fillRect (10, 10, 100, 100);
+
+        ctx.fillStyle = "rgba(0, 0, 200, 0.5)";
+        ctx.fillRect (30, 30, 100, 100);
+
 		
+
 	</script>
 </body>
 </html>
