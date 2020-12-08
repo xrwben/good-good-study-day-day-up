@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>canvas雪景</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+		#snow {
+			width: 100%;
+			height: 100vh;
+			background: url("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1607430084485&di=f65b2a32979936da744874e318c37d1e&imgtype=0&src=http%3A%2F%2Fpic.51yuansu.com%2Fbackgd%2Fcover%2F00%2F25%2F46%2F5bac096e294e6.jpg%2521%2Ffw%2F780%2Fquality%2F90%2Funsharp%2Ftrue%2Fcompress%2Ftrue") no-repeat center / 100% 100%;
+			display: block;
+		}
+	</style>
+</head>
+<body>
+	<canvas id="snow"></canvas>
+
+	<script type="text/javascript">
+		const canvas = document.querySelector("#snow")
+		const W = canvas.clientWidth
+		const H = canvas.clientHeight
+
+		// 设置canvas画布大小
+		canvas.setAttribute("width", W)
+		canvas.setAttribute("height", H)
+
+		const ctx = canvas.getContext("2d")
+
+		const config = {
+			number: 200,
+			snowArr: [],
+			pic: "https://www.deanhan.cn/wp-content/uploads/2017/12/snow.png",
+			speed: 0
+		}
+		let snowImg = new Image()
+		snowImg.src = config.pic
+
+		for (let i = 0; i < config.number; i++) {
+			config.snowArr.push({
+				x: Math.random() * W,
+				y: Math.random() * H,
+				toX: Math.random(),
+				toY: Math.random() * 1 + 1,
+				size: Math.random() * 20 + 5
+			})
+		}
+		console.log(config)
+		const dropAnimation = () => {
+			ctx.clearRect(0, 0, W, H)
+			for (let i = 0; i < config.snowArr.length; i++) {
+				let snow = config.snowArr[i]
+				ctx.beginPath()
+				// ctx.arc(snow.x, snow.y, snow.size, 0, Math.PI * 2, true)
+				ctx.drawImage(snowImg, snow.x, snow.y, snow.size, snow.size)
+				ctx.fillStyle = "#666"
+				ctx.fill()
+
+				snow.x = snow.x > W ? 0 : snow.x + snow.toX
+				snow.y = snow.y > H ? 0 : snow.y + snow.toY
+			}
+			requestAnimationFrame(dropAnimation)
+		}
+		requestAnimationFrame(dropAnimation)
+
+	</script>
+</body>
+</html>

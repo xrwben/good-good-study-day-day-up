@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>圣诞雪花图</title>
+	<title>canvas雪花</title>
 	<link rel="stylesheet" href="">
 	<style>
 		* {
@@ -21,6 +21,12 @@
 </head>
 <body>
 	<canvas id="snow"></canvas>
+
+	<div style="display:none;">
+    	<img id="source" src="https://mdn.mozillademos.org/files/5397/rhino.jpg" width="300" height="227">
+    	<img id="frame" src="https://mdn.mozillademos.org/files/242/Canvas_picture_frame.png" width="132" height="150">
+    	<img id="girl" src="https://static.guojiang.tv/social/head_pic/2020_08_05/3228ad569277dfcaa93415c8348dfcfc.jpg" width="132" height="150">
+   	</div>
 
 	<script type="text/javascript">
 		/*
@@ -49,6 +55,15 @@
 			透明度：
 			globalAlpha = 0到1  // 影响怎个canvas
 
+			线型样式：
+			lineWidth = value
+			lineCap = type  (butt、round、square)
+			lineJoin = type  (miter、round、bevel)
+			miterLimit = value
+			getLineDash()
+			setLineDash([4, 2])
+			lineDashOffset = value
+
 			渐变：
 			createLinearGradient(x1, y1, x2, y2)  // 线性渐变形状位置
 			createRadialGradient(x1, y1, radius1, x2, y2, radius2)  // 圆形渐变形状位置
@@ -64,10 +79,17 @@
 			shadowColor = color
 
 			绘制文本：
-			fillText(text, x, y [, maxWidth])
+			fillText(text, x, y [, maxWidth])  // maxWidth会压缩字体
 			strokeText(text, x, y [, maxWidth])
-	
 
+			font = value (10px sans-serif)
+			textAlign = value  (start, end, left, right or center)
+			textBaseline = value (top, hanging, middle, alphabetic, ideographic, bottom)
+			direction = value (ltr, rtl)
+	
+			绘制图片：
+			drawImage(image, x, y, width, height)  // 缩放（图片，起始位置，图片大小）
+			drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight) // 切片（图片、切割起始点、切割的大小、切完目标的位置、缩放大小）前4个是定义图像源的切片位置和大小，后4个则是定义切片的目标显示位置和大小
 
 		*/
 		let canvas = document.querySelector("#snow");
@@ -83,8 +105,64 @@
         ctx.fillStyle = "rgba(0, 0, 200, 0.5)";
         ctx.fillRect (30, 30, 100, 100);
 
-		
+        ctx.font = "50px serif";
+        ctx.fillStyle = "green";
+		ctx.fillText("LiBen", 200, 100);
 
+		ctx.strokeStyle = "blue";
+		ctx.strokeText("这句话比较长", 350, 100, 200);
+
+		// 使用图片绘制相框
+		let img = new Image();
+		img.src = "https://static.guojiang.tv/social/head_pic/2020_08_05/3228ad569277dfcaa93415c8348dfcfc.jpg"
+		// img.src = "https://mdn.mozillademos.org/files/242/Canvas_picture_frame.png"
+		img.onload = function () {
+			ctx.drawImage(img, 600, 30, 100, 100)
+		}
+
+		window.onload = function () {
+			console.log("加载完成")
+			const source = document.querySelector("#source");
+			const frame = document.querySelector("#frame");
+			const girl = document.querySelector("#girl");
+			// ctx.drawImage(source, 33,71,104,124,21,20,87,104)
+			ctx.drawImage(frame, 0, 150)
+			ctx.drawImage(girl, 0, 0, 750, 750, 22, 170, 85, 105)
+		}
+
+		// 绘制时钟 搁置
+		function clock () {
+			// let now = new Date()
+			// ctx.save()
+			ctx.clearRect(180, 180, 150, 150)
+			// ctx.translate(75, 75)
+			// ctx.rotate(-Math.PI/2)
+			ctx.strokeStyle = "#000"
+			ctx.fillStyle = "#fff"
+			ctx.lineWidth = 8
+			ctx.lineCap = "round"
+
+			// 时针
+			ctx.save()
+			for (let i = 0; i < 1; i++) {
+				ctx.rotate(Math.PI/6)
+				ctx.beginPath()
+				ctx.moveTo(250, 230)
+				ctx.lineTo(250, 240)
+				ctx.stroke()
+				ctx.closePath()
+			}
+			ctx.restore()
+
+
+			ctx.beginPath()
+			ctx.lineWidth = 8
+			ctx.strokeStyle = "#325FA2"
+			ctx.arc(250, 230, 70, 0, Math.PI * 2, true)
+			ctx.closePath()
+			ctx.stroke()
+		}
+		window.requestAnimationFrame(clock)
 	</script>
 </body>
 </html>
