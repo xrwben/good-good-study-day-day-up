@@ -13,12 +13,20 @@
 		#snow {
 			width: 100%;
 			height: 100vh;
-			background: url("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1607430084485&di=f65b2a32979936da744874e318c37d1e&imgtype=0&src=http%3A%2F%2Fpic.51yuansu.com%2Fbackgd%2Fcover%2F00%2F25%2F46%2F5bac096e294e6.jpg%2521%2Ffw%2F780%2Fquality%2F90%2Funsharp%2Ftrue%2Fcompress%2Ftrue") no-repeat center / 100% 100%;
+			background: rgba(0, 0, 0, 0.5);
+			/*background: url("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1607430084485&di=f65b2a32979936da744874e318c37d1e&imgtype=0&src=http%3A%2F%2Fpic.51yuansu.com%2Fbackgd%2Fcover%2F00%2F25%2F46%2F5bac096e294e6.jpg%2521%2Ffw%2F780%2Fquality%2F90%2Funsharp%2Ftrue%2Fcompress%2Ftrue") no-repeat center / 100% 100%;*/
 			display: block;
+			pointer-events: none;
+			position: fixed;
+			left: 0;
+			right: 0;
+			top: 0;
+			bottom: 0;
 		}
 	</style>
 </head>
 <body>
+	<button onclick="alert(123)">button</button>
 	<canvas id="snow"></canvas>
 
 	<script type="text/javascript">
@@ -55,11 +63,11 @@
 			ctx.clearRect(0, 0, W, H)
 			for (let i = 0; i < config.snowArr.length; i++) {
 				let snow = config.snowArr[i]
-				ctx.beginPath()
+				// ctx.beginPath()
 				// ctx.arc(snow.x, snow.y, snow.size, 0, Math.PI * 2, true)
+				// ctx.fillStyle = "#666"
+				// ctx.fill()
 				ctx.drawImage(snowImg, snow.x, snow.y, snow.size, snow.size)
-				ctx.fillStyle = "#666"
-				ctx.fill()
 
 				snow.x = snow.x > W ? 0 : snow.x + snow.toX
 				snow.y = snow.y > H ? 0 : snow.y + snow.toY
