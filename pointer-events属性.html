@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>pointer-events属性</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+		.shadow {
+			background: rgba(0, 0, 0, 0.5);
+			position: fixed;
+			left: 0;
+			right: 0;
+			top: 0;
+			bottom: 0;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			pointer-events: none;
+		}
+		.shadow .content {
+			width: 200px;
+			height: 200px;
+			background: #fff;
+		}
+		.shadow .content h3 {
+			color: #666;
+			text-align: center;
+			line-height: 200px;
+		}
+
+		.popup-layer .mask {
+			background: rgba(0, 0, 0, 0.5);
+			position: fixed;
+			left: 0;
+			right: 0;
+			top: 0;
+			bottom: 0;
+			z-index: 9;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			pointer-events: none;
+		}
+		.popup-layer .content {
+			width: 200px;
+			height: 200px;
+			background: #fff;
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			z-index: 10;
+		}
+		.popup-layer .content h3 {
+			color: #666;
+			text-align: center;
+			line-height: 200px;
+		}
+	</style>
+</head>
+<body>
+	<!-- 
+		pointer-events
+
+		除了指示该元素不是鼠标事件的目标之外，值none表示鼠标事件“穿透”该元素并且指定该元素“下面”的任何东西。
+
+		使用pointer-events来阻止元素成为鼠标事件目标不一定意味着元素上的事件侦听器永远不会触发。如果元素后代明确指定了pointer-events属性并允许其成为鼠标事件的目标，那么指向该元素的任何事件在事件传播过程中都将通过父元素，并以适当的方式触发其上的事件侦听器。当然，位于父元素但不在后代元素上的鼠标活动都不会被父元素和后代元素捕获（鼠标活动将会穿过父元素而指向位于其下面的元素）。
+	 -->
+	<button>button</button>
+	<!-- <div class="shadow">
+		<div class="content">
+			<h3 class="h3">弹出层内容</h3>
+		</div>
+	</div> -->
+	<div class="popup-layer">
+		<div class="mask"></div>
+		<div class="content">
+			<h3>弹出层内容</h3>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		const button = document.querySelector("button")
+		const h3 = document.querySelector("h3")
+
+		button.addEventListener("click", () => {
+			alert(123)
+		})
+		h3.addEventListener("click", () => {
+			alert("h3")
+		})
+	</script>
+</body>
+</html>
