@@ -60,10 +60,18 @@
 			background-image: -webkit-linear-gradient(bottom left, rgba(255, 255, 255, .2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, .2) 75%, transparent 75%, transparent);
 			cursor: pointer;
 		}
+		.btn-group {
+			text-align: center;
+		}
 	</style>
 </head>
 <body>
 	<div class="move-box">可移动</div>
+
+	<div class="btn-group">
+		<button class="add">增加</button>
+		<button class="reduce">减少</button>
+	</div>
 
 	<div class="scroll-wrapper">
 		<div class="content">
@@ -198,6 +206,8 @@
 		}
 		if (scrollWrapper.offsetHeight >= content.offsetHeight) {
 			scrollBar.style.display = "none";
+		} else {
+			scrollBar.style.display = "block";
 		}
 		console.log(scrollThumb.offsetHeight, scrollThumb.offsetTop, content.clientHeight, content.offsetHeight, content.scrollHeight)
 
@@ -259,6 +269,10 @@
 			e = e || window.event;
 			e.preventDefault();//阻止窗口默认的滚动事件
 
+			if (scrollWrapper.clientHeight >= content.offsetHeight) {
+				return
+			}
+
 			// console.log(e)
 			let delta = 0; // 判断上or下滚动
 
@@ -267,13 +281,12 @@
 			} else if (e.detail) {
 				delta = -e.detail / 3;
 			}
-			console.log(delta, scrollWrapper.scrollTop, content.offsetTop)
+			console.log(">>>", delta, contentTop, scrollWrapper.clientHeight, content.offsetTop)
 			contentTop = contentTop + (delta * 30);
 			console.log(contentTop)
 			if (contentTop >= 0) {
 				contentTop = 0;
-			}
-			if (contentTop <= scrollWrapper.clientHeight - content.offsetHeight) {
+			} else if (contentTop <= scrollWrapper.clientHeight - content.offsetHeight) {
 				contentTop = scrollWrapper.clientHeight - content.offsetHeight;
 			}
 			content.style.top = `${contentTop}px`;
@@ -283,6 +296,43 @@
 			thumbTop = scale * (scrollBar.offsetHeight - scrollThumb.offsetHeight);
 			scrollThumb.style.marginTop = `${thumbTop}px`;
 		}
+
+		let index = 0;
+		const eleAdd = document.querySelector(".add");
+		const eleReduce = document.querySelector(".reduce");
+		eleAdd.addEventListener("click", () => {
+			// for (let i = 0; i < 5; i++) {
+			// 	const div = document.createElement("div");
+			// 	div.innerHTML = `内容${++index}`;
+			// }
+			const div = document.createElement("div");
+			div.innerHTML = `内容${++index}`;
+			content.appendChild(div);
+		})
+
+		const observer = new MutationObserver((mutations, observer) => {
+			mutations.map(item => {
+				console.log(item, item.target)
+				if (scrollWrapper.offsetHeight >= content.offsetHeight) {
+					scrollBar.style.display = "none";
+				} else {
+					scrollBar.style.display = "block";
+				}
+				// debugger
+				if (scrollThumb.offsetHeight <= 40) {
+					scrollThumb.style.height = "40px";
+				}
+				scrollThumb.style.height =  (scrollWrapper.offsetHeight / content.offsetHeight * scrollBar.offsetHeight) + "px"
+				scrollThumb.style.marginTop = `0px`;
+				content.style.top = `0px`;
+			})
+			// observer.disconnect();
+		})
+		observer.observe(content, {
+			// attributes: true,
+			childList: true,
+			subtree: true
+		});
 	</script>
 </body>
 </html>
