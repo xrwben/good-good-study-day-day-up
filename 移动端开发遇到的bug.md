@@ -10,7 +10,7 @@
 
 6、clipboard在移动端复制失败，发现是要复制的标签元素加了readonly属性或者hidden等，于是用高级函数用法，Android没问题后发现ios特别恶心，iphone xr一直失败，然后无意中发现要点击两次才能成功，最后发现是和fastClick冲突，解决办法就是点击的目标元素添加类needsclick来单独解除点击延迟事件
 
-7、ios某些型号输入框textarea/input必须重压或长按才能唤起软键盘，是fastclick.js 引起的冲突，方法一：输入框事假@click="focus"，focus(e) { e.target.focus() }, 方法二：改fastClick.js源码中的focus方法
+7、ios某些型号(xr)输入框textarea/input必须重压或长按才能唤起软键盘，是fastclick.js 引起的冲突，方法一：输入框事假@click="focus"，focus(e) { e.target.focus() }, 方法二：改fastClick.js源码中的focus方法
 
 8、video属性定义了宽高，但是播放的时候video尺寸变化了，而且poster图片尺寸不适配，处理方法是给video样式加上 object-fit:fill; 属性，但这个属性不支持IE
 
@@ -35,3 +35,5 @@
 18、父元素设置属性max-height，子元素设置height:100无法生效，原因是max-height是动态计算的，解决方法：在父元素和子元素再加一层div,将原有的父元素设置为flex布局，而新加的这层div设置flex:1，这样子元素就能生效不会超出高度
 
 19、app内嵌h5页面请求http协议图片资源，oppo某些型号手机不显示图片资源，解决方法：给页面head标签里加<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">，自动将网页上所有加载外部资源的 HTTP 链接换成 HTTPS 协议
+
+20、某些电脑页面个别字符乱码显示“口”，原因是从word文档中复制过来字符编码有问题，解决方法：有问题字符手动敲一遍
