@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>进度条加载</title>
+	<style>
+		.mask {
+			color: #999;
+			font-size: 20px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			position: fixed;
+			left: 0;
+			right: 0;
+			top: 0;
+			bottom: 0;
+			margin: auto;
+			background: #fff;
+		}
+	</style>
+</head>
+<body>
+	<div class="mask">0%</div>
+	<p>哈哈</p>
+	<p>我出现了</p>
+	
+	<script src="https://unpkg.com/vue@next"></script>
+	<script>
+		const fragement = document.createDocumentFragment();
+		for (let i = 0; i < 100; i++) {
+			const p = document.createElement("p");
+			p.innerText = `giao-${i+1}`
+			fragement.appendChild(p)
+		}
+		document.querySelector('body').appendChild(fragement);
+
+
+		let progressNum = 0;
+		let timerIns = null;
+		const maskProgress = document.querySelector(".mask");
+		const progress = () => {
+			timerIns = setTimeout(() => {
+				maskProgress.innerText = `${progressNum++}%`
+				console.log(progressNum)
+				if (progressNum >= 100) {
+					setTimeout(() => {
+						maskProgress.style.display = 'none';
+						timerIns = null;
+					}, 500)
+				} else {
+					progress()
+				}
+			}, 50)
+		}
+
+		document.onreadystatechange = () => {
+			if (document.readyState === "loading") {
+				console.log(1)
+			}
+			if (document.readyState === "interactive") {
+				console.log(2)
+				// progress()
+			}
+			if (document.readyState === "complete") {
+				console.log(3)
+				progress()
+			}
+		}
+	</script>
+</body>
+</html>
