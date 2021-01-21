@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>右键</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+		}
+		.box {
+			width: 300px;
+			height: 300px;
+			border: 1px solid #999;
+			margin: 50px auto;
+			position: relative;
+		}
+		.menu {
+			width: 100px;
+			background: #eee;
+			display: none;
+			position: fixed;
+		}
+		li {
+			list-style: none;
+			line-height: 30px;
+			padding: 0 10px;
+		}
+		li:hover {
+			background: #999;
+		}
+	</style>
+</head>
+<body>
+	<div class="box"></div>
+	<ul class="menu">
+		<li>吃放</li>
+		<li>睡觉</li>
+		<li>打豆豆</li>
+	</ul>
+
+	<script>
+		const box = document.querySelector(".box");
+		const menu = document.querySelector(".menu");
+		box.addEventListener("contextmenu", (e) => {
+			console.log(this)
+			e.preventDefault()
+			menu.style.left = e.clientX;
+			menu.style.top = e.clientY;
+			menu.setAttribute("style", `
+				left: ${e.clientX}px;
+				top: ${e.clientY}px;
+				display: block;
+			`)
+		})
+
+		document.onclick = () => {
+			menu.style = "display: none;"
+		}
+	</script>
+</body>
+</html>
