@@ -75,11 +75,11 @@
 
 	<div class="scroll-wrapper">
 		<div class="content">
-			<div style="">内容1</div>
+			<!-- <div style="">内容1</div>
 			<div>内容2</div>
 			<div>内容3</div>
 			<div>内容4</div>
-			<div>内容5</div>
+			<div>内容5</div> -->
 		</div>
 		<div class="scroll-bar">
 			<div class="scroll-thumb"></div>
@@ -198,6 +198,15 @@
 
 			滚动条的高度： 容器的高度/内容的高度 = 滚动条的高度/滚动条容器的高度
 		*/
+		setTimeout(() => {
+			const fragment = document.createDocumentFragment();
+			for (let i = 0; i < 10; i++) {
+				const div = document.createElement('div');
+				div.innerHTML = `自动生成${i}`;
+				fragment.appendChild(div);
+			}
+			content.appendChild(fragment);
+		}, 2000)
 
 		// scrollThumb.style.height = "80px"
 		scrollThumb.style.height =  (scrollWrapper.offsetHeight / content.offsetHeight * scrollBar.offsetHeight) + "px"
@@ -209,7 +218,7 @@
 		} else {
 			scrollBar.style.display = "block";
 		}
-		console.log(scrollThumb.offsetHeight, scrollThumb.offsetTop, content.clientHeight, content.offsetHeight, content.scrollHeight)
+		console.log(scrollThumb.offsetHeight, scrollThumb.offsetTop, scrollWrapper.clientHeight, content.offsetHeight, content.scrollHeight)
 
 		let candrag = false; // 是否可以拖动的标志
 		let _gapTop; // 鼠标点击的相对位置
@@ -306,7 +315,7 @@
 			// 	div.innerHTML = `内容${++index}`;
 			// }
 			const div = document.createElement("div");
-			div.innerHTML = `内容${++index}`;
+			div.innerHTML = `新增${++index}`;
 			content.appendChild(div);
 		})
 
