@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>循环滚动</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+		}
+		.loop-scroll-wrapper {
+			width: 400px;
+			height: 250px;
+			border: 1px solid black;
+			margin: 100px auto 0;
+			overflow: hidden;
+		}
+		.loop-scroll-container {
+			width: 100%;
+			border: 1px solid red;
+		}
+		.loop-scroll-container p {
+			padding: 10px 20px;
+			color: #333;
+		}
+	</style>
+</head>
+<body>
+	<div class="loop-scroll-wrapper" ref="loop-scroll-wrapper">
+		<div class="loop-scroll-container" ref="loop-scroll-container">
+			<p v-for="item in listData">{{ item.date }} - {{ item.title }}</p>
+		</div>
+	</div>
+
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	<script>
+		new Vue({
+			el: ".loop-scroll-wrapper",
+			data () {
+				return {
+					animationIns: null,
+					distance: 1,
+					listData: [{
+	                   'title': '无缝滚动第一行无缝滚动第一行',
+	                   'date': '2017-12-16'
+	                 }, {
+	                    'title': '无缝滚动第二行无缝滚动第二行',
+	                    'date': '2017-12-16'
+	                 }, {
+	                     'title': '无缝滚动第三行无缝滚动第三行',
+	                     'date': '2017-12-16'
+	                 }, {
+	                     'title': '无缝滚动第四行无缝滚动第四行',
+	                     'date': '2017-12-16'
+	                 }, {
+	                     'title': '无缝滚动第五行无缝滚动第五行',
+	                     'date': '2017-12-16'
+	                 }, {
+	                     'title': '无缝滚动第六行无缝滚动第六行',
+	                     'date': '2017-12-16'
+	                 }, {
+	                     'title': '无缝滚动第七行无缝滚动第七行',
+	                     'date': '2017-12-16'
+	                 }, {
+	                     'title': '无缝滚动第八行无缝滚动第八行',
+	                     'date': '2017-12-16'
+	                 }, {
+	                     'title': '无缝滚动第九行无缝滚动第九行',
+	                     'date': '2017-12-16'
+	                 }]
+				}
+			},
+			mounted () {
+				new Promise((resolve, reject) => {
+					this.listData = this.listData.concat(this.listData.slice(0, 6))
+					resolve()
+				}).then(() => {
+					this.rowUpScroll()
+				})
+			},
+			methods: {
+				// 向上循环滚动动画
+		        rowUpScroll () {
+		        	console.log(this.$refs['loop-scroll-container'].getBoundingClientRect())
+		            // window.cancelAnimationFrame(this.animationIns)
+		            const requestAnimationFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame
+		            const scrollWrapperHeight = this.$refs['loop-scroll-wrapper'].getBoundingClientRect().height
+		            const scrollContainer = this.$refs['loop-scroll-container']
+		            const cHeight = scrollContainer.getBoundingClientRect().height
+		            let sTop = scrollContainer.scrollTop
+		            console.log('滚动容器：', scrollWrapperHeight, cHeight, sTop)
+		            let run = () => {
+		                window.cancelAnimationFrame(this.animationIns)
+		                sTop = sTop + this.distance
+		                scrollContainer.style.transform = `translate3d(0, -${sTop}px, 0)`
+		                // console.log('滚动了:', sTop, this.animationIns)
+		                if (sTop >= cHeight - scrollWrapperHeight) {
+		                    sTop = 0
+		                }
+		                this.animationIns = requestAnimationFrame(run)
+		            }
+		            this.animationIns = requestAnimationFrame(run)
+		            console.log('this.animationIns>>>>', this.animationIns)
+		        },
+			}
+		})
+	</script>
+</body>
+</html>
