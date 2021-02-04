@@ -23,13 +23,19 @@
 		.loop-scroll-container p {
 			padding: 10px 20px;
 			color: #333;
+			display: flex;
+			justify-content: space-between;
+			align-self: center;
 		}
 	</style>
 </head>
 <body>
 	<div class="loop-scroll-wrapper" ref="loop-scroll-wrapper">
 		<div class="loop-scroll-container" ref="loop-scroll-container">
-			<p v-for="item in listData">{{ item.date }} - {{ item.title }}</p>
+			<p v-for="item in listData">
+				<span>{{ item.title }}</span>
+				<span>{{ item.date }}</span>
+			</p>
 		</div>
 	</div>
 
@@ -40,6 +46,7 @@
 			data () {
 				return {
 					animationIns: null,
+					maxNum: 5, // 超过5条数据就开始滚动
 					distance: 1,
 					listData: [{
 	                   'title': '无缝滚动第一行无缝滚动第一行',
@@ -72,19 +79,27 @@
 				}
 			},
 			mounted () {
-				new Promise((resolve, reject) => {
-					this.listData = this.listData.concat(this.listData.slice(0, 6))
-					resolve()
-				}).then(() => {
-					this.rowUpScroll()
-				})
+				this.init()
 			},
 			methods: {
+				init () {
+					if (this.listData.length > this.maxNum) {
+						this.listData = this.listData.concat(this.listData.slice(0, this.maxNum))
+						this.rowUpScroll()
+					}
+				},
 				// 向上循环滚动动画
 		        rowUpScroll () {
 		        	console.log(this.$refs['loop-scroll-container'].getBoundingClientRect())
 		            // window.cancelAnimationFrame(this.animationIns)
-		            const requestAnimationFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame
+		            const requestAnimationFrame = (
+			            window.webkitRequestAnimationFrame ||
+			            window.mozRequestAnimationFrame ||
+			            window.msRequestAnimationFrame ||
+			            function (callback) {
+			                return window.setTimeout(callback, 1000/60);
+			            }
+			        )
 		            const scrollWrapperHeight = this.$refs['loop-scroll-wrapper'].getBoundingClientRect().height
 		            const scrollContainer = this.$refs['loop-scroll-container']
 		            const cHeight = scrollContainer.getBoundingClientRect().height
@@ -103,6 +118,41 @@
 		            this.animationIns = requestAnimationFrame(run)
 		            console.log('this.animationIns>>>>', this.animationIns)
 		        },
+		        // scrollTop animation
+				scrollTop (el, from = 0, to, duration = 500, endCallback) {
+				    if (!window.requestAnimationFrame) {
+				        window.requestAnimationFrame = (
+				            window.webkitRequestAnimationFrame ||
+				            window.mozRequestAnimationFrame ||
+				            window.msRequestAnimationFrame ||
+				            function (callback) {
+				                return window.setTimeout(callback, 1000/60);
+				            }
+				        );
+				    }
+				    const difference = Math.abs(from - to);
+				    const step = Math.ceil(difference / duration * 50);
+
+				    function scroll(start, end, step) {
+				        if (start === end) {
+				            endCallback && endCallback();
+				            return;
+				        }
+
+				        let d = (start + step > end) ? end : start + step;
+				        if (start > end) {
+				            d = (start - step < end) ? end : start - step;
+				        }
+
+				        if (el === window) {
+				            window.scrollTo(d, d);
+				        } else {
+				            el.scrollTop = d;
+				        }
+				        window.requestAnimationFrame(() => scroll(d, end, step));
+				    }
+				    scroll(from, to, step);
+				}
 			}
 		})
 	</script>

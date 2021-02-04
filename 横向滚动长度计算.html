@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title></title>
+	<link rel="stylesheet" href="">
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+		}
+		.outer {
+			width: 400px;
+			height: 50px;
+			border: 1px solid black;
+			margin: 50px auto;
+			position: relative;
+		}
+		.inner {
+			height: 100%;
+			display: flex;
+			align-items: center;
+			position: absolute;
+			left: 0;
+			top: 0;
+			border: 1px solid blue;
+			white-space: nowrap;
+		}
+		.inner p {
+			border: 1px solid red;
+		}
+		img {
+			display: block;
+		}
+	</style>
+</head>
+<body>
+	<!-- 
+		inner一行展示且能获取实际宽度条件： 相对定位 + white-space:nowarp;
+
+		或者知道子元素内容的宽度后再设置父元素的width
+	 -->
+	<div class="outer">
+		<div class="inner">
+			<p>数据项1</p>
+			<p>数据项2</p>
+			<p>数据项3</p>
+			<p>数据项4</p>
+			<p>数据项5</p>
+			<p>数据项6</p>
+			<p>数据项7</p>
+			<p>数据项8</p>
+			<p>数据项9</p>
+			<p>数据项10</p>
+			<img src="http://static.guojiang.tv/pc/img/head/alternative/face18_s1.jpg" alt="">
+		</div>
+	</div>
+</body>
+</html>
