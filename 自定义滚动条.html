@@ -253,9 +253,9 @@
 				scrollThumb.style.marginTop = `${thumbTop}px`;
 				// 计算内容滚动
 				let scale = thumbTop / (scrollBar.offsetHeight - scrollThumb.offsetHeight);
-				contentTop = scale * (content.offsetHeight - scrollWrapper.clientHeight);
+				contentTop = -scale * (content.offsetHeight - scrollWrapper.clientHeight);
 				console.log(contentTop)
-				content.style.top = `${-contentTop}px`;
+				content.style.top = `${contentTop}px`;
 			}
 			document.onmouseup = (e) => {
 				candrag = false;
@@ -332,8 +332,8 @@
 					scrollThumb.style.height = "40px";
 				}
 				scrollThumb.style.height =  (scrollWrapper.offsetHeight / content.offsetHeight * scrollBar.offsetHeight) + "px"
-				scrollThumb.style.marginTop = `0px`;
-				content.style.top = `0px`;
+				// scrollThumb.style.marginTop = `0px`;
+				// content.style.top = `0px`;
 			})
 			// observer.disconnect();
 		})
