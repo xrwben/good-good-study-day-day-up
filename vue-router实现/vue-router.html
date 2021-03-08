@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>router</title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+	<div id="app">
+		<button @click="back">后退</button>
+		<button @click="forward">前进</button>
+		<button @click="pushState">pushState</button>
+
+		<br>
+		<br>
+		<p>hash</p>
+		<a href="#/home">home</a> |
+		<a href="#/about">about</a>
+		<div class="router-view"></div>
+
+		<br>
+		<br>
+		<p>history</p>
+		<a class="ah1" href="/home">home</a> |
+		<a class="ah1" href="/about">about</a>
+		<div class="router-view-histroy"></div>
+
+		<br>
+		<br>
+		<p>vue-router</p>
+		<router-link to="/foo">Go to Foo</router-link> | 
+		<router-link to="/bar">Go to Bar</router-link>
+		<router-view></router-view>
+
+	</div>
+
+	<!-- 
+		History
+
+		属性：
+
+		length => 会话历史记录数
+
+		scrollRestoration => 设置滚动恢复位置 auto自动恢复 manual不恢复需手动设置
+
+		state => 历史堆栈顶部的状态的值 pushState() or replaceState() 如果不进行这两种类型的调用，state 的值将会是 null 
+
+		方法：
+
+		back() 后退一步
+
+		forward() 前进一步
+
+		go() 前进or后退
+
+		pushState(state, title[, url]) 按指定的名称和URL（如果提供该参数）将数据push进会话历史栈
+
+		replaceState(state, title[, url]) 按指定的数据，名称和URL(如果提供该参数)，更新历史栈上最新的入口
+
+
+		事件：
+
+		popstate 需要注意的是调用history.pushState()或history.replaceState()不会触发popstate事件。只有在做出浏览器动作时，才会触发该事件，如用户点击浏览器的回退按钮（或者在Javascript代码中调用history.back()或者history.forward()方法）
+
+	 -->
+	 <!-- 
+
+		如何实现一个前端路由？？
+
+		1、怎么检测到url变化？
+
+		2、怎么做到url变化不刷新页面？
+
+	  -->
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	<script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+	<!-- <<script src="./route.js"></script> -->
+
+	<script>
+		// vue-router
+		const Foo = { template: '<div>foo</div>' }
+		const Bar = { template: '<div>bar</div>' }
+
+		const router = new VueRouter({
+			mode: 'history',
+		  	routes: [
+			    { path: '/foo', component: Foo },
+			    { path: '/bar', component: Bar }
+			]
+		})
+
+		new Vue({
+			el: "#app", 
+			router,
+			mounted () {
+				console.log(window.history)
+
+				// const routerView = document.querySelector(".router-view")
+
+				// window.addEventListener("hashchange", (e) => {
+				// 	console.log(location,e)
+				// 	routerView.innerHTML = location.hash
+				// })
+				// window.addEventListener("DOMContentLoaded", () => { // hmtl解析完成触发 不需要等待css img
+				// 	console.log(location)
+				// 	if (!location.hash) {
+				// 		location.hash = "/"
+				// 	} else {
+				// 		routerView.innerHTML = location.hash
+				// 	}
+				// })
+
+				const routerViewHistory = document.querySelector(".router-view-histroy")
+
+				window.addEventListener("popstate", (e) => {
+					e.preventDefault()
+					console.log(location, e)
+				})
+				window.addEventListener("DOMContentLoaded", () => {
+					document.querySelectorAll(".ah1").forEach((el) => {
+						el.addEventListener("click", (e) => {
+							console.log(e, location)
+							e.preventDefault()  // 阻止a标签跳转
+							history.pushState(el.href, null, el.href) // 通过h5的pushState()或者replaceState()改变路由
+							routerViewHistory.innerHTML = location.pathname
+						})
+					})
+				})
+
+			},
+			methods: {
+				back () {
+					window.history.back()
+				},
+				forward () {
+					window.history.forward()
+				},
+				pushState () {
+					window.history.pushState({"id": 123}, null, "/page1")
+				}
+			}
+		})
+	</script>
+</body>
+</html>
