@@ -37,3 +37,33 @@
 19、app内嵌h5页面请求http协议图片资源，oppo某些型号手机不显示图片资源，解决方法：给页面head标签里加<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">，自动将网页上所有加载外部资源的 HTTP 链接换成 HTTPS 协议
 
 20、某些电脑页面个别字符乱码显示“口”，原因是从word文档中复制过来字符编码有问题，解决方法：有问题字符手动敲一遍
+
+21、部分Android机(vivo某型号)使用line-height可能文字上下不能垂直居中，具体原因可能跟文字渲染有关，hack方法：
+```
+.name {
+    width: 200/@bf;
+    height: 60/@bf;
+    color: #fff;
+    background: #ff2248;
+    border-radius: 20/@bf;
+    font-size: 26/@bf;
+    text-align: center;
+    margin: 0 10/@bf;
+    padding: 5/@bf 5/@bf 5/@bf 10/@bf;
+    display: table;
+    & > p {
+        background: green;
+        line-height: normal;
+        display: table-cell;
+        vertical-align: middle;
+        &::after{
+            content: ' ';
+            display: inline-block;
+            width: 0;
+            height: 100%;
+            vertical-align: middle;
+            margin-top: 1px;
+          }
+    }
+}
+```
