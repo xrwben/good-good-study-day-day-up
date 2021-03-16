@@ -1,0 +1,33 @@
+{
+  "name": "rollup-v0.1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "bundle.copy.js",
+  "dependencies": {
+    "vue": "^2.6.12"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.13.10",
+    "@babel/plugin-transform-runtime": "^7.13.10",
+    "@babel/preset-env": "^7.13.10",
+    "autoprefixer": "^10.2.5",
+    "less": "^4.1.1",
+    "postcss": "^8.2.8",
+    "rollup-plugin-babel": "^4.4.0",
+    "rollup-plugin-clear": "^2.0.7",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-json": "^4.0.0",
+    "rollup-plugin-livereload": "^2.0.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-postcss": "^4.0.0",
+    "rollup-plugin-serve": "^1.1.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "livereload 'src/'",
+    "build": "rollup --config rollup.config.js",
+    "watch": ""
+  },
+  "author": "",
+  "license": "ISC"
+}
