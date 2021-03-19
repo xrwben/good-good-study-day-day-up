@@ -3,7 +3,14 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width,initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
 	<title>rollup</title>
+	<style>
+		h1 {
+			font-size: 2rem;
+		}
+	</style>
+	<!-- <script src="./src/rem.js"></script> -->
 </head>
 <body>
 	<h1>rollup</h1>
@@ -12,9 +19,11 @@
 		<!-- {{ msg }} -->
 	</div>
 
-	<script src="./dist/bundle.js"></script>
-	<script>
-		// main();
+	<!-- <script src="./dist/bundle.js"></script> -->
+	<script type="module">
+		import dll from "./dist/bundle.js";
+		console.log(dll);
+		// console.log(cl)
 		// new Vue({
 		// 	el: "#app",
 		// 	data () {
