@@ -15,7 +15,7 @@ export default {
 		file: "./dist/bundle.js",
 		format: "umd",
 		name: "dll",  // 全局名称挂载到window
-		globals: {
+		globals: {    // 这跟external 是配套使用的，指明global.Vue即是外部依赖vue
 	  		vue: "Vue"
   		}
 	},
