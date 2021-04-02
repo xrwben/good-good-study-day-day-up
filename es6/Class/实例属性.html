@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>属性</title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+	<script>
+		/*
+			实例属性除了定义在constructor()方法里面的this上面，也可以定义在类的最顶层。
+		*/
+
+		class Foo {
+			constructor () {
+				this.name = "liben";
+				this.age = "28"
+			}
+		}
+
+		let foo = new Foo()
+		console.log(foo) // {name: "liben", age: "28"}
+
+		console.log("------属性也可以定义在最顶层--------")
+
+		class Bar {
+			name = "GG";
+			age = "18";
+
+			constructor () {
+				this.sex = "纯爷们"
+			}
+			
+			myinfo () {
+				console.log(`${this.name} : ${this.age}`)
+			}
+		}
+		let bar = new Bar()
+		console.log(bar)
+		bar.myinfo()
+	</script>
+</body>
+</html>

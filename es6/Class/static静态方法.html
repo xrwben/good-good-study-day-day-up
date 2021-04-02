@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>静态方法</title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+	<script>
+		/*
+			静态方法：方法前，加上static关键字，就表示该方法不会被实例继承，而是直接通过类来调用
+
+			静态方法可以与非静态方法重名
+
+			ES6 明确规定，Class 内部只有静态方法，没有静态属性
+		*/
+
+		class Foo {
+			static age = 12;  // 新提案
+
+			static say () {
+				return "我是最棒的"
+			}
+		}
+
+		Foo.name = "小明"  // 定义静态属性
+
+		let foo = new Foo()
+		console.log(foo)
+		console.log(Foo.prototype)
+		console.log(Foo.say())
+	</script>
+</body>
+</html>

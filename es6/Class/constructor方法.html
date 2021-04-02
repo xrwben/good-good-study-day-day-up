@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>constructor</title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+	<script type="text/javascript">
+		/*
+			一个类必须有constructor()方法，如果没有显式定义，一个空的constructor()方法会被默认添加
+
+			constructor()方法默认返回实例对象（即this），完全可以指定返回另外一个对象
+		*/
+
+		class Point {
+			constructor () {
+				return {};  // 返回一个空对象
+			}
+		}
+		console.log(Point.prototype)
+
+		console.log(new Point() instanceof Point)
+
+		console.log(Point.name)
+
+	</script>
+</body>
+</html>

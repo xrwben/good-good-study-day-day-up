@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>extends继承</title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+	<script>
+		/*
+			类的三大特性：封装、继承、多态
+
+			extends
+
+			实质是先将父类实例对象的属性和方法，加到this上面（所以必须先调用super方法），然后再用子类的构造函数修改this
+
+			super() => ES6 要求，子类的构造函数必须执行一次super函数，只能用在子类的构造函数之中
+
+			Object.getPrototypeOf() => 可以使用这个方法判断一个类是否继承了另一个类
+		
+		*/
+
+		class Parent {
+			constructor (x, y) {
+				this.x = x;
+				this.y = y;
+			}
+
+			say () {
+				console.log("我是父类方法")
+			}
+
+			static eat () {
+				console.log("父类静态方法也会被继承")
+			}
+		}
+
+		class Child extends Parent {
+			constructor (x, y, color) {
+				// this.color = color;
+				super(x, y);  // 子类的构造函数中，只有调用super之后，才可以使用this关键字，否则会报错
+				this.color = color;
+			}
+
+			print () {
+				console.log(`xz: ${this.x + this.y}, color: ${this.color}`)
+			}
+		}
+
+		let child = new Child(1, 2, 'red')
+		console.log(child)
+
+		child.say()
+		child.print()
+
+		console.log(child instanceof Parent)
+		console.log(child instanceof Child)
+
+		Child.eat()
+
+		console.log(Object.getPrototypeOf(Child)) // 可以用来从子类上获取父类
+		console.log(Object.getPrototypeOf(Child) === Parent)
+
+		console.log(Child.__proto__)
+
+	</script>
+</body>
+</html>

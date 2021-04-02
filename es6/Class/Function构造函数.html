@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>构造函数</title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+	<script>
+		function Point (x, y) {
+			this.x = x;
+			this.y = y;
+			console.log(">>>>", this)
+		}
+		Point.prototype.add = function () {
+			return this.x + this.y;
+		}
+
+		console.log(Point.prototype)
+		let res = new Point(1, 2);
+		console.log(res)
+		console.log(res.add())
+
+		console.log("-----------------------")
+
+		class Pointt {
+			constructor (a, b) {
+				this.a = a;
+				this.b = b;
+				console.log(">>>>", this)
+			}
+
+			add () {
+				return this.a + this.b;
+			}
+
+		}
+		console.log(Pointt.prototype)
+		let ress = new Pointt(2, 3);
+		console.log(ress)
+		console.log(ress.add())
+
+		console.log("-------异同----------")
+
+		/*
+			类完全可以看作构造函数的另一种写法
+
+			类的数据类型就是函数，类本身就指向构造函数
+
+			类的所有方法都定义在类的prototype属性上面
+		*/
+		console.log(typeof Pointt) // function
+		console.log(Pointt.prototype.constructor === Pointt)
+		console.log(Pointt.prototype.add)
+		console.log(ress.constructor === Pointt.prototype.constructor)
+	</script>
+</body>
+</html>
