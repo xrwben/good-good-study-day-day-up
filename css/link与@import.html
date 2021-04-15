@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>link与@import</title>
+
+	<link rel="stylesheet" href="./link.css">
+	<style>
+		/*@import "./import.css";*/
+		@import url("./import.css");
+	</style>
+	
+</head>
+<body>
+	<!-- 
+		link是html标签，@import是css语法
+
+		link不存在兼容问题，@import在IE5+才支持
+
+		link同步加载，@import在页面加载完后再加载
+
+	 -->
+
+	<h2>link 与 @import</h2>
+
+</body>
+</html>
