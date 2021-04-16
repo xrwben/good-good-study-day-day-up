@@ -1,5 +1,7 @@
 /*
 	css格式化样式 => http://css-tricks.neatbang.com/reset/#reset
+
+  因为浏览器的兼容问题，不同浏览器对有些标签的默认值是不同的，如果没对CSS初始化往往会出现浏览器之间的页面显示差异
 */
 
 *{-webkit-overflow-scrolling : touch;-webkit-tap-highlight-color: rgba(255, 255, 255, 0);}

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>display与visibility</title>
+	<link rel="stylesheet" href="">
+	<style>
+		.display {
+			display: none;
+		}
+		.display p {
+			display: block;
+		}
+		.visibility {
+			visibility: hidden;
+		}
+		.visibility p {
+			visibility: visible;
+		}
+		.opacity {
+			opacity: 0;
+		}
+		.opacity p {
+			opacity: 1;
+		}
+	</style>
+</head>
+<body>
+	<!-- 
+		display: none;   元素从dom树中消失，不占空间，子元素不可操作
+
+		visibility: hidden;  不会让元素从dom树中消失，继续占据空间，内容不可见, 子元素可以显示
+
+		opacity: 0;  不会让元素从dom树中消失，继续占据空间，内容不可见, 子元素不能显示
+	 -->
+	<h2 class="display"><p>display</p></h2>
+	<h2 class="visibility"><p>visibility</p></h2>
+	<h2 class="opacity"><p>opacity</p></h2>
+	<p>我是底线</p>
+
+	<!-- 
+		【display】 list-item 列表 兼容性不好
+	 -->
+	 <style>
+	 	.listitem {
+	 		display: list-item;
+	 		list-style-position: inside;
+	 	}
+	 </style>
+	<div class="listitem">list-item</div>
+</body>
+</html>

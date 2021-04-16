@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>清除浮动</title>
+	<link rel="stylesheet" href="">
+	<style>
+		.outer {
+			width: 400px;
+			border: 1px solid red;
+		}
+		.fl {
+			width: 200px;
+			height: 200px;
+			border: 1px solid green;
+			float: left;
+		}
+		.fr {
+			width: 180px;
+			height: 200px;
+			border: 1px solid blue;
+			float: right;
+		}
+	</style>
+</head>
+<body>
+	<!-- 
+		1、父级div定义height
+
+		2、结尾处加空div标签clear:both
+
+		3、父级div定义伪类:after和zoom （推荐）
+
+		4、父级div定义overflow:hidden
+
+		5、父级div也浮动，需要定义宽度
+
+		6、结尾处加br标签clear:both（同3）
+
+		
+		原理：
+
+		clear 属性定义了元素的哪边上不允许出现浮动元素 值有left、right、both、none、inherit
+
+		其它几种方式原理即是BFC（块级格式上下文）规则实现清除浮动
+
+	 -->
+
+	 <style>
+	 	.outer1 { height: 200px; }
+	 </style>
+	 <h2>第一种 父元素也给一个高度</h2>
+	 <div class="outer outer1">
+	 	<div class="fl">左边</div>
+	 	<div class="fr">右边</div>
+	 </div>
+
+	 <br>
+
+	 <style>
+	 	.outer2 .clearboth { clear: both; }
+	 </style>
+	 <h2>第二种 浮动元素底部增加空div 给clear: both属性;</h2>
+	 <div class="outer outer2">
+	 	<div class="fl">左边</div>
+	 	<div class="fr">右边</div>
+	 	<div class="clearboth"></div>
+	 </div>
+
+	 <br>
+
+	 <style>
+	 	.outer3::after { content: ''; display: block; clear: both; }
+	 </style>
+	 <h2>第三种 父级div定义伪类:after和zoom</h2>
+	 <div class="outer outer3">
+	 	<div class="fl">左边</div>
+	 	<div class="fr">右边</div>
+	 </div>
+
+	 <br>
+
+	 <style>
+	 	.outer4 { overflow: hidden; }
+	 </style>
+	 <h2>第四种 父级div定义overflow:hidden</h2>
+	 <div class="outer outer4">
+	 	<div class="fl">左边</div>
+	 	<div class="fr">右边</div>
+	 </div>
+
+	 <br>
+
+	 <style>
+	 	.outer5 { float: left; }
+	 </style>
+	 <h2>第五种 父级也浮动</h2>
+	 <div class="outer outer5">
+	 	<div class="fl">左边</div>
+	 	<div class="fr">右边</div>
+	 </div>
+</body>
+</html>
