@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>闭包</title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+	<script type="text/javascript">
+		/*
+			闭包 => 是一个可以访问外部作用域的内部函数，即使这个外部作用域已经执行结束
+
+			红宝书上对于闭包的定义：闭包是指有权访问另外一个函数作用域中的变量的函数，利用闭包可以突破作用链域
+
+			MDN 对闭包的定义为：闭包是指那些能够访问自由变量(既不是函数参数arguments也不是函数的局部变量)的函数
+
+
+			闭包会使得函数中的变量都被保存在内存中，可能导致内存泄露，解决方法是，在退出函数之前，将不使用的局部变量全部删除
+			
+		*/
+		(function autorun(){
+		    let x = 1;
+		    function log(){ 
+		       console.log(x); // 1
+		    }
+		    log();
+		})();
+
+		(function autorun(p){
+		    let x = 1;
+		    setTimeout(function log(){
+		      console.log(x);   //1
+		      console.log(p);   //10
+		    }, 3000);
+		})(10);
+
+		// 闭包的外部作用域是在其定义的时候已决定，而不是执行的时候
+		(function autorun(){
+		    let x = 1;
+		    function log(){
+		      console.log('外部作用域定义时已决定>>>', x);
+		    };
+		    
+		    function run(fn){
+		      let x = 100;
+		      fn();
+		    }
+		    
+		    run(log);  // 1
+		})();
+
+		// 作用域链
+		(function () {
+			let x0 = 0;
+			(function autorun1(){
+			 let x1 = 1;
+			  
+			 (function autorun2(){
+			   let x2 = 2;
+			  
+			   (function autorun3(){
+			     let x3 = 3;
+			      
+			     console.log(x0 + " " + x1 + " " + x2 + " " + x3);  // 0 1 2 3
+			    })();
+			  })();
+			})();
+		})()
+
+		console.log('---------------------')
+
+		let a = function b () {
+			var num = 1;
+			return function () {
+				num += 1;
+				return num;
+			}
+		}
+		console.log(a()())
+		console.log(a()())
+		console.log(a()())
+
+		// let a = b()
+		// console.log(a()) // 2?
+		// console.log(a()) // 3?
+		// console.log(a()) // 4?
+
+		console.log('---------------')
+
+		var add = (function(){
+		　　var counter = 0;
+		　　return function () {
+				counter += 1;
+				return counter;
+			}
+		})();
+
+		//调用，每次自增1
+		console.log(add()); //值为1
+		console.log(add()); //值为2
+		console.log(add()); //值为3
+
+		console.log('------------------')
+
+		function f() {
+			// debugger
+		    var a = 1;
+
+		    a = 2;
+		    var b = g();
+		    a = 3;
+
+		    return b;
+
+		    function g() {
+		        return a;
+		    }
+		}
+
+		f(); // 2
+		console.log(">>>f()", f())
+
+	</script>
+</body>
+</html>
