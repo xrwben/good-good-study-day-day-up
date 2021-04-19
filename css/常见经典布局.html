@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>布局</title>
+	<link rel="stylesheet" href="">
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+	</style>
+</head>
+<body>
+	<h2>流体布局 float然后margin出左右</h2>
+	<!--
+		注意 main要放在文档最后才行
+		假如在一行之上只有极少的空间可供浮动元素，那么这个元素会跳至下一行，这个过程会持续到某一行拥有足够的空间为止。
+	 -->
+	<style>
+		.container {
+			width: 100%;
+			height: 300px;
+			border: 1px solid black;
+		}
+		.left {
+			width: 200px;
+			height: 100%;
+			float: left;
+			background: green;
+		}
+		.right {
+			width: 200px;
+			height: 100%;
+			float: right;
+			background: skyblue;
+		}
+		.main {
+			height: 100%;
+			margin-left: 200px;
+			margin-right: 200px;
+			background: blue;
+			border: 1px solid red;
+		}
+	</style>
+	<div class="container">
+		<div class="left"></div>
+		<div class="right"></div>
+		<div class="main"></div>
+	</div>
+	<br>
+
+	<h2>圣杯布局 padding留出左右</h2>
+	<!-- 
+		要求：三列布局；中间主体内容前置，且宽度自适应；两边内容定宽
+		好处：重要的内容放在文档流前面可以优先渲染
+		原理：利用相对定位、浮动、负边距布局，而不添加额外标签
+	 -->
+	<style>
+		.sb {
+			width: 100%;
+			height: 300px;
+			border: 1px solid black;
+			padding: 0 200px;
+		}
+		.sb-l {
+			width: 200px;
+			height: 100%;
+			background: skyblue;
+			margin-left: -200px;
+			float: left;
+		}
+		.sb-m {
+			width: 100%;
+			height: 100%;
+			background: green;
+			float: left;
+		}
+		.sb-r {
+			width: 200px;
+			height: 100%;
+			background: blue;
+			margin-right: -200px;
+			float: right;
+		}
+	</style>
+	<div class="sb">
+		<div class="sb-l"></div>
+		<div class="sb-m"></div>
+		<div class="sb-r"></div>
+	</div>
+	<br>
+
+	<h2>双飞翼布局 float上浮</h2>
+	<!-- 
+		双飞翼布局：对圣杯布局（使用相对定位，对以后布局有局限性）的改进，消除相对定位布局
+		原理：主体元素上设置左右边距，预留两翼位置。左右两栏使用浮动和负边距归位，消除相对定位。
+	 -->
+	<style>
+		.sfy {
+			width: 100%;
+			height: 300px;
+			border: 1px solid black;
+			/*padding: 0 200px;*/
+		}
+		.sfy-m {
+			width: 100%;
+			height: 100%;
+			background: skyblue;
+			float: left;
+		}
+		.sfy-m-c {
+			/*margin: 0 200px;*/
+			margin-left: 200px;
+			margin-right: 200px;
+			border: 1px solid red;
+		}
+		.sfy-l {
+			width: 200px;
+			height: 100%;
+			background: blue;
+			margin-left: -100%;
+			float: left;
+		}
+		.sfy-r {
+			width: 200px;
+			height: 100%;
+			background: green;
+			margin-left: -200px;
+			float: right;
+		}
+	</style>
+	<div class="sfy">
+		<div class="sfy-m">
+			<div class="sfy-m-c">center</div>
+		</div>
+		<div class="sfy-l"></div>
+		<div class="sfy-r"></div>
+	</div>
+	<br>
+
+	<h2>Flex布局</h2>
+	<style>
+		.flex {
+			width: 100%;
+			height: 300px;
+			border: 1px solid black;
+			display: flex;
+		}
+		.flex-l {
+			width: 200px;
+			background: green;
+		}
+		.flex-m {
+			/*flex: 0 1 auto; // 放大0 缩小1 主轴空间auto*/
+			flex: auto;
+			background: skyblue;
+		}
+		.flex-r {
+			width: 200px;
+			background: blue;
+		}
+	</style>
+	<div class="flex">
+		<div class="flex-l"></div>
+		<div class="flex-m"></div>
+		<div class="flex-r"></div>
+	</div>
+</body>
+</html>
