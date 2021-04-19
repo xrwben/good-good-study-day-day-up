@@ -26,6 +26,8 @@ body,textarea,input,button,select,keygen,legend{font:12px/1.14 arial,\5b8b\4f53;
 body{background:#fff;}
 a,a:hover{color:#333;}
 
+-webkit-font-smoothing: antialiased; /*IOS手机浏览器字体齿轮设置*/
+
 input {
   border: none;
   -moz-appearance: none;
@@ -34,6 +36,7 @@ input {
   outline: medium; /*去掉鼠标点击的默认黄色边框*/
   background-color: transparent;
 
+  /* Chrome记住密码后自动填充表单的黄色背景 */
   &:-webkit-autofill {
     -webkit-box-shadow: 0 0 0px 1000px white inset;
   }
@@ -47,4 +50,16 @@ input {
     -webkit-appearance: none;
     margin: 0;
   }
+}
+
+/**一种常见利用伪类清除浮动的代码**/
+.clearfix:after {
+    content:".";       //这里利用到了content属性
+    display:block;
+    height:0;
+    visibility:hidden;
+    clear:both; 
+ }
+.clearfix {
+    *zoom:1;
 }
