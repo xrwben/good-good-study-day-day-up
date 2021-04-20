@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>parseInt</title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+	<script>
+		/*
+			["1", "2", "3"].map(parseInt) 答案是多少？ 之前面试微众银行时遇到的问题
+
+			解析： map((item, index, array) => {}) map函数接受一个函数参数，在上面传入parseInt函
+
+				parseInt(string, radix) 第一个参数为要转换的字符串，第二个为解析的基数(进制)
+
+				所以上面的式子实际解析如下：
+
+				parseInt('1', 0)
+
+				parseInt('2', 1)
+
+				parsetInt('3', 2)
+
+		*/
+
+		let arr = ["1", "2", "3"].map(parseInt);
+
+		console.log(arr) // [1, NaN, NaN]
+
+
+		/*
+			parseInt(string, radix) 将第一个参数转换为字符串然后解析返回一个整数或NaN radix值为 2~36  返回值为整数或NaN
+
+			值为NaN情况： 
+
+			1、radix小于2或大于36（0除外）
+
+			2、第一个非空格字符不能转换为数字
+
+			3、string中出现比radix大的字符
+			
+		*/
+
+		let less2 = parseInt("1", 1);
+		console.log(less2) // NaN radix小于2
+
+		let greater36 = parseInt(12, 37); 
+		console.log(greater36) // NaN radix大于37  后台会调用toString()把12转换为“12”
+
+		let notNumber = parseInt('a12', 3);
+		console.log(notNumber)  // NaN  'a12'不能装换为数字 
+
+		let lessRadix = parseInt("3", 2)
+		console.log(lessRadix)  // NaN 二进制中不会有大于等于2的数 除了“0、1”外，其它数字都不是有效二进制数字
+
+
+		/*
+			如果 parseInt 遇到的字符不是指定 radix 参数中的数字，它将忽略该字符以及所有后续字符，并返回到该点为止已解析的整数值。
+		*/
+
+		let te = parseInt("13", 2)
+		console.log(te)  // 1  转化为parseInt("1", 2)
+
+		let te1 = parseInt("12abc3", 3)
+		console.log(te1)  // 5  转化为parseInt("12", 2)
+	</script>
+</body>
+</html>
