@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>script标签</title>
+</head>
+<body>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.8/lottie.min.js" crossorigin="anonymous"></script>
+
+    <h2>defer async</h2>
+    <script>
+        /*
+            async => 并行下载、立即执行
+
+            defer => 并行下载、文档解析完成后再执行
+
+            行内script代码 不能出现字符串“<//script>” 报错 转义即可
+        */
+        console.log(123)
+
+        function say () {
+            console.log("<\/script>")
+        }
+    </script>
+</body>
+</html>
