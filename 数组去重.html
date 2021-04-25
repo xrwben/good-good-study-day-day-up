@@ -9,7 +9,7 @@
 <body>
 	<script>
 		/*
-			1、Set
+			1、Set 类似于数组，但是成员的值都是唯一的
 		*/
 		let arr1 = [1, 1, 2, "true", true, true, undefined, undefined, null, null, NaN, NaN, {}, {}, {a:1}, {a:1}]
 		let result1 = Array.from(new Set(arr1))
@@ -88,7 +88,7 @@
 		console.log(result7) // (10) [1, 2, "true", true, undefined, null, {}, {}, {a:1}, {a:1}]
 
 		/*
-			8、Map 类似于利用对象属性, 优点是键可以是任何类型
+			8、Map 键值对的集合，类似于利用对象属性, 优点是键可以是任何类型
 		*/
 		let arr8 = [1, 1, 2, "true", true, true, undefined, undefined, null, null, NaN, NaN, {}, {}, {a:1}, {a:1}]
 		let result8 = [], map = new Map();
