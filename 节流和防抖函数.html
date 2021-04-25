@@ -19,7 +19,7 @@
 		/*
 			节流定义：指的是某个函数在一定时间间隔内（例如 3 秒）只执行一次，在这 3 秒内 无视后来产生的函数调用请求，也不会延长时间间隔
 
-			应用场景：scroll事件、mousemove事件、上传进度等情况
+			应用场景：resize事件、scroll事件、mousemove事件、上传进度等情况
 
 			方法：定时器、时间戳
 
@@ -74,7 +74,7 @@
 			可视化对比： http://demo.nimius.net/debounce_throttle/
 		*/
 
-		function debounce(fn, wait = 50) {
+		function debounce(fn, wait = 50, immediate) {
 			let timer = null;
 			return function () {
 				if (timer) {
