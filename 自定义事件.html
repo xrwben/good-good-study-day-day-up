@@ -40,7 +40,11 @@
 		document.body.dispatchEvent(event); // 分发事件  IE9以下使用fireEvent()
 
 		/*
-			例二
+			例二 
+
+			从技术上讲，CustomEvent 和 Event 一样
+
+			CustomEvent在第二个参数（对象）中，我们可以为我们想要与事件一起传递的任何自定义信息添加一个附加的属性 detail
 		*/
 		let myEvent = new CustomEvent("pingan", {
 			detail: {name: "平安科技"}
