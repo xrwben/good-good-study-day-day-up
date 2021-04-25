@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>event loop</title>
+</head>
+<body>
+	<script>
+		/*
+			事件循环 Event Loop？
+
+			概念：它是一个在 JavaScript 引擎等待任务，执行任务和进入休眠状态等待更多任务这几个状态之间转换的无限循环。
+
+			JS单线程，处理任务使用事件队列的形式，一次处理一个事件响应，如果一个任务到来，而引擎正在繁忙状态，那么这个任务就会被相应的引擎添加到任务队列，等到引擎空闲再来执行。
+
+			JS非阻塞单线程原因？
+
+			JS是为了和浏览器交互而诞生的，如果多线程的话在处理DOM就可能冲突，一个线程增加节点，一个线程删除，不一致。
+
+
+			JS 在执行的过程中会产生执行环境，这些执行环境会被顺序的加入到执行栈中。如果遇到异步的代码，会被挂起并加入到 Task（有多种 task） 队列中。一旦执行栈为空，Event Loop 就会从 Task 队列中拿出需要执行的代码并放入执行栈中执行
+
+
+			微任务： process.nextTick、promise、Object.observe、MutationObserver
+
+			宏任务： setTimeout、setInterval、setImmediate、I/O、UI rendering
+		*/
+		console.log('script start');
+
+		setTimeout(function() {
+		  console.log('setTimeout');
+		}, 0);
+
+		new Promise((resolve) => {
+		    console.log('Promise')
+		    resolve()
+		}).then(function() {
+		  console.log('promise1');
+		}).then(function() {
+		  console.log('promise2');
+		});
+
+		console.log('script end');
+
+		// script start => Promise => script end => promise1 => promise2 => setTimeout
+	</script>	
+</body>
+</html>
