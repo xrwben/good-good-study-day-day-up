@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>捕获、目标、冒泡</title>
+	<style>
+		.outer {
+			width: 200px;
+			height: 200px;
+			background: green;
+		}
+		.inner {
+			width: 150px;
+			height: 150px;
+			background: red;
+		}
+		.con {
+			width: 100px;
+			height: 100px;
+			background: blue;
+		}
+	</style>
+</head>
+<body>
+	<div class="outer">
+		<div class="inner">
+			<div class="con"></div>
+		</div>
+	</div>
+
+	<script>
+		/*	
+			事件执行阶段： 捕获阶段 => 目标阶段 => 冒泡阶段
+			冒泡false（默认）、捕获true
+		*/
+
+		const outer = document.querySelector(".outer");
+		const inner = document.querySelector(".inner");
+		const con = document.querySelector(".con");
+
+
+		// 冒泡事件阶段  点击con输出结果为 con -> inner -> outer
+		// outer.addEventListener("click", (e) => {
+		// 	console.log("点击了outer")
+		// }, false)
+		// inner.addEventListener("click", (e) => {
+		// 	console.log("点击了inner")
+		// }, false)
+		// con.addEventListener("click", () => {
+		// 	console.log("点击了con")
+		// }, false)
+
+
+		// 捕获阶段  点击con输出结果为 outer -> inner -> con
+		// outer.addEventListener("click", (e) => {
+		// 	console.log("点击了outer")
+		// }, true)
+		// inner.addEventListener("click", (e) => {
+		// 	console.log("点击了inner")
+		// }, true)
+		// con.addEventListener("click", () => {
+		// 	console.log("点击了con")
+		// }, true)
+
+		// 点击con输出结果为 inner -> con -> outer
+		outer.addEventListener("click", (e) => {
+			console.log("点击了outer")
+		}, false)
+		inner.addEventListener("click", (e) => {
+			console.log("点击了inner")
+		}, true)
+		con.addEventListener("click", () => {
+			console.log("点击了con")
+		}, false)
+	</script>
+</body>
+</html>
