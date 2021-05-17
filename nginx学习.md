@@ -19,6 +19,8 @@
 
 - 字符串匹配，如果有正则也匹配到则使用正则，如果正则匹配不到，使用字符串前缀匹配最长的
 
+**注意：** 只有`~`或`~*`可以匹配正则
+
 ### 常用配置指令
 
 - **`alias` —— 别名配置，在匹配到location配置的url路径后，指向alias配置的路径**
@@ -39,6 +41,13 @@ location ~ /dist/vmaker/(.*) {
 }
 ```
 请求/dist/vmaker/2020/2/modCommemorationDay.html，返回/guojiang/xg-tpl/dist/mobile/html/2020/2/modCommemorationDay.html
+
+当location为正则表达式时，proxy_pass 不能包含URI部分，如：
+```
+location ~ /dist/ {
+    proxy_pass https://m.tuho.tv:3000/html/mobile/dist/;  //不生效
+}
+```
 
 - **`root` —— 根路径配置，匹配到location配置的URL路径后，指向root配置的路径，并把请求路径附加到其后**
 
