@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>元素平均分布在圆环</title>
+	<style>
+	    .zh-circle{position: relative;width: 240px;height: 240px;border-radius: 50%;border: 1px solid #f00;box-sizing: border-box;margin: 20px auto 0;}
+	    .zh-circle li{position: absolute;z-index: 2;left: 50%;top: 0;width: 40px;height: 40px;margin: -20px 0 0 -20px;border: 1px solid #f00;border-radius: 50%;box-sizing: border-box;list-style: none;transform-origin: 20px 140px;}
+
+	    /*sin cos*/
+	    .loading-container {
+	    	position: relative;width: 240px;height: 240px;border-radius: 50%;border: 1px solid #f00;box-sizing: border-box;margin: 20px auto 0;position: relative;
+	    }
+        .circle {
+            width: 25%;
+            height: 25%;
+            background: #c8c8c8;
+            border-radius: 50%;
+            position: absolute;
+            animation: loading 1s infinite ease-in-out;
+            animation-fill-mode: forwards;
+        }
+	</style>
+</head>
+<body>
+	<h2>css实现（transform）</h2>
+	<ul class="zh-circle">
+	    <!-- <li></li> -->
+	</ul>
+
+	<h2>js实现（sin/cos）</h2>
+	<div class="loading-container">
+    </div>
+
+	<script>
+		/*  
+			transform: rotate + transform-origin
+		*/
+	    var liSize = 10,
+	        lis = '';
+	    for(var i=0; i<liSize; i++) {
+	        lis += '<li style="transform: rotate('+360/liSize*i+'deg)"></li>';
+	    }
+	    document.querySelector('.zh-circle').innerHTML =lis;
+
+	    /*
+			sin cos 函数
+	    */
+	    let fragment = document.createDocumentFragment();
+	    for (let i = 0; i < 8; i++) {
+	    	let div = document.createElement('div');
+	    	div.className = 'circle';
+	    	div.style = `
+                left: ${Math.cos(Math.PI / 180 * 360 / 8 * i) * 240 / 2 + 90}px;
+                top: ${Math.sin(Math.PI / 180 * 360 / 8 * i) * 240 / 2 + 90}px;
+            `
+	    	fragment.appendChild(div)
+	    }
+	    document.querySelector(".loading-container").appendChild(fragment);
+	</script>
+</body>
+</html>
