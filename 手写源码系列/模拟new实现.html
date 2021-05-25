@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    /*
+    	1、创建（或者说构造）一个新对象
+
+		2、这个新对象会被执行[[Prototype]]连接
+
+		3、执行构造函数方法，属性和方法被添加到this引用的对象中（这个新对象会绑定到函数调用的this）
+
+		4、如果函数没有返回其他对象，那么new表达式中的函数调用会自动返回这个新对象
+
+    */
+    
+    function Test(name) {
+      this.name = name;
+      return "hello";
+    }
+
+    let ins = new Test("liben");
+    console.log("ins>>>", ins);
+
+    let test1 = Test("111");
+    console.log(test1);
+
+    console.log("-----------------");
+
+    function Test1(name) {
+      this.name = name;
+      // return this;
+      return {age: 12};
+    }
+
+    let ins1 = new Test1("cxk");
+    console.log("ins1>>", ins1, ins1.age, ins1.name);
+
+    console.log("-----------------");
+
+
+    // 手写一个new操做符
+    function _new(Ob, ...arg) {
+      // 1、定义一个空对象
+      let obj = {};
+
+      // 2、链接原型 
+      // Object.setPrototypeOf(obj, Ob.prototype); // 访问原型链 或者像下面这么写也可以
+      obj.__proto__ = Ob.prototype;
+
+      //注意可以合并1、2步 创建一个基于Ob原型的新对象（原型式继承）
+      // let obj = Object.create(Ob);
+
+      // 3、将this指向新对象
+      let result = Ob.apply(obj, arg);
+
+      // 4、返回这个对象
+      return (typeof result) === "object" ? result : obj;
+    }
+
+    function Person(first, last) {
+      this.firstname = first;
+      this.lastname = last;
+      this.say = function() {
+        console.log("你是cxk");
+      }
+    }
+    Person.prototype.age = 18;
+    let _new1 = _new(Person, "ben", "ben");
+    console.log(_new1);
+    _new1.say();
+    
+  </script>
+</body>
+</html>
