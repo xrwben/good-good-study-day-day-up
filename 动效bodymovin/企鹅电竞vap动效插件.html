@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>vap</title>
+	<link rel="stylesheet" href="">
+	<style>
+		.app {
+		  width: 900px;
+		  height: 600px;
+		  border: 1px solid #cccccc;
+		  background: #000;
+		  margin: 20px auto;
+		}
+		video {
+			/*display: block !important;*/
+		}
+		.button {
+			text-align: center;
+		}
+	</style>
+</head>
+<body>
+	<video id="video" controls width="250" crossorigin="anonymous" preload="auto" autoplay src="./demo.mp4"></video>
+	<button class="play">播放</button>
+	<script>
+		const playBtn = document.querySelector(".play");
+		const video = document.querySelector("#video");
+		playBtn.addEventListener("click", () => {
+			video.play()
+		})
+
+	</script>
+
+	<div class="app"></div>
+	<div class="button">
+		<button class="start">开始</button>
+		<button class="stop">停止</button>
+		<button class="puase">暂停</button>
+		<button class="continue">继续</button>
+		<button class="destroy">销毁</button>
+	</div>
+
+	<script src="./vap.js"></script>
+	<script>
+
+		window.onload = function() {
+			let configJson = '';
+			fetch("./demo.json").then(response => {
+				return response.json()
+			}).then(res => {
+				console.log(res)
+				configJson = res
+			})
+
+			const app = document.querySelector(".app");
+			let vapIns = null;
+
+			function load() {
+				let vap = new Vap({
+					container: app,
+					src: "./demo.mp4",
+					config: configJson,
+					width: configJson.info.w / 2,
+	        		height: configJson.info.h / 2,
+					loop: true,
+					muted: true,
+					imgUser: '//shp.qlogo.cn/pghead/Q3auHgzwzM6TmnCKHzBcyxVPEJ5t4Ria7H18tYJyM40c/0',
+			        imgAnchor: '//shp.qlogo.cn/pghead/PiajxSqBRaEKRa1v87G8wh37GibiaosmfU334GBWgk7aC8/140',
+			        textUser: 'user1',
+			        textAnchor: 'user2',
+			        type: 2
+				}).on('playing', () => {
+		        	console.log('playing')
+		        }).on('ended', () => {
+		        	console.log('play ended')
+		        })
+
+	        	console.log(vap)
+		        return vap;
+			}
+			
+			setTimeout(() => {
+				// vapIns = load()
+			}, 2000)
+
+			// 播放
+			document.querySelector(".start").addEventListener("click", (ev) => {
+				// vapIns.play()
+				if (vapIns) {
+					vapIns.destroy()
+				}
+				vapIns = load()
+			})
+
+			// 停止
+			// document.querySelector(".stop").addEventListener("click", (ev) => {
+			// 	vapIns.stop()
+			// })
+
+			// 暂停
+			document.querySelector(".puase").addEventListener("click", (ev) => {
+				vapIns.pause()
+			})
+
+			// 继续播放
+			document.querySelector(".continue").addEventListener("click", (ev) => {
+				vapIns.play()
+			})
+
+			// 销毁
+			document.querySelector(".destroy").addEventListener("click", (ev) => {
+				vapIns.destroy()
+			})
+		}
+
+	</script>
+</body>
+</html>
