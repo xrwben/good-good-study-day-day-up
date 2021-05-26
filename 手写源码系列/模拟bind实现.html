@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>手写bind函数</title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+	<script>
+		/*
+			bind(obj, [args]) obj为需要绑定this的对象 第二个为可选参数
+
+			如果函数需要传 name 和 age 两个参数，竟然还可以在 bind 的时候，只传一个 name，在执行返回的函数的时候，再传另一个参数 age
+		*/
+		var a = "a";
+		let bindObj = {
+			a: "bat"
+		}
+		function getA(x, y) {
+			console.log(">>>>", `${this.a} - ${x} - ${y}`)
+			return x + y
+		}
+		getA("你", "好")
+		getA.bind(bindObj, "你", "好")()  // >>>> bat - 你 - 好
+		getA.bind(bindObj)("你", "好")  // >>>> bat - 你 - 好  同上
+		getA.bind(bindObj, "可以", "挺狠")("你", "好") // >>>> bat - 可以 - 挺狠
+		getA.bind(bindObj, "nb")("你", "好") // >>>> bat - nb - 你 会忽略多余的参数
+		console.log(getA(1, 2))
+
+		console.log("----------bind返回作为构造函数------------")
+
+		let GetAFun = getA.bind(bindObj, 7, 8)
+		let getAFunIns = new GetAFun()  // >>>> undefined - 7 - 8 按理应该this.a应该返回bat 但这里返回undefined说明绑定失败
+		console.log(getAFunIns)
+
+		/*
+			实现一个bind函数
+
+			注意点：
+
+			1、函数定义在Function原型 2、不立即执行返回调用的函数 3、参数处理
+		*/
+		console.log(...[1, 2].concat([3, 4, 5]))
+		Function.prototype._bind = function(context, ...args) {
+
+			// 如果context不传,this就默认绑定到window
+			const ctx = context || window;
+
+			ctx.fn = this;
+			// console.log(this)
+
+			return function(...subArgs) {
+
+				// return ctx.fn(...args.concat(subArgs))  // 可以先在bind()传入一部分，再执行返回时传入另外参数
+
+				const res = ctx.fn(...args.concat(subArgs))
+
+				delete ctx.fn;
+
+				return res;
+
+			}
+		}
+		var b = "bbbb";
+		var _bindObj = {
+			b: "nb"
+		}
+		function getB(x, y) {
+			console.log("_bind>>>>", this.b, x, y)
+			return x + y;
+		}
+		getB(1, 2)
+		getB._bind(_bindObj, 3, 4)() // _bind>>>> nb 3 4
+		getB._bind(_bindObj)(5, 6) // _bind>>>> nb 5 6
+		console.log(getB._bind(_bindObj, 3, 4)())  // 7
+		console.log(_bindObj)  // {b: "nb", fn: ƒ}
+
+		let GetBFun = getB._bind(_bindObj, "liben")
+		let getBFunIns = new GetBFun('菜鸡啊')  // _bind>>>> nb liben 菜鸡啊 这里this.b应该指向undefined才对
+
+		/*
+			优化版本
+		*/
+		Function.prototype.newbind = function(context, ...args) {
+
+			// 如果不是函数调用bind
+			if (typeof this !== "function") {
+		    	throw new Error("调用bind的不是函数~")
+		    }
+
+			// 如果context不传,this就默认绑定到window
+			const ctx = context || window;
+
+			// 调用函数
+			const self = this;
+
+			const fNOP = function() {};
+			const fBound = function(...subArgs) {
+				return self.call(this instanceof fNOP ? this : ctx, ...args.concat(subArgs))
+			}
+
+			fNOP.prototype = this.prototype;
+			fBound.prototype = new fNOP();
+			return fBound;
+		}
+		var c = "cccc";
+		var newbindObj = {
+			c: "今晚我来C"
+		}
+		function getC(x, y) {
+			console.log("newbind>>>>", this.c, x, y)
+			return x + y;
+		}
+		let GetCFun = getC.newbind(newbindObj, "liben")
+		let getCFunIns = new GetCFun('菜鸡啊')  // newbind>>>> undefined liben 菜鸡啊
+	</script>
+</body>
+</html>
