@@ -30,7 +30,10 @@ exports.js = js;
 const css = () => {
 	return src("./src/less/*.less")
 		.pipe(gLess())
-		.pipe(gAutoprefixer())
+		.pipe(gAutoprefixer({
+			browsers: ['last 2 versions','Android >= 5.0'],
+			remove: true
+		}))
 		// .pipe(gConcat("style.min.css"))
 		.pipe(gMinifyCss())
 		.pipe(dest("dist/css/"));

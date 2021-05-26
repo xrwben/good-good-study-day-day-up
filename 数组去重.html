@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>数组去重</title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+	<script>
+		/*
+			1、Set 类似于数组，但是成员的值都是唯一的
+		*/
+		let arr1 = [1, 1, 2, "true", true, true, undefined, undefined, null, null, NaN, NaN, {}, {}, {a:1}, {a:1}]
+		let result1 = Array.from(new Set(arr1))
+		console.log(result1)  // (11) [1, 2, "true", true, undefined, null, NaN, {}, {}, {a:1}, {a:1}]
+
+		/*
+			2、indexOf()
+		*/
+		let arr2 = [1, 1, 2, "true", true, true, undefined, undefined, null, null, NaN, NaN, {}, {}, {a:1}, {a:1}]
+		let result2 = [];
+		for (let i = 0; i < arr2.length; i++) {
+			if (result2.indexOf(arr2[i]) === -1) { // 判断result2中是否存在，不存在则添加到数组中
+				result2.push(arr2[i])
+			}
+		}
+		console.log(result2) // (12) [1, 2, "true", true, undefined, null, NaN, NaN, {}, {}, {a:1}, {a:1}]
+
+		/*
+			3、双重循环
+		*/
+		let arr3 = [1, 1, 2, "true", true, true, undefined, undefined, null, null, NaN, NaN, {}, {}, {a:1}, {a:1}]
+		for (let i = 0; i < arr3.length; i++) {
+			for (let j = i + 1; j < arr3.length; j++) {
+				if (arr3[i] === arr3[j]) {
+					arr3.splice(j, 1)
+				}
+			}
+		}
+		console.log(arr3) // (12) [1, 2, "true", true, undefined, null, NaN, NaN, {}, {}, {a:1}, {a:1}]
+
+		/*
+			4、sort()+前后对比 缺点：会改变数组顺序
+		*/
+		let arr4 = [1, 1, 2, "true", true, true, undefined, undefined, null, null, NaN, NaN, {}, {}, {a:1}, {a:1}]
+		arr4 = arr4.sort();
+		let result4 = [arr4[0]]
+		for (let i = 1; i < arr4.length; i++) {
+			if (arr4[i] !== arr4[i-1]) { // 后一个与前面对比
+				result4.push(arr4[i])
+			}
+		}
+		console.log(result4) // (12) [1, 2, NaN, NaN, {}, {}, {a:1}, {a:1}, null, "true", true, undefined]
+
+		/*
+			5、利用对象属性不能相同去重 缺点： 属姓名会隐式转换为字符串，如true和‘true’会导致字符串去掉
+		*/
+		let arr5 = [1, 1, 2, "true", true, true, undefined, undefined, null, null, NaN, NaN, {}, {}, {a:1}, {a:1}]
+		let result5 = [], obj5 = {};
+		for (let i = 0; i < arr5.length; i++) {
+			if (!obj5[arr5[i]]) {
+				result5.push(arr5[i])
+				obj5[arr5[i]] = 1;
+			}
+		}
+		console.log(result5) // (7) [1, 2, "true", undefined, null, NaN, {}]
+
+		/*
+			6、includes()方法
+		*/
+		let arr6 = [1, 1, 2, "true", true, true, undefined, undefined, null, null, NaN, NaN, {}, {}, {a:1}, {a:1}]
+		let result6 = [];
+		for (let i = 0; i < arr6.length; i++) {
+			if (!result6.includes(arr6[i])) {
+				result6.push(arr6[i])
+			}
+		}
+		console.log(result6) // (11) [1, 2, "true", true, undefined, null, NaN, {}, {}, {a:1}, {a:1}]
+
+		/*
+			7、filter() + indexOf索引位置判断 NaN会去掉
+		*/
+		let arr7 = [1, 1, 2, "true", true, true, undefined, undefined, null, null, NaN, NaN, {}, {}, {a:1}, {a:1}]
+		let result7 = arr7.filter((item, index, arr7) => {
+			return arr7.indexOf(item) === index // 判断每个值得索引位置
+		})
+		console.log(result7) // (10) [1, 2, "true", true, undefined, null, {}, {}, {a:1}, {a:1}]
+
+		/*
+			8、Map 键值对的集合，类似于利用对象属性, 优点是键可以是任何类型
+		*/
+		let arr8 = [1, 1, 2, "true", true, true, undefined, undefined, null, null, NaN, NaN, {}, {}, {a:1}, {a:1}]
+		let result8 = [], map = new Map();
+		for (let i = 0; i < arr8.length; i++) {
+			if (!map.has(arr8[i])) {
+				result8.push(arr8[i])
+				map.set(arr8[i], 1)
+			}
+		}
+		console.log(map)
+		console.log(result8) // (11) [1, 2, "true", true, undefined, null, NaN, {}, {}, {a:1}, {a:1}]
+	</script>	
+</body>
+</html>

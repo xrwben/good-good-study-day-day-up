@@ -61,7 +61,7 @@
 
 
 		function test(a, b){
-		  	//debugger
+		  	// debugger
 		  	console.log(b);
 		  	return {
 			    test: function(c) {
@@ -71,8 +71,11 @@
 		}
 
 		var a = test(100);  // undefine
-		a.test(101);		// 100
+		console.log('>>>>第一步', a)
+		var a2 = a.test(101);		// 100
+		console.log('>>>>第二步', a2)
 		a.test(102);		// 100
+		console.log('>>>>第三步', a)
 		// var b = test(200).test(201).test(202);
 		// var c = test(300).test(301);c.test(302);
 	</script>

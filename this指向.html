@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>this指向</title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+	<script>
+		/*
+			this执行时才能确定
+
+			1、默认绑定（严格/非严格模式）
+			2、隐式绑定
+			3、显式绑定（call/apply）
+			4、new绑定
+			5、箭头函数绑定
+		*/
+		// 默认绑定
+		var a = 'liben';
+		function moren1() {
+			console.log(this.a)  // 打印liben this指向全局window
+		}
+		moren1()
+
+		function moren2() {
+			"use strict"
+			console.log(this.a)  // 报错 this指向了undefined
+		}
+		// moren2()
+
+		function moren3() {
+			console.log(this.a) // 打印liben 严格模式下调用函数则不影响默认绑定
+		}
+		(function(){
+			"use strict"
+			moren3()
+		})()
+
+		console.log("--------------")
+
+		// 隐式绑定
+		var ysObj = {
+			b: "liben",
+			yinshi1: function() {
+				console.log(this.b)
+			}
+		}
+		ysObj.yinshi1()  // 打印liben
+
+		var yinshi2 = ysObj.yinshi1  // 函数别名
+		yinshi2()    // undefined 丢失this绑定
+
+		function doYinshi(fn) {
+			fn()
+		}
+		doYinshi(ysObj.yinshi1) // undefined 参数传递就是一种隐式赋值 丢失this绑定
+
+		setTimeout(ysObj.yinshi1, 1000)  // undefined
+
+		doYinshi.call(ysObj, ysObj.yinshi1) // undefined
+
+		console.log("--------------")
+
+		// 显示绑定
+		function xianshi() {
+			console.log(this.c)
+		}
+		var xsObj = {
+			c: "xianshi"
+		}
+		var xsObj2 = {
+			c: "xianshi2"
+		}
+		xianshi.call(xsObj)  // xianshi
+		xianshi.apply(xsObj) // xianshi
+		xianshi.bind(xsObj)() // xianshi
+		xianshi.bind(xsObj2).bind(xsObj)() // xianshi2 bind多次this只绑定第一次
+		xianshi.bind(xsObj2).call(xsObj) // xianshi2 bind后this指向就不会变了
+
+		// 如果我们将null或者是undefined作为this的绑定对象传入call、apply或者是bind,这些值在调用时会被忽略，实际应用的是默认绑定规则
+		var c = "moren"
+		xianshi.call(null)  // moren
+
+		console.log("--------------")
+
+		// new绑定
+		function New_(d) {
+			this.d = d
+		}
+		var dd = new New_("newnewnew")
+		console.log(dd.d)  // newnewnew
+
+		console.log("--------------")
+
+		// 箭头函数 箭头函数没有自己的this，箭头函数中的this继承于外层代码块中的this
+		var jtObj = {
+			f: "jiantou",
+			jiantou: () => {
+				console.log(this.f)
+			},
+			putong: function() {
+				console.log(this.f)
+			}
+		}
+		var f = "123"
+		jtObj.jiantou()  // 123
+		jtObj.putong()   // jiantou
+
+
+		/*	
+			绑定优先级？
+
+			箭头函数 > new绑定 > 显式绑定 > 隐式绑定 > 默认绑定
+
+			函数是否在new中调用(new绑定)，如果是，那么this绑定的是新创建的对象
+
+			函数是否通过call,apply调用，或者使用了bind(即硬绑定)，如果是，那么this绑定的就是指定的对象
+
+			函数是否在某个上下文对象中调用(隐式绑定)，如果是的话，this绑定的是那个上下文对象。一般是obj.foo()
+
+			如果以上都不是，那么使用默认绑定。如果在严格模式下，则绑定到undefined，否则绑定到全局对象
+
+			如果把null或者undefined作为this的绑定对象传入call、apply或者bind，这些值在调用时会被忽略，实际应用的是默认绑定规则
+
+			如果是箭头函数，箭头函数的this继承的是外层代码块的this
+		*/
+
+		function _newBind(h) {
+			this.h = h
+		 	console.log(this, this.__proto__ === _newBind.prototype)
+		}
+		var newbindObj = {
+			h: 'h_obj'
+		}
+		var NewBind = _newBind.bind(newbindObj)
+		new NewBind("liben")
+
+		console.log("-----------考题---------")
+
+		// 考题
+		var number = 5;
+		var obj = {
+		    number: 3,
+		    fn1: (function () {
+		    	// debugger
+		        var number;
+		        this.number *= 2;
+		        number = number * 2;
+		        number = 3;
+		        return function () {
+		            var num = this.number;
+		            this.number *= 2;
+		            console.log(num);
+		            number *= 3;
+		            console.log(number);
+		        }
+		    })()
+		}
+		var fn1 = obj.fn1;
+		fn1.call(null);
+		obj.fn1();
+		console.log(window.number);
+
+		function func(num) {
+			this.count++
+		}
+
+		func.count = 0
+		func(1)
+		console.log(func)
+		console.log(func.count)
+	</script>
+</body>
+</html>
