@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>实现call、apply函数</title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+	<script>
+		/*
+			call(obj, args) 第一个参数为this要指向的对象，第二个参数为函数传参序列化
+
+			apply(obj, [args]) 第二个参数为传参数组
+
+			注意： let / const 声明的变量不会挂载到window上
+		*/
+		let name = "vn";
+		let obj = {
+			name: 'liben'
+		}
+		function getName(x, m) {
+			console.log(">>>>", `${this.name}：姓${x}名${m}`)
+		}
+
+		getName('黎', '奔')  // vn：姓黎名奔
+
+		getName.call(obj, "li", "ben") // liben：姓li名ben
+
+		getName.apply(obj, ["黎", "奔"]) // liben：姓黎名奔
+
+		getName.call(null)
+		console.log(Function.prototype)
+
+		/*
+			实现一个call
+
+			注意点：
+
+			1、绑定在Function原型上 2、立即执行 3、如何接受参数
+
+			this绑定的优先级  =>  [箭头函数 > new > 显式 > 隐式 > 默认绑定]
+
+			call属于显示 用箭头函数和new优先级就不能变了，所以只能用隐式要改变this指向了
+
+			实现原理：
+
+			就是为对象 obj 添加需要调用的方法，接着调用该方法（此时 this 指向 obj），调用过后再删除该方法
+		*/
+		Function.prototype._call = function(context, ...args) {
+
+			// 如果context不传,this就默认绑定到window
+			const ctx = context || window;
+
+			// 这里this指调用函数
+			ctx.fn = this;
+			// console.log(this)
+
+			// 立即执行方法
+			const res = ctx.fn(...args);
+
+			delete ctx.fn;  // 为何要delete？ 不删则绑定的ctx对象会添加一个fn方法进来可能产生副作用
+
+			return res;  // 这里为何要return出去结果呢？ _call相当于包装器，ctx.fn函数得到的结果也要return出去
+
+		}
+		// 验证例子
+		let age = 28;
+		let objCall = {
+			age: 23
+		}
+		function getAge(x, m) {
+			console.log(">>>>call", `姓${x}名${m}：年龄${this.age}`)
+			return x + m;
+		}
+		getAge._call(objCall, "aa", "bb")
+		getAge._call(objCall)
+		getAge._call(null)
+		console.log(getAge("77", "88"))
+
+		console.log(getAge._call(objCall, 1, 2))
+
+		console.log(">>>delete?", objCall) // 不过不delete 则objCall对象会添加一个fn方法
+
+
+		/*
+			实现一个apply
+
+			实现原理跟call一样，区别是参数必须是一个数组
+		*/
+		Function.prototype._apply = function(context, args) {
+
+			// 如果context不传,this就默认绑定到window
+			const ctx = context || window;
+
+			// 这里this指调用函数
+			ctx.fn = this;
+
+			// 这里参数为数组
+			const res = ctx.fn(...args);
+
+			delete ctx.fn;
+
+			return res;
+
+		}
+		// 验证例子
+		let addr = "深圳";
+		console.log(this.addr)  // undefined let/const声明的变量不会挂载到window
+		let objApply = {
+			addr: "岳阳"
+		}
+		function getAddress(a, b) {
+			console.log(">>>>apply", `现居：${this.addr} - 国籍：${a} - 省：${b}`)
+			// return a + b;
+		}
+		getAddress("china", "广东")
+		getAddress._apply(objApply, ["china", "广东"]) // >>>>apply 现居：岳阳 - 国籍：china - 省：广东
+		getAddress._apply(null, ["china", "广东"])
+	</script>
+</body>
+</html>
