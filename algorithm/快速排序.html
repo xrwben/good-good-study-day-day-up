@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>快速排序</title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+	<script>
+		/*
+			采用二分法，取出中间数，数组每次和中间数比较，小的放到左边，大的放到右边
+
+			思路：
+
+			1、取中间一个基准点 2、声明两个数组分别存储左边和右边 3、递归，合并
+		*/
+
+		var arr = [3, 1, 4, 6, 5, 7, 2, 8];
+
+		function quickSort(arr) {
+			// debugger
+
+			if (arr.length <= 1) {
+				return arr
+			}
+
+			var centerIndex = Math.floor(arr.length / 2)
+			var leftArr = []
+			var rightArr = []
+			var centerValue = arr.splice(centerIndex, 1)[0]  // 剔除比较基准值，否则递归死循环
+			// var centerValue = arr[centerIndex]
+
+			for(let i = 0; i < arr.length; i++) {
+				if (arr[i] < centerValue) {
+					leftArr.push(arr[i])
+				} else {
+					rightArr.push(arr[i])
+				}
+			}
+			console.log(arr, centerValue, leftArr, rightArr)
+			
+			return quickSort(leftArr).concat(centerValue, quickSort(rightArr))
+		}
+		var res = quickSort(arr)
+		console.log(res)
+	</script>
+</body>
+</html>
