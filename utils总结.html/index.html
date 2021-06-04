@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>utils测试</title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+	<script type="module">
+		import utils, { getQueryString, getQueryUrl } from "./utils.js"
+
+		console.log(utils)
+		
+		console.log(typeof utils.getQueryString('mids'))
+
+		console.log(utils.getQueryUrl("mid"))
+
+
+	</script>
+</body>
+</html>
