@@ -14,18 +14,38 @@
 
 			当子元素不一样时，nth-of-type选择的是一个类别的第几个，nth-child选择不分类别，通常情况下建议用nth-of-type吧
 		*/
-		p:nth-of-type(1) {
+		.box p:nth-of-type(1) {
 			color: red;  // 第一个p标签红色
 		}
-		p:nth-child(1) {
+		.box p:nth-child(1) {
 			color: green;  // 选择不会覆盖，因为第一个元素不是p标签，如果是2则会覆盖成绿色
 		}
-		span:nth-child(1) {
+		.box span:nth-child(1) {
 			color: blue;    // 第一个span标签变成蓝色
+		}
+
+		/*
+			范围选择
+		*/
+		.list p:nth-child(2n - 1) {
+			color: red;    // 选择奇数
+		}
+		.list p:nth-child(2n) {
+			color: green;    // 偶数
+		}
+		.list p:nth-child(n + 5) {
+			color: blue;    // 第5项开始
+		}
+		.list p:nth-child(-n + 2) {
+			color: #eee;  // 前2项
+		}
+		.list p:nth-child(n + 7):nth-child(-n + 9) {
+			color: yellow;  // 第7项到第9项
 		}
 	</style>
 </head>
 <body>
+	<h2>nth-child 与 nth-of-type 的区别</h2>
 	<div class="box">
 		<span>我是span元素</span>
 		<p>第1项p元素</p>
@@ -33,6 +53,20 @@
 		<p>第3项p元素</p>
 		<p>第4项p元素</p>
 		<p>第5项p元素</p>
+	</div>
+
+	<h2>nth-child()范围选择</h2>
+	<div class="list">
+		<p>第一项p元素</p>
+		<p>第二项p元素</p>
+		<p>第三项p元素</p>
+		<p>第四项p元素</p>
+		<p>第五项p元素</p>
+		<p>第六项p元素</p>
+		<p>第七项p元素</p>
+		<p>第八项p元素</p>
+		<p>第九项p元素</p>
+		<p>第十项p元素</p>
 	</div>
 </body>
 </html>
