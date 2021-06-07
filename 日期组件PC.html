@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>日期选择</title>
+	<style>
+		* { margin: 0; padding: 0; box-sizing: border-box; line-height: 1; }
+		.date-picker {
+			width: 310px;
+			box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+			margin: 20px;
+		}
+		.date-head {
+			width: 100%;
+			height: 100px;
+			background: #2196f3;
+			padding: 15px 24px;
+		}
+		.date-head .year {
+			color: #fff;
+			font-size: 16px;
+			font-weight: 500;
+			opacity: 0.7;
+		}
+		.date-head .month {
+			color: #fff;
+			font-size: 36px;
+			font-weight: 500;
+			margin-top: 10px;
+		}
+		.date-con {
+			width: 100%;
+			height: 290px;
+			background: #fff;
+			padding: 0 8px 8px;
+		}
+		.date-con .toolbar {
+			height: 48px;
+			display: flex;
+			justify-content: space-between;
+			align-self: center;
+		}
+		.date-con .toolbar i {
+			color: #666;
+			font-size: 14px;
+			font-style: normal;
+			font-weight: bold;
+			line-height: 48px;
+			text-align: center;
+			padding: 0 5px;
+			cursor: pointer;
+		}
+		.date-con .toolbar i:hover {
+			color: #2196f3;
+		}
+		.date-con .toolbar p {
+			flex: 1;
+			color: #666;
+			font-size: 14px;
+			font-weight: bold;
+			line-height: 48px;
+			text-align: center;
+			cursor: pointer;
+		}
+		.date-con .toolbar p:hover {
+			color: #2196f3;
+		}
+		.date-con .week {
+			height: 25px;
+			font-size: 14px;
+			color: #999;
+			border-bottom: 1px solid #ebeef5;
+			display: flex;
+			justify-content: space-around;
+			margin: 5px auto;
+		}
+		.date-con .week span {
+			flex: 1;
+			text-align: center;
+		}
+		.date-con .date {
+			margin-top: 10px;
+		}
+		.date-con .date .row {
+			height: 34px;
+			display: flex;
+			justify-content: space-around;
+			align-content: center;
+			margin-bottom: 2px;
+		}
+		.date-con .date .row span {
+			width: 34px;
+			line-height: 34px;
+			text-align: center;
+			border-radius: 34px;
+			font-size: 14px;
+			color: #333;
+			cursor: pointer;
+			transition: all 0.45s cubic-bezier(.23,1,.32,1);
+		}
+		.date-con .date .row span:hover {
+			color: #fff;
+			background: #2196f3;
+			opacity: 0.6;
+		}
+		.date-con .date .row span.current {
+			color: #fff;
+			background: #2196f3;
+		}
+	</style>
+</head>
+<body>
+	<div class="date-picker">
+		<div class="date-head">
+			<div class="year">2021</div>
+			<div class="month">06-05 星期六</div>
+		</div>
+		<div class="date-con">
+			<div class="toolbar">
+				<i>《</i>
+				<i>〈</i>
+				<p class="curSelect">2021 年 6 月</p>
+				<i>〉</i>
+				<i>》</i>
+			</div>
+			<div class="week">
+				<span>日</span>
+				<span>一</span>
+				<span>二</span>
+				<span>三</span>
+				<span>四</span>
+				<span>五</span>
+				<span>六</span>
+			</div>
+			<div class="date">
+				<p class="row">
+					<span class="current">32</span>
+					<span>32</span>
+					<span>32</span>
+					<span>32</span>
+					<span>32</span>
+					<span>32</span>
+					<span>32</span>
+				</p>
+			</div>
+		</div>
+	</div>
+
+	<script src="https://unpkg.com/vue@next"></script>
+	<script type="text/javascript">
+		const year = new Date().getFullYear();
+		const month = new Date().getMonth();
+		const day = new Date().getDate();
+		const week = new Date(year, month, 1).getDay();
+		
+		console.log(year, month, day, week)
+	</script>
+</body>
+</html>
