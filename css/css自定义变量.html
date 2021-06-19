@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>css自定义变量</title>
+	<style>
+		/*
+			注意，规则集所指定的选择器定义了自定义属性的可见作用域。通常的最佳实践是定义在根伪类 :root 下，这样就可以在HTML文档的任何地方访问到它了，变量只能作为属性值
+
+			变量声明： --theme
+			使用变量： var(--theme, params) params参数为默认值
+		*/
+		* { margin: 0; padding: 0; box-sizing: border-box; }
+		html, body {
+			height: 100%;
+			padding: 30px;
+		}
+		:root {
+			--theme-color: green;
+			--bg-color: #fff;
+		}
+		.is_dark {
+			--theme-color: #aaa;
+			--bg-color: #222;
+		}
+
+		body {
+			background: var(--bg-color);
+		}
+		h2, p {
+			color: var(--theme-color);
+		}
+		input {
+			margin-left: auto;
+			display: block;
+		}
+		.switch-wrap {
+			width: 60px;
+			height: 24px;
+			border: 1px solid skyblue;
+			border-radius: 24px;
+			background: #ccc;
+			/*padding: 2px;*/
+			margin-bottom: 20px;
+			position: relative;
+			overflow: hidden;
+		}
+		.switch-wrap input {
+			width: 100%;
+			height: 100%;
+			display: block;
+			position: absolute;
+			left: 0;
+			top: 0;
+			opacity: 0;
+			cursor: pointer;
+		}
+		.switch-inner {
+			width: 100%;
+			height: 100%;
+			padding: 2px;
+			display: flex;
+			align-items: center;
+			transition: all 0.1s ease-in-out;
+		}
+		.switch-inner::after {
+			content: "";
+			width: 20px;
+			height: 20px;
+			border-radius: 20px;
+			background: #fff;
+		}
+		.switch-wrap input:checked + .switch-inner {
+			background: #39f;
+		}
+		.switch-wrap input:checked + .switch-inner::after {
+			margin-left: auto;
+		}
+	</style>
+</head>
+<body>
+	<div class="switch-wrap">
+		<input type="checkbox">
+		<div class="switch-inner"></div>
+	</div>
+
+	<H2>css变量</H2>
+	<p>自定义属性（有时候也被称作CSS变量或者级联变量）是由CSS作者定义的，它包含的值可以在整个文档中重复使用。由自定义属性标记设定值（比如： --main-color: black;），由var() 函数来获取值（比如： color: var(--main-color);）
+复杂的网站都会有大量的CSS代码，通常也会有许多重复的值。举个例子，同样一个颜色值可能在成千上百个地方被使用到，如果这个值发生了变化，需要全局搜索并且一个一个替换（很麻烦哎～）。自定义属性在某个地方存储一个值，然后在其他许多地方引用它。另一个好处是语义化的标识。比如，--main-text-color 会比 #00ff00 更易理解，尤其是这个颜色值在其他上下文中也被使用到。
+自定义属性受级联的约束，并从其父级继承其值。</p>
+
+	<script>
+		// console.log(document.body.style.getPropertyValue("--theme-color").trim())
+		// document.body.style.setProperty('--theme-color', '#7F583F')
+
+		// const flag = "black";
+		const btn = document.querySelector("input");
+
+		btn.addEventListener("click", (e) => {
+			console.log(e.target.checked)
+
+			/*if (e.target.checked) {
+				document.body.classList.add("is_dark")
+			} else {
+				document.body.classList.remove("is_dark")
+			}*/
+
+			document.body.classList.toggle("is_dark")
+		})
+	</script>
+</body>
+</html>

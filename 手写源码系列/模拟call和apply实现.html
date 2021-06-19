@@ -30,6 +30,8 @@
 		getName.apply(obj, ["黎", "奔"]) // liben：姓黎名奔
 
 		getName.call(null)
+		getName.apply()
+
 		console.log(Function.prototype)
 
 		/*
@@ -73,12 +75,12 @@
 			console.log(">>>>call", `姓${x}名${m}：年龄${this.age}`)
 			return x + m;
 		}
-		getAge._call(objCall, "aa", "bb")
-		getAge._call(objCall)
-		getAge._call(null)
-		console.log(getAge("77", "88"))
+		getAge._call(objCall, "aa", "bb")  // >>>>call 姓aa名bb：年龄23
+		getAge._call(objCall) // >>>>call 姓undefined名undefined：年龄23
+		getAge._call(null) // >>>>call 姓undefined名undefined：年龄undefined
+		console.log(getAge("77", "88")) // >>>>call 姓77名88：年龄undefined  7788
 
-		console.log(getAge._call(objCall, 1, 2))
+		console.log(getAge._call(objCall, 1, 2))  // >>>>call 姓1名2：年龄23  3
 
 		console.log(">>>delete?", objCall) // 不过不delete 则objCall对象会添加一个fn方法
 

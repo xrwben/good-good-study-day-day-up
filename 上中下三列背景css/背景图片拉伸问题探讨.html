@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>background-image</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+		.box {
+			width: 1034px;
+			height: 100%;
+			/*border: 35px solid skyblue;*/
+			border-image: url("./border-bg.png");
+			/*border-image: url("./border.png");*/
+			border-image-slice: 75 30 35 fill;
+			border-image-width: 75px 30px 35px;
+			margin: 20px auto;
+			padding: 35px 35px 30px;
+		}
+		.con {
+			height: 2900px;
+			background: rgba(0, 0, 0, 0.2);
+			border: 1px solid blue;
+			color: #fff;
+		}
+		/*
+			图片分割四条切片线：
+
+			border-image-slice: 10 10%;  // 垂直 水平
+
+			border-image-slice: 7 12 14 5;   // 上 右 下 左
+
+
+			边界图像 (border image) 的宽度：
+
+			border-image-width：5% 2em 10% auto;  // 上右下左 
+		*/
+	</style>
+</head>
+<body>
+	<div class="box">
+		<div class="con">The image is stretched to fill the area.</div>
+	</div>
+</body>
+</html>

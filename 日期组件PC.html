@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>日期选择</title>
+	<style>
+		* { margin: 0; padding: 0; box-sizing: border-box; line-height: 1; }
+		.date-picker {
+			width: 310px;
+			box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+			margin: 20px;
+		}
+		.date-head {
+			width: 100%;
+			height: 100px;
+			background: #2196f3;
+			padding: 15px 24px;
+			display: none;
+		}
+		.date-head .year {
+			color: #fff;
+			font-size: 16px;
+			font-weight: 500;
+			opacity: 0.7;
+		}
+		.date-head .month {
+			color: #fff;
+			font-size: 36px;
+			font-weight: 500;
+			margin-top: 10px;
+		}
+		.toolbar {
+			height: 48px;
+			display: flex;
+			justify-content: space-between;
+			align-self: center;
+		}
+		.toolbar i {
+			color: #666;
+			font-size: 14px;
+			font-style: normal;
+			font-weight: bold;
+			line-height: 48px;
+			text-align: center;
+			padding: 0 5px;
+			cursor: pointer;
+			user-select: none;
+		}
+		.toolbar i:hover {
+			color: #2196f3;
+		}
+		.toolbar p {
+			flex: 1;
+			color: #666;
+			font-size: 14px;
+			font-weight: bold;
+			display: flex;
+			justify-content: center;
+			align-self: center;
+		}
+		.toolbar p b {
+			margin: 0 5px;
+			cursor: pointer;
+		}
+		.toolbar p b:hover {
+			color: #2196f3;
+		}
+		.year-con, .month-con, .date-con {
+			width: 100%;
+			height: 260px;
+			background: #fff;
+			padding: 0 8px 8px;
+		}
+		.year-con {
+			display: none;
+		}
+		.year-con .year-list {
+			width: 100%;
+			height: 100%;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			flex-wrap: wrap;
+		}
+		.year-con .year-list span {
+			flex: 0 0 30%;
+			height: 36px;
+			align-content: center;
+			border-radius: 5px;
+			font-size: 14px;
+			color: #333;
+			text-align: center;
+			line-height: 36px;
+			cursor: pointer;
+			transition: all 0.45s cubic-bezier(.23,1,.32,1);
+		}
+		.year-con .year-list span:hover {
+			color: #fff;
+			background: #2196f3;
+			opacity: 0.6;
+		}
+		.year-con .year-list span.selectedYear {
+			color: #fff;
+			background: #2196f3;
+		}
+		.month-con {
+			display: none;
+		}
+		.month-con .month-list {
+			width: 100%;
+			height: 100%;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			flex-wrap: wrap;
+		}
+		.month-con .month-list span {
+			flex: 0 0 30%;
+			height: 36px;
+			align-content: center;
+			border-radius: 5px;
+			font-size: 14px;
+			color: #333;
+			text-align: center;
+			line-height: 36px;
+			cursor: pointer;
+			transition: all 0.45s cubic-bezier(.23,1,.32,1);
+		}
+		.month-con span.selectedMonth {
+			color: #fff;
+			background: #2196f3;
+		}
+		.month-con span:hover {
+			color: #fff;
+			background: #2196f3;
+			opacity: 0.6;
+		}
+		.date-con .week {
+			height: 25px;
+			font-size: 14px;
+			color: #999;
+			border-bottom: 1px solid #ebeef5;
+			display: flex;
+			justify-content: space-around;
+			margin: 5px auto;
+		}
+		.date-con .week span {
+			flex: 1;
+			text-align: center;
+		}
+		.date-con .date-list {
+			margin-top: 10px;
+		}
+		.date-con .date-list .row {
+			height: 34px;
+			display: flex;
+			justify-content: space-around;
+			align-content: center;
+			margin-bottom: 2px;
+		}
+		.date-con .date-list .row span {
+			width: 34px;
+			line-height: 34px;
+			text-align: center;
+			border-radius: 34px;
+			font-size: 14px;
+			color: #333;
+			cursor: pointer;
+			transition: all 0.45s cubic-bezier(.23,1,.32,1);
+		}
+		.date-con .date-list .row span.pre, .date-con .date-list .row span.next {
+			color: #999;
+		}
+		.date-con .date-list .row span:hover {
+			color: #fff;
+			background: #2196f3;
+			opacity: 0.6;
+		}
+		.date-con .date-list .row span.selected {
+			color: #fff;
+			background: #2196f3;
+		}
+	</style>
+</head>
+<body>
+	<div class="date-picker">
+		<div class="date-head">
+			<div class="year">2021</div>
+			<div class="month">06-05 星期六</div>
+		</div>
+		<div class="toolbar">
+			<i class="preYear">《</i>
+			<i class="preMonth">〈</i>
+			<p><b class="curYear">2021 年</b> <b class="curMonth">6 月</b></p>
+			<i class="nextMonth">〉</i>
+			<i class="nextYear">》</i>
+		</div>
+		<div class="year-con">
+			<div class="year-list">
+				<!-- <span>2021</span>	 -->
+			</div>
+		</div>
+		<div class="month-con">
+			<div class="month-list">
+				<!-- <span>一月</span>
+				<span>二月</span>
+				<span>三月</span>
+				<span>四月</span>
+				<span>五月</span>
+				<span>六月</span>
+				<span>七月</span>
+				<span>八月</span>
+				<span>九月</span>
+				<span>十月</span>
+				<span>十一月</span>
+				<span>十二月</span> -->
+			</div>
+		</div>
+		<div class="date-con">
+			<div class="week">
+				<span>日</span>
+				<span>一</span>
+				<span>二</span>
+				<span>三</span>
+				<span>四</span>
+				<span>五</span>
+				<span>六</span>
+			</div>
+			<div class="date-list">
+				<!-- <p class="row">
+					<span class="current">31</span>
+					<span>1</span>
+					<span>2</span>
+					<span>3</span>
+					<span>4</span>
+					<span>5</span>
+					<span>6</span>
+				</p> -->
+			</div>
+		</div>
+	</div>
+
+	<!-- <script src="https://unpkg.com/vue@next" defer></script> -->
+	<script type="text/javascript">
+		/*
+			结构 => 六横七列
+
+			思路 => 
+
+			1、计算传入的时间的当月第一天是星期几
+
+			2、推算出第一行第一个数据日期是从几号开始的，星期几前面就补
+
+			3、用一个42位的数组存放每日的数据信息（上月、本月、下月）
+		*/
+		const yearCon = document.querySelector(".year-con");
+		const monthCon = document.querySelector(".month-con");
+		const dateCon = document.querySelector(".date-con");
+
+		const yearListDom = document.querySelector(".year-list");
+		const monthListDom = document.querySelector(".month-list");
+		const dateListDom = document.querySelector(".date-list");
+
+		const curYear = document.querySelector(".curYear");
+		const curMonth = document.querySelector(".curMonth");
+		const preMonth = document.querySelector(".preMonth");
+		const nextMonth = document.querySelector(".nextMonth");
+		const preYear = document.querySelector(".preYear");
+		const nextYear = document.querySelector(".nextYear");
+
+		const yearList = [];
+		const monthList = ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一', '十二月']
+
+		let selectedTime = new Date();
+		let year = selectedTime.getFullYear();
+		let month = selectedTime.getMonth();
+		let date = selectedTime.getDate();
+
+		console.log(year, month, date)
+
+		//生成年份dom
+		for(let i = 0; i < 10; i++) {
+			yearList.push(year - year % 10 + i)
+		}
+		console.log(yearList)
+		let yFrag = document.createDocumentFragment();
+		yearList.forEach((y, i) => {
+			const span = document.createElement('span');
+			span.className = `${y===year?'selectedYear':''}`;
+			span.setAttribute("year", y)
+			span.innerHTML = y;
+			yFrag.appendChild(span);
+		})
+		yearListDom.appendChild(yFrag);
+
+		// 生成月份dom
+		let mFrag = document.createDocumentFragment();
+		monthList.forEach((m, i) => {
+			const span = document.createElement('span');
+			span.className = `${i===month?'selectedMonth':''}`;
+			span.setAttribute("month", i)
+			span.innerHTML = m;
+			mFrag.appendChild(span);
+		})
+		monthListDom.appendChild(mFrag);
+
+		// 生成日期dom
+		generateDate(selectedTime)
+		function generateDate (selectedTime) {
+			let year = selectedTime.getFullYear();
+			let month = selectedTime.getMonth();
+			let date = selectedTime.getDate();
+			console.log(year, month, date)
+
+			let firstDayOfMonth = new Date(year, month, 1); // 当月第一天时间
+			let week = new Date(year, month, 1).getDay();  // 当月第一天星期几
+
+			let year1 = firstDayOfMonth.getFullYear();
+			let month1 = firstDayOfMonth.getMonth();
+			let date1 = firstDayOfMonth.getDate();
+			console.log(year1, month1, date1)
+
+			let startDay = firstDayOfMonth - week * 24 * 60 * 60 * 1000; // 计算出开始时间戳
+			// console.log(week, startDay, firstDayOfMonth, new Date(startDay).getDate());
+
+			let dayList = [];
+			for (let i = 0; i < 42; i++) {
+				let timestamp = startDay + i * 24 * 60 * 60 * 1000; // 开始时间戳
+
+				let initDate = new Date(timestamp).getDate();  // 日期
+				let initMonth = new Date(timestamp).getMonth();  // 月份
+				let initYear = new Date(timestamp).getFullYear();  // 年份
+
+				dayList.push({
+					date: initDate,
+					month: initMonth + 1,
+					year: initYear,
+					type: monthType(timestamp),
+				})
+			}
+			console.log(dayList)
+
+			renderDom(dayList)
+		}
+
+		function renderDom (dayList) {
+			// 渲染头部年月日期
+			curYear.innerHTML = `${year} 年`
+			curMonth.innerHTML = `${month + 1} 月`
+
+			// 渲染前先清楚之前dom
+			dateListDom.innerHTML = "";
+
+			let frag = document.createDocumentFragment();
+			for (let i = 0; i < 6; i++) {
+				let p = document.createElement('p');
+				p.classList.add("row");
+				for (let j = 0; j < 7; j++) {
+					let span = document.createElement("span");
+
+					let isToday = dayList[i * 7 + j].year === year && dayList[i * 7 + j].month === month + 1 && dayList[i * 7 + j].date === date;
+
+					span.className = `${dayList[i * 7 + j].type} ${isToday?'selected':''}`;
+
+					span.setAttribute("date",`${dayList[i * 7 + j].year}-${dayList[i * 7 + j].month}-${dayList[i * 7 + j].date}`)
+
+					span.innerText = `${dayList[i * 7 + j].date}`;
+
+					p.appendChild(span);
+				}
+				frag.appendChild(p);
+			}
+			dateListDom.appendChild(frag);
+		}
+
+		// 计算月份是当月、上月还是下月
+		function monthType (timestamp) {
+			let paramMonth = new Date(timestamp).getMonth();
+			let selectMonth = new Date(selectedTime).getMonth();
+			if (paramMonth > selectMonth) {
+				return new Date(timestamp) < new Date(selectedTime) ? "pre" : "next";
+			} else if (paramMonth < selectMonth) {
+				return new Date(timestamp) > new Date(selectedTime) ? "next" : "pre";
+			} else {
+				return "cur";
+			}
+		}
+
+		dateListDom.addEventListener("click", e => {
+			// console.log(e, e.target)
+			if (e.target.tagName === "SPAN") {
+				// console.log(e.target.tagName)
+				// e.target.classList.add("selected")
+				let d = e.target.getAttribute("date")
+				selectedTime = new Date(d)
+				year = selectedTime.getFullYear();
+				month = selectedTime.getMonth();
+				date = selectedTime.getDate();
+				console.log(d, year, month, date)
+				generateDate(selectedTime)
+			}
+		})
+
+		// 减一个月
+		preMonth.addEventListener("click", e => {
+			console.log(year, month, date)
+			month = month - 1;
+			if (month < 0) {
+				month = 11;
+				year  = year - 1;
+			}
+			selectedTime = new Date(year, month, date)
+			generateDate(selectedTime)
+		})
+
+		// 加一个月
+		nextMonth.addEventListener("click", e => {
+			console.log(year, month, date)
+			month = month + 1;
+			if (month > 11) {
+				month = 0;
+				year  = year + 1;
+			}
+			selectedTime = new Date(year, month, date)
+			generateDate(selectedTime)
+		})
+
+		// 减一年
+		preYear.addEventListener("click", e => {
+			console.log(year, month, date)
+			year = year - 1;
+			selectedTime = new Date(year, month, date)
+			generateDate(selectedTime)
+		})
+
+		// 加一年
+		nextYear.addEventListener("click", e => {
+			console.log(year, month, date)
+			year = year + 1;
+			selectedTime = new Date(year, month, date)
+			generateDate(selectedTime)
+		})
+
+		// 显示月份
+		curMonth.addEventListener("click", e => {
+			dateCon.style.display = "none";
+			curMonth.style.display = "none";
+			preMonth.style.display = "none";
+			nextMonth.style.display = "none";
+			monthCon.style.display = "block";
+		})
+
+		// 选择月份
+		monthCon.addEventListener("click", e => {
+			console.log(e)
+			if (e.target.tagName === "SPAN") {
+				let m = e.target.getAttribute("month")
+				selectedTime = new Date(year, m, date)
+				year = selectedTime.getFullYear();
+				month = selectedTime.getMonth();
+				date = selectedTime.getDate();
+				console.log(m, year, month, date)
+
+				dateCon.style.display = "block";
+				curMonth.style.display = "block";
+				preMonth.style.display = "block";
+				nextMonth.style.display = "block";
+				monthCon.style.display = "none";
+
+				generateDate(selectedTime)
+			}
+		})
+
+		// 显示年份
+		curYear.addEventListener("click", e => {
+			dateCon.style.display = "none";
+			// curMonth.style.display = "none";
+			// preMonth.style.display = "none";
+			// nextMonth.style.display = "none";
+			yearCon.style.display = "block";
+		})
+
+	</script>
+</body>
+</html>

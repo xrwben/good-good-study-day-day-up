@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>let const</title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+	<script>
+		let a = 123;
+		console.log(this.a)  // undefined
+
+		var b = "abc";
+		console.log(this.b) // abc
+
+		const name = "vn";
+		console.log(">>>", this.name) // chrome打印出vn  Edg和Firfox打印空
+		function getName() {
+			console.log(this.name) // chrome打印出vn  Edg和Firfox打印空
+		}
+		getName()
+
+		let addr = "深圳";
+		function getAddress() {
+			console.log(this.addr) // undefined
+		}
+		getAddress()
+
+		console.log(this)
+
+		/*
+			Firefox、Safari、Chrome和Opera中都给函数定义了一个非标准的name属性，通过这个属性可以访问到给函数指定的名字，因此在这些浏览器中不能使用name作为变量名
+
+
+			应该避免使用 JavaScript 内置的对象、属性和方法的名称作为 Javascript 的变量或函数名
+
+			Array   Date    eval    function    hasOwnProperty
+			Infinity    isFinite    isNaN   isPrototypeOf   length
+			Math    NaN     name    Number  Object
+			prototype   String  toString    undefined   valueOf
+		*/
+	</script>
+</body>
+</html>

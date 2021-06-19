@@ -67,3 +67,5 @@
     }
 }
 ```
+
+22、当我们使用flex布局，子元素设置了flex:1 后再设置width会无效，因为flex:1 是简写 flex-grow、flex-shrink、flex-basis，如果要设置宽度需要通过flex-basis指定宽度
