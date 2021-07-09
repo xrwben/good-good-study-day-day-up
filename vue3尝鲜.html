@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>vue3</title>
+	<style>
+		.footer {
+			border: 1px solid red;
+		}
+		.footer footer {
+			color: green;
+		}
+	</style>
+</head>
+<body>
+	<div id="app">
+		<span :title="msg">{{ msg }}</span>
+		<button @click="reverse">反转</button>
+		<br>
+		<input type="text" v-model="name" @input="onchange">
+		<p v-for="item in todos">{{ item.text }}</p>
+		<ul>
+			<todo-item class="baz" v-for="item in todos" :todo="item"></todo-item>
+		</ul>
+
+		<a :[attributename]="url">a标签</a>
+		<button v-on:[eventname]="eventFn">动态属性</button>
+		<p :style="attentionStyle">注意: 动态属性名称包含大写字母时失效</p>
+		<div>{{ hello }}</div>
+		<input type="text" v-model="answer">
+
+		<div :class="{show: isShow}">样式对象语法</div>
+		<div :class="className">样式对象语法</div>
+		<div :class="[name, 'name', {'value': true}, true?'col':'row']">样式数组语法</div>
+		<div :style="{color: 'blue', fontSize: fontSize + 'px'}">绑定内联对象样式</div>
+		<div :style="[{color: 'blue'}, {fontSize: fontSize + 'px'}]">绑定内联数组样式</div>
+		<b>注意：内联不能用分号分割，要用逗号</b>
+
+		<p v-for="item in arr">数组-{{ item }}</p>
+		<b>vue2: push、pop、shift、unshift、splice、sort、reverse</b>
+		<button @click="changeIndex">Vue3更改索引也会更新</button>
+
+		<br />
+		<p v-for="item in arr" v-if="item === 1">item: {{ item }}</p>
+		<b>v-if 的优先级比 v-for 更高，这意味着 v-if 将没有权限访问 v-for 里的变量，所以报警告没有渲染出来</b>
+
+		<hr>
+		<button @click="greet1($event, '黎奔')">event事件无参数</button>
+		<button @click="greet2('liben', $event)">event事件有参数</button>
+
+		<p style="border: 1px solid red" @click="clickDiv"><button @click.stop="clickBtn">按钮</button></p>
+		<b>事件修饰符：stop、prevent、capture、self、once、pasive</b>
+
+		<hr>
+		<input type="checkbox" v-model="toggle" true-value="yes" false-value="no" />{{ toggle }}
+		<p><input v-model.number="age" type="number" /></p>
+
+		<div>
+			<button-counter @parent-add="increase"></button-counter>
+			<button-counter></button-counter>
+			<button-counter></button-counter>
+			<button-counter></button-counter>
+		</div>
+		<div>父子组件通信{{ counter }}</div>
+		<custom-input v-model="searchText"></custom-input>{{ searchText }}
+
+		<alert-box>Something <span style="color: red">bad</span> happened.</alert-box>
+
+		<component is="alert-box"></component>
+
+		<component-a class="classA"></component-a>
+
+		<hr>
+		<!-- 自定义指令 -->
+		<input type="text" v-model="direcitveValue" v-focus v-numb:123="direcitveValue"/>
+
+		<div>
+	      <modal-button></modal-button>
+	    </div>
+
+	    <!-- Teleport 允许我们控制在 DOM 中哪个父节点下呈现 HTML -->
+	    <div class="footer">
+	    	<div>
+	    		<div>
+	    			<teleport to="body">
+	    				<footer>顶部</footer>
+	    			</teleport>
+	    			<teleport to="body">
+	    				<footer>底部</footer>
+	    			</teleport>
+	    		</div>
+	    	</div>
+	    </div>
+
+	    <hr>
+
+	    <p>
+	    	<span :class="true && 'abc'">{{ ccc }}</span>
+	    	<button @click="ccc++">Increment count</button>
+	    </p>
+	</div>
+	
+	<script src="https://unpkg.com/lodash@4.17.20/lodash.min.js" defer></script>
+	<script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js" defer></script>
+	<script src="https://unpkg.com/vue@next"></script>
+	<script type="module">
+
+		// 局部组件
+		const ComponentA = {
+			inheritAttrs: false,
+			template: `<div>
+				<p>组件A</p>
+				<alert-box></alert-box>
+			</div>`,
+			inject: ['infos', "location"],
+			created () {
+				console.log("ComponentA组件>>>>", this.infos, this.location)
+			},
+			watch: {
+				infos (newVal, oldVal) {
+					console.log(">>>>infos", newVal, oldVal)
+					console.log("ComponentA组件>>>>", this.infos)
+				}
+			}
+		}
+
+		// 局部混入
+		const commomMixin = {
+			mounted () {
+				this.say()
+			},
+			methods: {
+				say () {
+					console.log("say hello ！")
+				}
+			}
+		}
+
+		const count = Vue.ref(0)
+		console.log(count)
+		count.value++
+		console.log(count.value)
+
+		const state = Vue.reactive({
+			aaa: 123,
+			count
+		})
+		console.log(state.count)
+
+		const book = Vue.reactive({
+			author: 'Vue Team',
+			year: '2020',
+			title: 'Vue 3 Guide',
+			description: 'You are reading this book right now ;)',
+			price: 'free'
+		})
+		let { author, title } = Vue.toRefs(book);
+		console.log(title)
+
+		const cocc = Vue.ref(1)
+		const plusOne = Vue.computed(() => ++cocc.value)
+		console.log(plusOne.value) // 2
+
+		const app = Vue.createApp({
+			setup (props) {
+				Vue.provide("location", "深圳")
+
+				Vue.onMounted(() => {
+					console.log("onMounted>>>>>>")
+				})
+				console.log("setup>>>>", props)
+				const ccc = Vue.ref(0)
+				return {
+					ccc
+				}
+			},
+			provide () {
+				return {
+					// infos: this.answer
+					infos: Vue.computed(() => this.answer)
+				}
+			},
+			components: {
+				ComponentA
+			},
+			mixins: [commomMixin],  // 同名钩子函数将合并为一个对象，混入对象的钩子将在组件自身钩子之前调用。
+			directives: {
+				numb: {
+					mounted (el, binding) {
+						console.log("directives>>>>>>>>>", el, binding)
+					},
+					updated (el, binding) {
+						// console.log(el, binding)
+						// binding.value = binding.value.replace(/([^0-9])/g, '')
+						// if (binding.value >= 9999) {
+						// 	this.direcitveValue = 9999
+						// }
+						// if (binding.value <= 1) {
+						// 	this.direcitveValue = 1
+						// }
+					}
+				}
+			},
+			data () {
+				return {
+					msg: "heloo",
+					name: "liben",
+					todos: [
+			       		{ text: 'Learn JavaScript' },
+			        	{ text: 'Learn Vue' },
+				        { text: 'Build something awesome' }
+				    ],
+				    attributename: "href",
+				    url: "https://www.tuho.tv/",
+				    eventname: "click",
+				    color: "red",
+				    answer: "答案",
+				    isShow: true,
+				    className: {
+				    	score: true
+				    },
+				    fontSize: 18,
+				    arr: [1, 2, 3, 4, 5],
+				    toggle: 'no',
+				    age: 28,
+				    counter: 0,
+				    searchText: 'abc',
+				    direcitveValue: 1
+				}
+			},
+			computed: {
+				attentionStyle () {
+					return `color: ${this.color};`
+				},
+				hello: {
+					// getter 默认getter
+					get () {
+						return `${this.name} ${this.msg}`
+					},
+					// setter
+					set (newVal) {
+						this.msg = "你好"
+					}
+				}
+			},
+			watch: {
+				answer (newVal, oldVal) {
+					// this.newVal = oldVal
+					console.log(">>>>", newVal, oldVal)
+					this.answer = newVal
+					// this.getAnswer()
+				}
+			},
+			beforeCreate () {
+				console.log('beforeCreate>>>>', this.name)
+			},
+			created () {
+				console.log("created>>>>", this.name)
+				// 用 Lodash 的防抖函数
+				console.log(_.debounce)
+    			this.onchange = _.debounce(this.onchange, 5000)
+			},
+			beforeMount () {
+				console.log("beforeMount>>>>", this.name)
+			},
+			mounted () {
+				console.log("mounted>>>>", this.name)
+			},
+			beforeUpdate () {
+				console.log("beforeUpdate>>>>", this.name)
+			},
+			updated () {
+				console.log("updated>>>>", this.name)
+			},
+			beforeUnmount () {
+				console.log("之前的beforeDestory组件")
+			},
+			unmounted () {
+				console.log("之前的destroyed组件")
+			},
+			methods: {
+				reverse () {
+					this.msg = this.msg.split('').reverse().join('')
+					this.hello = 123
+				},
+				onchange () {
+					console.log(this.name)
+				},
+				eventFn () {
+					console.log("动态事件名")
+					this.color = "green"
+				},
+				getAnswer () {
+			        this.answer = 'Thinking...'
+			        axios.get('https://yesno.wtf/api').then(response => {
+			            this.answer = response.data.answer
+		          	}).catch(error => {
+			            this.answer = 'Error! Could not reach the API. ' + error
+			        })
+			    },
+			    changeIndex () {
+			    	this.arr[0] = 6
+			    	// this.arr.push(6)
+			    },
+			    greet1 (e, name) {
+			    	console.log(e, name)
+			    	if (e) {
+			    		e.preventDefault();
+			    	}
+			    	alert(name)
+			    },
+			    greet2 (name, $event) {
+			    	console.log("hello " + name, $event)
+			    },
+			    clickDiv () {
+			    	alert("点击了div")
+			    },
+			    clickBtn () {
+			    	alert("点击了button")
+			    },
+			    increase (num = 1) {
+			    	this.counter += num
+			    },
+			    say () {
+			    	console.log("say你大爷呢？")
+			    }
+			}
+		})
+
+		app.mixin({
+			data () {
+				return {}
+			}
+		})
+
+		// 定义全局组件
+		app.component("todo-item", {
+			props: ['todo'],
+			template: `<span :class="$attrs.class">List：</span><li @click="todo.text = 123">{{ todo.text }}</li><div>{{ readersNumber }} {{ book.title }}</div><p>{{ location1 }}</p>`,
+			setup (props, { attrs, slots, emit }) {
+				const location1 = Vue.inject("location")
+
+				console.log(props.todo.text)
+				console.log(attrs, slots, emit)
+
+				const readersNumber = Vue.ref(0)
+				const book = Vue.reactive({ title: 'Vue 3 Guide' })
+
+				// expose to template
+				return {
+					readersNumber,
+					book,
+					location1
+				}
+			}
+		})
+
+		app.component("button-counter", {
+			data () {
+				return {
+					times: 0
+				}
+			},
+			methods: {
+				add () {
+					this.times++
+					this.$emit("parent-add")
+				}
+			},
+			template: `<button @click="add">点击了{{ times }}次</button>`
+		})
+
+		app.component("custom-input", {
+			props: ['modelValue'],
+			template: `<p><input :value="modelValue" type="text" @input="$emit('update:modelValue', $event.target.value)"></p>`
+		})
+
+		app.component("alert-box", {
+			template: `<div><strong>Error!</strong><slot></slot></div>`,
+			inject: ['infos'],
+			created () {
+				console.log("alert-box组件>>>>>", this.infos)
+			}
+		})
+
+		// 自定义指令
+		app.directive("focus", {
+			mounted (el) {
+				console.log(el)
+				el.focus()
+			},
+			// updated (el, binding) {
+			// 	console.log(el, binding)
+			// }
+		})
+
+		app.component('modal-button', {
+		  template: `
+		    <button @click="modalOpen = true">
+		        Open full screen modal!
+		    </button>
+
+		    <teleport to="body">
+			    <div v-if="modalOpen" class="modal">
+			      <div>
+			        I'm a modal! 
+			        <button @click="modalOpen = false">
+			          Close
+			        </button>
+			      </div>
+			    </div>
+		    </teleport>
+		  `,
+		  data() {
+		    return { 
+		      modalOpen: false
+		    }
+		  }
+		})
+
+		const vm = app.mount("#app")
+
+		console.log(Vue, app, vm)
+
+	</script>
+</body>
+</html>
