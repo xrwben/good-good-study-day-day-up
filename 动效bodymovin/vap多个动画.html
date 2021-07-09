@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>vap</title>
+	<link rel="stylesheet" href="">
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+		.app {
+			border: 1px solid red;
+		}
+		.vap-animation {
+		    width: 100%;
+		    height: 774px;
+		    border: 1px solid red;
+		    position: relative;
+		}
+	    .vap-entry, .vap-float {
+	        width: 100%;
+	        height: 100%;
+	        position: absolute;
+	        top: 0;
+	        left: 0;
+	    }
+        .vap-entry canvas, .vap-float canvas {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+	    .vap-float {
+	        display: none;
+	    }
+		video {
+			/*display: block !important;*/
+		}
+		.button {
+			text-align: center;
+		}
+	</style>
+</head>
+<body>
+	<div id="app">
+		<div class="vap-animation">
+	        <div class="vap-entry" ref="entry"></div>
+	        <div class="vap-float" ref="float"></div>
+	    </div>
+	</div>
+
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+	<script src="./vap.js"></script>
+	<script>
+		new Vue({
+			el: "#app",
+			data () {
+				return {
+					animationSrc: {
+			            entryVideo: './animations/entry-vap.mp4',
+			            floatVideo: './animations/float-vap.mp4',
+			            entryJson: './animations/entry-vap.json',
+			            floatJson: './animations/float-vap.json'
+				    },
+				    vapIns: null
+				}
+			},
+			mounted () {
+		        this.loadVideo()
+		    },
+		    methods: {
+		        getJson (jsonSrc) {
+		            return fetch(jsonSrc).then(response => {
+		                return response.json()
+		            }).then(result => {
+		                // console.log('123', res)
+		                return result
+		            })
+		        },
+		        async loadVideo () {
+	                const configEntry = await this.getJson(this.animationSrc.entryJson)
+	                const configFloat = await this.getJson(this.animationSrc.floatJson)
+	                console.log('>>>>config', configEntry, configFloat)
+
+	                this.vapEntryIns = this.newVap('.vap-entry', this.animationSrc.entryVideo, configEntry, false, 1, configEntry.info.w, configEntry.info.h)
+	                this.vapFloatIns = this.newVap('.vap-float', this.animationSrc.floatVideo, configFloat, true, 2, configEntry.info.w, configEntry.info.h)
+
+		            // this.vapEntryIns.play()
+		            this.vapEntryIns.on('ended', () => {
+		                console.log('play ended')
+		                document.querySelector('.vap-float').style.display = 'block'
+		            })
+		        },
+		        newVap (ele, src, config, loop, type, width, height) {
+		            const eles = document.querySelector(ele)
+		            // eslint-disable-next-line no-undef
+		            const vap = new Vap({
+		                container: eles,
+		                src: src,
+		                config: config,
+		                width: width,
+		                height: height,
+		                loop: loop,
+		                type: type
+		            })
+		            console.log(vap)
+		            return vap
+		        }
+		    }
+		})
+	</script>
+</body>
+</html>
