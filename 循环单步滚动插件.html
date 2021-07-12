@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>循环单步滚动</title>
+	<style>
+		* {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+        li {
+            list-style: none;
+        }
+        .rollBox {
+            margin: 50px auto;
+            padding: 0 20px;
+            width: 340px;
+            height: 120px;
+            background: #FFF;
+            overflow: hidden;
+            border: 1px solid #666;
+        }
+        .rollEl {
+            width: 100%;
+        }
+        .rollEl li {
+            height: 30px;
+            line-height: 30px;
+            border-bottom: 1px dotted #999;
+            color: #555;
+        }
+	</style>
+</head>
+<body>
+	<div class="rollBox">
+	    <ul class="rollEl">
+	        <li>文字1</li>
+	        <li>文字2</li>
+	        <li>文字3</li>
+	        <li>文字4</li>
+	        <li style='color:#ff0000'>文字5</li>
+	    </ul>
+	</div>
+
+	<script>
+		var rollBox = document.getElementsByClassName('rollBox')[0];
+        var rollEl = rollBox.getElementsByClassName('rollEl')[0];
+        var rollHeight = rollEl.getElementsByTagName('li')[0].offsetHeight;
+        var scrollTop = parseInt(getStyle(rollEl,'margin-top'));
+        var rollBoxHheight = rollBox.offsetHeight;
+        // var sHtml = rollEl.innerHTML;
+
+        if (rollEl.offsetHeight > rollBox.offsetHeight) {
+            rollEl.innerHTML += rollEl.innerHTML
+            scrollUp();
+        }
+
+        // function move(obj, attr, target, fnEnd) {
+        //     clearInterval(obj.timer);
+        //     obj.timer = setInterval(function () {
+        //         //计算速度
+        //         var speed =(target - parseInt(getStyle(obj,attr)))/8 ;
+        //         //判断速度是正还是负，正速度向上取整，负的向下取整
+        //         speed = speed > 0 ? Math.ceil(speed):Math.floor(speed);
+        //         var dist = parseInt(getStyle(obj,attr));
+        //         if(dist == target){
+        //             clearInterval(obj.timer);
+        //             fnEnd && fnEnd();
+        //         }else{
+        //             dist +=speed;
+        //             obj.style[attr] = dist + 'px';
+        //         }
+        //     },50);
+        // }
+        //获取计算后的样式
+        function getStyle(obj, attr) {
+            return obj.currentStyle ? obj.currentStyle[attr] : getComputedStyle(obj)[attr];
+        }
+
+        var timerIns = null;
+        var timer = null;
+
+        function scrollUp () {
+
+            scrollTop -= rollHeight;
+
+            // console.log(rollEl, scrollTop, parseInt(rollEl.offsetHeight)/2)
+
+            rollEl.style.marginTop = scrollTop + 'px';
+            rollEl.style.transition = `all 0.7s linear`;
+
+            console.log(rollEl, scrollTop)
+
+            if (Math.abs(scrollTop) >= parseInt(rollEl.offsetHeight)/2) {
+                // rollEl.addEventListener("transitionend", () => {
+                //     rollEl.style.transition = 'none';
+                //     rollEl.style.marginTop = 0;
+                //     scrollTop = 0;
+                // })
+                timer = setTimeout(() => {
+                    rollEl.style.transition = 'none';
+                    rollEl.style.marginTop = 0;
+                    scrollTop = 0;
+                    timer && clearTimeout(timer)
+                }, 700)
+            }
+
+            timerIns = setTimeout(() => {
+                scrollUp()
+            }, 2000)
+
+
+
+            // move(rollEl, 'margin-top', scrollTop, () => {
+            //     timerIns = setTimeout(() => {
+            //         scrollUp()
+            //     }, 2000)
+            // });
+        }
+
+        // function move (el, attr, value, callback) {
+        //     console.log(el, value)
+        //     el.style[attr] = value + 'px';
+        //     el.style.transition = `all 0.7s linear`;
+
+        //     if (Math.abs(scrollTop) > parseInt(rollEl.offsetHeight)/2) {
+        //         rollEl.style.transition = 'none';
+        //         rollEl.style.marginTop = 0;
+        //         scrollTop = 0;
+        //     } else {
+        //         callback && callback()
+        //     }
+        // }
+        // setInterval(function () {
+        //    if((parseInt(rollEl.offsetHeight) - Math.abs(iTaget)) <= parseInt(rollBoxHheight)){
+
+        //         rollEl.innerHTML += sHtml;
+        //    }else if(parseInt(rollEl.offsetHeight)/2 == Math.abs(iTaget)){
+        //         rollEl.style.marginTop = 0;
+        //        iTaget = 0;
+        //         rollEl.innerHTML = sHtml;
+        //     }
+        //     iTaget-=rollHeight;
+        //     move(rollEl,'margin-top',iTaget);
+        // },2000);
+
+        window.onunload = function () {
+            timerIns && clearTimeout(timerIns)
+        }
+	</script>
+</body>
+</html>
