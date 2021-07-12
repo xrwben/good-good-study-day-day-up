@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>单例模式</title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+
+	<script>
+		/*
+			单例： 一个类仅有一个实例
+			场景： 程池、全局缓存、window 登录浮窗
+		*/
+	
+		// 惰性单例 在需要时才创建
+		function Singleton(name) {
+			
+		}
+
+
+
+		
+		let createDiv = (function() {
+	
+			let div = null;
+	
+			return function () {
+				if (!div) {
+					div = document.createElement("div");
+					div.style.width = "100px";
+					div.style.height = "100px";
+					div.style.background = "green";
+					document.body.appendChild(div);
+				}
+				return div;
+			}
+	
+		})()
+	
+		let div1 = createDiv();
+		let div2 = createDiv();
+	
+		console.log(div1 === div2);
+	
+	</script>
+	
+</body>
+</html>
