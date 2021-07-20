@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>高为宽一半</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+		html, body {
+			width: 100%;
+			height: 100%;
+		}
+		:root {
+			--wwidth: 100vw;
+			--hheight: calc(var(--wwidth) / 2);
+		}
+		.box {
+			width: var(--wwidth);
+			height: var(--hheight);
+			border: 1px solid red;
+			color: green;
+			display: flex;
+	        align-items: center;
+	        justify-content: center;
+	        color: green;
+	        font-size: 30px;
+		}
+
+		.container {
+			width: 100vw;
+	        height: 50vw;
+	        background: green;
+	        display: flex;
+	        align-items: center;
+	        justify-content: center;
+	        color: #fff;
+	        font-size: 30px;
+		}
+
+		.outer {
+			width: 100%;
+			/*padding-bottom: 50%;*/
+			padding: 25% 0;
+			position: relative;
+		}
+		.inner {
+	        position: absolute;
+	        left: 0;
+	        top: 0;
+	        right: 0;
+	        bottom: 0;
+	        display: flex;
+	        align-items: center;
+	        justify-content: center;
+	        color: #fff;
+	        font-size: 30px;
+	        background: skyblue;
+		}
+	</style>
+</head>
+<body> 
+
+	<div class="box">var + calc + vw</div>
+
+	<div class="container">vw</div>
+
+	<!-- 
+		padding值：
+
+		auto：浏览器计算内边距
+
+		length：具体单位 如px等
+
+		%：基于父元素的宽度的百分比的内边距
+
+		inherit：从父元素继承内边距
+	 -->
+	<div class="outer">
+		<div class="inner">padding</div>
+	</div>
+</body>
+</html>
