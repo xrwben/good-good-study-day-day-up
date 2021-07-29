@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<!-- <meta http-equiv="refresh" content="5"> -->
+	<title>Object.defineProperty</title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+	<!-- <div style="height: 1200px;">自动刷新页面</div> -->
+	<div class="app">{{ num }}</div>
+
+	<button class="btn">+</button>
+
+	<script>
+		/*
+			对象属性：数据属性、访问器属性
+
+			访问器属性由 “getter” 和 “setter” 方法表示。在对象字面量中，它们用 get 和 set 表示
+
+			从外表看，访问器属性看起来就像一个普通属性。这就是访问器属性的设计思想。我们不以函数的方式调用 user.getName，我们正常读取它：getter 在幕后运行
+
+			Object.defineProperty()
+		*/
+		let user = {
+			name: 'liben',
+			age: 28,
+
+			say () {
+				console.log('wuwuwu')
+			},
+
+			get getName () {
+				return 123;
+			},
+
+			set setAge (value) {
+				this.age = value
+			}
+		}
+		
+		console.log(user.getName, user.name, user.age)
+		user.say()
+
+		user.setAge = 27
+		console.log(user.age)
+
+		console.log('--------------------')
+
+		let car = {};
+
+		Object.defineProperty(car, 'price', {
+			enumerable: true,
+			configurable: true,
+			get: function(value) {
+				console.log("读取属性值>>>>>", value);
+				return 300;
+			},
+			set: function (newVal, oldVal) {
+				oldVal = newVal
+				console.log("设置属性值>>>>>", newVal, oldVal);
+			}
+		})
+		car.price = 12;
+		console.log(car.price);
+
+		/*
+			实现一个Vue2的双向绑定
+		*/
+		function observe(obj) {
+			if (!obj || typeof obj !== 'object') {
+				return
+			}
+			Object.keys(obj).forEach(key => {
+				defineReactive(obj, key, obj[key])
+			})
+		}
+
+		function defineReactive(obj, key, val) {
+			// 递归子属性
+			observe(val);
+
+			let dep = new Dep();
+
+			Object.defineProperty(obj, key, {
+				enumerable: true,
+				configurable: true,
+				get: function() {
+					console.log('get value')
+					if (Dep.target) {
+						dep.addSub(Dep.target)
+					}
+					return val;
+				},
+				set: function(newVal) {
+					console.log('change value')
+					val = newVal;
+					dep.notify()
+				}
+			})
+		}
+
+		class Dep {
+			constructor() {
+				this.subs = []
+			}
+			addSub(sub) {
+				// sub是Watcher实例
+				this.subs.push(sub)
+			}
+			notify() {
+				this.subs.forEach(sub => {
+					sub.update()
+				})
+			}
+		}
+		// 全局属性，通过该属性配置 Watcher
+		Dep.target = null
+
+		function update(value) {
+			document.querySelector('.app').innerText = value
+		}
+
+		class Watcher {
+			constructor(obj, key, cb) {
+				Dep.target = this;
+				this.cb = cb;
+				this.obj = obj;
+				this.key = key;
+				this.value = obj[key];
+				Dep.target = null;
+			}
+			update() {
+				this.value = this.obj[this.key]
+				this.cb(this.value)
+			}
+		}
+
+		var data = {
+			num: "liben"
+		}
+		observe(data)
+		new Watcher(data, 'num', update)
+
+		let num = data.num;
+		data.num = 1;
+
+		document.querySelector(".btn").addEventListener("click", () => {
+			data.num ++
+		})
+	</script>
+</body>
+</html>
