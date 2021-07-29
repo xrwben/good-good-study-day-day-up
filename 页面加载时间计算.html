@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>page load time</title>
+	<link rel="stylesheet" href="">
+	<script src="https://unpkg.com/vue@next"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.8/lottie.min.js" async></script> -->
+</head>
+<body onload="onLoad()">
+	<p>显示</p>
+	<script>
+		/*
+			timing: PerformanceTiming
+
+			http://poetries1.gitee.io/img-repo/2020/07/performance/64.png
+
+			connectEnd: 1627273693160
+			connectStart: 1627273693160
+			domComplete: 1627273693182
+			domContentLoadedEventEnd: 1627273693176
+			domContentLoadedEventStart: 1627273693176
+			domInteractive: 1627273693176
+			domLoading: 1627273693163
+			domainLookupEnd: 1627273693160
+			domainLookupStart: 1627273693160
+			fetchStart: 1627273693160                        // 准备好使用HTTP请求来获取(fetch)文档
+			loadEventEnd: 1627273693183
+			loadEventStart: 1627273693182
+			navigationStart: 1627273693159
+			redirectEnd: 0
+			redirectStart: 0
+			requestStart: 1627273693160
+			responseEnd: 1627273693161
+			responseStart: 1627273693160
+			secureConnectionStart: 0
+			unloadEventEnd: 1627273693162
+			unloadEventStart: 1627273693162
+		*/
+
+		/*
+			const timing = window.performance.timing
+			// DNS查询耗时
+			timing.domainLookupEnd - timing.domainLookupStart
+			  
+			// TCP连接耗时
+			timing.connectEnd - timing.connectStart
+			 
+			// 内容加载耗时
+			timing.responseEnd - timing.requestStart
+
+			// firstbyte：首包时间	
+			timing.responseStart – timing.domainLookupStart	
+
+			// fpt：First Paint Time, 首次渲染时间 / 白屏时间
+			timing.responseEnd – timing.fetchStart
+
+			// tti：Time to Interact，首次可交互时间	
+			timing.domInteractive – timing.fetchStart
+
+			// ready：HTML 加载完成时间，即 DOM 就位的时间
+			timing.domContentLoaded – timing.fetchStart
+
+			// load：页面完全加载时间
+			timing.loadEventStart – timing.fetchStart
+		*/
+		function onLoad() {
+		  console.log(performance)
+		  var now = new Date().getTime();
+		  var page_load_time = now - performance.timing.navigationStart;
+		  console.log("User-perceived page loading time: " + page_load_time);
+
+		  console.log("页面完全加载时间：", performance.timing.loadEventStart-performance.timing.fetchStart)
+		}
+	</script>
+</body>
+</html>
