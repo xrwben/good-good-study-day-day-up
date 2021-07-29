@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Proxy</title>
+</head>
+<body>
+	<script>
+		/*
+			Proxy 在目标对象之前架设一层“拦截”，外界对该对象的访问，都必须先通过这层拦截，可以对外界的访问进行过滤和改写。
+
+			要使得Proxy起作用，必须针对Proxy实例（上例是proxy对象）进行操作，而不是针对目标对象（上例是空对象）进行操作。
+		*/
+		var obj = new Proxy({}, {
+			get: function (target, propKey, receiver) {
+				console.log(target, propKey, receiver);
+				return 1
+			},
+			set: function (target, propKey, value, receiver) {
+				console.log(target, propKey, value, receiver);
+			}
+		});
+
+		obj.count = 1;
+		console.log(obj.count, ++obj.count);
+
+
+		var proxy_1 = new Proxy({}, {
+			get: function (target, propKey, receiver) {
+				console.log(target, propKey);
+				return 35;
+			}
+		})
+		console.log(proxy_1.time);
+		console.log(proxy_1.name);
+
+		console.log("-----------------------------------")
+
+		/*
+			如果handler没有设置任何拦截，那就等同于直接通向原对象。
+		*/
+		var target = {};
+		var proxy1 = new Proxy(target,{});
+		proxy1.name = "liben";
+		console.log(proxy1, proxy1.name, target.name);
+
+		console.log("----------------get()-------------------")
+
+		var person = {
+			name: "张三"
+		};
+		var proxy = new Proxy(person, {
+			get: function(target, propKey) {
+				if (propKey in target) {
+					console.log(target, propKey)
+					return target[propKey];
+				} else {
+					throw new Error("属性不存在:", propKey);
+				}
+			}
+		})
+		console.log(proxy.name);
+		// console.log("<<<", proxy.age);
+
+		let obj1 = Object.create(proxy);  // get方法可以继承
+		console.log("obj继承>>>", obj1.name)
+
+
+		function createArray(...elements) {
+			console.log([...elements])
+			return new Proxy([...elements], {
+				get: function (target, propKey, receiver) {
+					console.log(target, propKey);
+					let index = Number(propKey);
+					if (index < 0) {
+						propKey = String(target.length + index)
+					}
+					return Reflect.get(target, propKey, receiver);
+				}
+			})
+		}
+		let arr = createArray('a', 'b', 'c');
+		console.log(arr[-2]);
+	</script>
+</body>
+</html>

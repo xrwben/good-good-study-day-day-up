@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>api</title>
+	<style>
+		p {
+			color: green;
+		}
+	</style>
+</head>
+<body>
+	<!-- 古诗词 -->
+	<h2 class="gs-c"></h2>
+	<p class="gs-a"></p>
+	<script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+	<script type="text/javascript">
+	  jinrishici.load(function(result) {
+	    // 自己的处理逻辑
+	    console.log(result)
+
+	    const gsC = document.querySelector(".gs-c");
+	    const gsA = document.querySelector(".gs-a");
+	    gsC.innerHTML = result.data.content;
+	    gsA.innerHTML = `-- ${result.data.origin.author}`;
+	  });
+	</script>
+
+	<!-- 一言 -->
+	<h2 id="hitokoto" class="yy-c"></h2>
+	<p class="yy-a"></p>
+	<!-- <script src="https://v1.hitokoto.cn/?encode=js&select=%23hitokoto" defer></script> -->
+	<script>
+		fetch('https://v1.hitokoto.cn').then(response => {
+			return response.json()
+		}).then(data => {
+		  const yyC = document.querySelector('.yy-c')
+		  const yyA = document.querySelector('.yy-a')
+		  yyC.innerHTML = data.hitokoto
+		  yyA.innerHTML = `-- ${data.from}`;
+		}).catch(err => {
+			console.error(err)
+		})
+	</script>
+
+	<!-- 一句 -->
+	<h2 class="yj-c"></h2>
+	<p class="yj-a"></p>
+	<script>
+		fetch('http://yijuzhan.com/api/word.php?m=json').then(response => {
+			return response.json()
+		}).then(data => {
+			const yjC = document.querySelector('.yj-c')
+			const yjA = document.querySelector('.yj-a')
+			yjC.innerHTML = data.hitokoto
+			yjA.innerHTML = `-- ${data.from}`;
+		}).catch(err => {
+			console.error(err)
+		})
+	</script>
+</body>
+</html>

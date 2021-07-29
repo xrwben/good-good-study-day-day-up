@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title></title>
+	<style>
+		.mask {
+		  position: fixed;
+		  left: 0;
+		  top: 0;
+		  width: 100%;
+		  height: 100%;
+		  background: rgba(33, 32, 44, 0.6);
+		  display: flex;
+		  flex-direction: column;
+		  transition: .2s;
+		  visibility: hidden;
+		  opacity: 0;
+		  z-index: 11;
+		}
+
+		.mask.show {
+		  visibility: visible;
+		  opacity: 1;
+		}
+
+		/* dialog */
+		.dialog-content {
+		  box-sizing: border-box;
+		  width: 280px;
+		  background: #fff;
+		  margin: auto;
+		  border-radius: 8px;
+		  padding: 24px 16px 16px;
+		  transition: .2s;
+		  transform: translateY(10px);
+		}
+
+		.dialog.show .dialog-content {
+		  transform: translateY(0);
+		}
+
+		.dialog-title {
+		  font-size: 16px;
+		  line-height: 20px;
+		  color: rgba(33, 32, 44, 0.9);
+		}
+
+		.dialog-msg {
+		  font-size: 14px;
+		  line-height: 20px;
+		  color: rgba(33, 32, 44, 0.55);
+		  padding: 8px 0 24px;
+		}
+
+		.dialog-footer {
+		  display: flex;
+		  justify-content: flex-end;
+		}
+
+		.dialog-footer button {
+		  font-size: 14px;
+		  line-height: 20px;
+		  padding: 8px;
+		  margin-left: 16px;
+		  border: 0;
+		  background: none;
+		  color: rgba(33, 32, 44, 0.55);
+		  outline: 0;
+		}
+
+		.dialog-footer .dialog-btn_confirm {
+		  color: var(--ui-primary);
+		}
+	</style>
+</head>
+<body>
+	<button>点击显示弹窗</button>
+
+	<script type="text/javascript">
+		class Dialog {
+		  constructor() {
+		    this.init({});
+		  }
+		  init({
+		    title,
+		    msg,
+		    cancel = {},
+		    confirm = {},
+		  }) {
+		    this.el = document.getElementById('dialog');
+		    if (!this.el) {
+		      this.el = document.createElement('div');
+		      this.el.id = 'dialog';
+		      this.el.className = 'mask dialog';
+		      this.el.innerHTML = `
+		            <div class="dialog-content">
+		                <h3 class="dialog-title"></h3>
+		                <p class="dialog-msg"></p>
+		                <div class="dialog-footer">
+		                    <button class="dialog-btn_cancel"></button>
+		                    <button class="dialog-btn_confirm"></button>
+		                </div>
+		            </div>
+		            `
+		      document.body.appendChild(this.el);
+		      this.title = this.el.querySelector('.dialog-title');
+		      this.content = this.el.querySelector('.dialog-msg');
+		      this.btn_cancel = this.el.querySelector('.dialog-btn_cancel');
+		      this.btn_confirm = this.el.querySelector('.dialog-btn_confirm');
+		    }
+		    this.title.innerText = title || '标题';
+		    this.content.innerHTML = msg || '';
+		    this.el.onclick = (ev) => {
+		      if (!ev.target.closest('.dialog-content')) {
+		        this.close();
+		        cancel.fn && cancel.fn();
+		      }
+		    }
+		    if (cancel) {
+		      this.btn_cancel.innerText = cancel.txt || '取消';
+		      this.btn_cancel.onclick = () => {
+		        this.close();
+		        cancel.fn && cancel.fn();
+		      };
+		      this.btn_cancel.hidden = false;
+		    } else {
+		      this.btn_cancel.hidden = true;
+		    }
+		    this.btn_confirm.innerText = confirm.txt || '确认';
+		    this.btn_confirm.onclick = () => {
+		      this.close();
+		      confirm.fn && confirm.fn();
+		    };
+		    return this.el;
+		  }
+		  close() {
+		    this.el && this.el.classList.remove('show');
+		  }
+		  show(options) {
+		    const el = this.init(options);
+		    el.classList.add('show');
+		  }
+		  alert(title, msg, fn) {
+		    this.show({
+		      title,
+		      msg,
+		      cancel: false,
+		      confirm: {
+		        txt: '我知道了',
+		        fn
+		      }
+		    })
+		  }
+		}
+
+		/**
+		dialog.show({
+		    title:'',
+		    msg:'',
+		    cancel:{
+		        txt:'',
+		        fn:()=>{}
+		    },
+		    confirm:{
+		        txt:'',
+		        fn:()=>{}
+		    }
+		})
+		 */
+
+		window.dialog = new Dialog();
+
+		let button =document.querySelector('button')
+		button.addEventListener('click',()=>{
+		  dialog.show({
+              title: '弹窗标题',
+              msg: `我是js组件的组件`,
+              cancel: {
+                txt: '取消 ',
+                fn:()=>{alert('取消')}
+              },
+              confirm: {
+                txt: '确定',
+                fn: () => {alert('确定')},
+              },
+            })
+		})
+	</script>
+</body>
+</html>

@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>js导出csv</title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+	<div id="app">
+		<button @click="exportCSV">导出csv</button>
+	</div>
+
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	<script>
+		new Vue({
+			el: '#app',
+			data () {
+				return {
+					tableList: [
+	                    {
+	                        "name": "Name1",
+	                        "fav": 0,
+	                        "show": 7302,
+	                        "weak": 5627,
+	                        "signin": 1563,
+	                        "click": 4254,
+	                        "active": 1438,
+	                        "day7": 274,
+	                        "day30": 285,
+	                        "tomorrow": 1727,
+	                        "day": 558,
+	                        "week": 4440,
+	                        "month": 5610
+	                    },
+	                    {
+	                        "name": "Name2",
+	                        "fav": 0,
+	                        "show": 4720,
+	                        "weak": 4086,
+	                        "signin": 3792,
+	                        "click": 8690,
+	                        "active": 8470,
+	                        "day7": 8172,
+	                        "day30": 5197,
+	                        "tomorrow": 1684,
+	                        "day": 2593,
+	                        "week": 2507,
+	                        "month": 1537
+	                    },
+	                    {
+	                        "name": "Name3",
+	                        "fav": 0,
+	                        "show": 7181,
+	                        "weak": 8007,
+	                        "signin": 8477,
+	                        "click": 1879,
+	                        "active": 16,
+	                        "day7": 2249,
+	                        "day30": 3450,
+	                        "tomorrow": 377,
+	                        "day": 1561,
+	                        "week": 3219,
+	                        "month": 1588
+	                    },
+	                    {
+	                        "name": "Name4",
+	                        "fav": 0,
+	                        "show": 9911,
+	                        "weak": 8976,
+	                        "signin": 8807,
+	                        "click": 8050,
+	                        "active": 7668,
+	                        "day7": 1547,
+	                        "day30": 2357,
+	                        "tomorrow": 7278,
+	                        "day": 5309,
+	                        "week": 1655,
+	                        "month": 9043
+	                    },
+	                    {
+	                        "name": "Name5",
+	                        "fav": 0,
+	                        "show": 934,
+	                        "weak": 1394,
+	                        "signin": 6463,
+	                        "click": 5278,
+	                        "active": 9256,
+	                        "day7": 209,
+	                        "day30": 3563,
+	                        "tomorrow": 8285,
+	                        "day": 1230,
+	                        "week": 4840,
+	                        "month": 9908
+	                    },
+	                    {
+	                        "name": "Name6",
+	                        "fav": 0,
+	                        "show": 6856,
+	                        "weak": 1608,
+	                        "signin": 457,
+	                        "click": 4949,
+	                        "active": 2909,
+	                        "day7": 4525,
+	                        "day30": 6171,
+	                        "tomorrow": 1920,
+	                        "day": 1966,
+	                        "week": 904,
+	                        "month": 6851
+	                    },
+	                    {
+	                        "name": "Name7",
+	                        "fav": 0,
+	                        "show": 5107,
+	                        "weak": 6407,
+	                        "signin": 4166,
+	                        "click": 7970,
+	                        "active": 1002,
+	                        "day7": 8701,
+	                        "day30": 9040,
+	                        "tomorrow": 7632,
+	                        "day": 4061,
+	                        "week": 4359,
+	                        "month": 3676
+	                    },
+	                    {
+	                        "name": "Name8",
+	                        "fav": 0,
+	                        "show": 862,
+	                        "weak": 6520,
+	                        "signin": 6696,
+	                        "click": 3209,
+	                        "active": 6801,
+	                        "day7": 6364,
+	                        "day30": 6850,
+	                        "tomorrow": 9408,
+	                        "day": 2481,
+	                        "week": 1479,
+	                        "month": 2346
+	                    },
+	                    {
+	                        "name": "Name9",
+	                        "fav": 0,
+	                        "show": 567,
+	                        "weak": 5859,
+	                        "signin": 128,
+	                        "click": 6593,
+	                        "active": 1971,
+	                        "day7": 7596,
+	                        "day30": 3546,
+	                        "tomorrow": 6641,
+	                        "day": 1611,
+	                        "week": 5534,
+	                        "month": 3190
+	                    },
+	                    {
+	                        "name": "Name10",
+	                        "fav": 0,
+	                        "show": 3651,
+	                        "weak": 1819,
+	                        "signin": 4595,
+	                        "click": 7499,
+	                        "active": 7405,
+	                        "day7": 8710,
+	                        "day30": 5518,
+	                        "tomorrow": 428,
+	                        "day": 9768,
+	                        "week": 2864,
+	                        "month": 5811
+	                    }
+	                ]
+				}
+			},
+			methods: {
+				exportCSV () {
+					this.download("test.csv", this.tableList)
+				},
+				/*  -------------  */
+				csv(columns, datas, options, noHeader = false) {
+					const newLine = '\r\n';
+					const defaults = {
+					    separator: ',',
+					    quoted: false
+					};
+				    options = Object.assign({}, defaults, options);
+				    let columnOrder;
+				    const content = [];
+				    const column = [];
+
+				    if (columns) {
+				        columnOrder = columns.map(v => {
+				            if (typeof v === 'string') return v;
+				            if (!noHeader) {
+				                column.push(typeof v.title !== 'undefined' ? v.title : v.key);
+				            }
+				            return v.key;
+				        });
+				        if (column.length > 0) this.appendLine(content, column, options);
+				    } else {
+				        columnOrder = [];
+				        datas.forEach(v => {
+				            if (!Array.isArray(v)) {
+				                columnOrder = columnOrder.concat(Object.keys(v));
+				            }
+				        });
+				        if (columnOrder.length > 0) {
+				            columnOrder = columnOrder.filter((value, index, self) => self.indexOf(value) === index);
+				            if (!noHeader) this.appendLine(content, columnOrder, options);
+				        }
+				    }
+
+				    if (Array.isArray(datas)) {
+				        datas.forEach(row => {
+				            if (!Array.isArray(row)) {
+				                row = columnOrder.map(k => (typeof row[k] !== 'undefined' ? row[k] : ''));
+				            }
+				            this.appendLine(content, row, options);
+				        });
+				    }
+				    return content.join(newLine);
+				},
+				appendLine (content, row, { separator, quoted }) {
+				    const line = row.map(data => {
+				        if (!quoted) return data;
+				        // quote data
+				        data = typeof data === 'string' ? data.replace(/"/g, '"') : data;
+				        return `"${data}"`;
+				    });
+				    content.push(line.join(separator));
+				},
+				has (browser) {
+				    const ua = navigator.userAgent;
+				    if (browser === 'ie') {
+				        const isIE = ua.indexOf('compatible') > -1 && ua.indexOf('MSIE') > -1;
+				        if (isIE) {
+				            const reIE = new RegExp('MSIE (\\d+\\.\\d+);');
+				            reIE.test(ua);
+				            return parseFloat(RegExp['$1']);
+				        } else {
+				            return false;
+				        }
+				    } else {
+				        return ua.indexOf(browser) > -1;
+				    }
+				},
+				_isIE11 () {
+			        let iev = 0;
+			        const ieold = (/MSIE (\d+\.\d+);/.test(navigator.userAgent));
+			        const trident = !!navigator.userAgent.match(/Trident\/7.0/);
+			        const rv = navigator.userAgent.indexOf('rv:11.0');
+
+			        if (ieold) {
+			            iev = Number(RegExp.$1);
+			        }
+			        if (navigator.appVersion.indexOf('MSIE 10') !== -1) {
+			            iev = 10;
+			        }
+			        if (trident && rv !== -1) {
+			            iev = 11;
+			        }
+
+			        return iev === 11;
+			    },
+
+			    _isEdge () {
+			        return /Edge/.test(navigator.userAgent);
+			    },
+
+			    _getDownloadUrl (text) {
+			        const BOM = '\uFEFF';
+			        // Add BOM to text for open in excel correctly
+			        if (window.Blob && window.URL && window.URL.createObjectURL) {
+			            const csvData = new Blob([BOM + text], { type: 'text/csv' });
+			            return URL.createObjectURL(csvData);
+			        } else {
+			            return 'data:attachment/csv;charset=utf-8,' + BOM + encodeURIComponent(text);
+			        }
+			    },
+
+			    download (filename, text) {
+			        if (this.has('ie') && this.has('ie') < 10) {
+			            // has module unable identify ie11 and Edge
+			            const oWin = window.top.open('about:blank', '_blank');
+			            oWin.document.charset = 'utf-8';
+			            oWin.document.write(text);
+			            oWin.document.close();
+			            oWin.document.execCommand('SaveAs', filename);
+			            oWin.close();
+			        } else if (this.has('ie') === 10 || this._isIE11() || this._isEdge()) {
+			            const BOM = '\uFEFF';
+			            const csvData = new Blob([BOM + text], { type: 'text/csv' });
+			            navigator.msSaveBlob(csvData, filename);
+			        } else {
+			            const link = document.createElement('a');
+			            link.download = filename;
+			            link.href = this._getDownloadUrl(text);
+			            document.body.appendChild(link);
+			            link.click();
+			            document.body.removeChild(link);
+			        }
+			    }
+			}
+		})
+	</script>
+</body>
+</html>
