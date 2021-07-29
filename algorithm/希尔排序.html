@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>希尔排序</title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+	<script>
+		/*
+			https://www.cnblogs.com/onepixel/articles/7674659.html
+
+			是简单插入排序的改进版。它与插入排序的不同之处在于，它会优先比较距离较远的元素。希尔排序又叫缩小增量排序 
+
+			思路：
+
+			
+		*/
+
+		var arr = [3, 1, 4, 6, 5, 7, 2, 8];
+
+		function shellSort(arr) {
+
+			for(let gap = Math.floor(arr.length / 2); gap > 0; gap = Math.floor(gap / 2)) {
+				
+				for (let i = gap; i < arr.length; i++) {
+					
+				}
+				
+			}
+
+			return arr
+		}
+		console.log(shellSort(arr))
+	</script>
+</body>
+</html>
