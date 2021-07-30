@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>变量声明</title>
+</head>
+<body>
+    <script>
+        /*
+            变量组成：字母、下划线、$符号、数字、ASCII码
+
+            var 申明提升 => 先申明后执行
+
+            let const 不存在变量提升、也不能重复申明、块级作用域
+
+            const 申明必须有初始值、不能修改
+
+        */ 
+        var a = 12;
+        // var 12 = 12;  报错
+        aa = 123;
+
+        let l = 12;
+        // let l = 'ab';  // 不能变量覆盖 Uncaught SyntaxError: Identifier 'l' has already been declared
+
+        // const cc; // Uncaught SyntaxError: Missing initializer in const declaration 申明必须有初始值
+        const c = 12;
+        // const c = 'ab'; // Uncaught SyntaxError: Identifier 'c' has already been declared
+
+        function b () {
+            console.log(bb)
+            // console.log(bbb)
+            var bb = 12; // 申明提升
+            let bbb = 123; 
+            bbb = 12;
+        }
+        b()
+        // console.log(bb) // Uncaught ReferenceError: bb is not defined  块级作用域 外面读不到
+
+        // console.log(bbb)  // bbb已定义 报错
+
+        if (true) {
+            var k = 12;
+            let kk = 123;
+            const kkk = 1234;
+        }
+        console.log(k) // 12 var没有块级作用域
+        // console.log(kk, kkk)  // Uncaught ReferenceError: kk is not defined
+    </script>
+    <script>
+        // let l = 123;  // Uncaught ReferenceError: bb is not defined  
+
+        
+    </script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据类型</title>
+</head>
+<body>
+    <script>
+        /*
+            基本数据类型：Undefined、Null、Boolean、Number、String、Symbol
+
+            复杂数据类型：Object
+        */ 
+
+        console.log(typeof undefined) // undefined
+        console.log(typeof null)      // object 比较特殊
+        console.log(typeof true)      // boolean
+        console.log(typeof 1234)      // number
+        console.log(typeof 'ab')      // string
+        console.log(typeof Symbol(1)) // symbol
+
+        console.log(typeof {})        // object
+
+        console.log(typeof function(){})   // function
+
+
+        console.log("------------------------")
+
+        let message;
+        console.log(message === undefined)  // true
+
+        console.log(null === undefined) // false
+        
+    </script>
+</body>
+</html>
