@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Tcplayer播放器插件</title>
+	<link href="https://web.sdk.qcloud.com/player/tcplayer/release/v4.2.1/tcplayer.min.css" rel="stylesheet">
+	<style>
+	    .tcplayer {
+	      margin: 0 auto;
+	    }
+	    @media screen and (max-width: 640px) {
+	      #player-container-id {
+	        width: 100%;
+	      }
+	    }
+	    /* 设置logo在高分屏的显示样式 */
+	    @media only screen and (min-device-pixel-ratio: 2), only screen and (-webkit-min-device-pixel-ratio: 2) {
+	      .tcp-logo-img {
+	        width: 50%;
+	      }
+	    }
+	</style>
+</head>
+<body>
+	<div id="video"></div>
+	<video id="player-container-id" width="1500px" height="1000px" preload="auto" playsinline webkit-playsinline></video>
+
+	<!--如果需要在 Chrome 和 Firefox 等现代浏览器中通过 H5 播放 HLS 格式的视频，需要在 tcplayer.v4.2.min.js 之前引入 hls.min.0.13.2m.js。-->
+	<script src="https://web.sdk.qcloud.com/player/tcplayer/release/v4.2.1/libs/hls.min.0.13.2m.js"></script>
+	<!--播放器脚本文件-->
+	<script src="https://web.sdk.qcloud.com/player/tcplayer/release/v4.2.1/tcplayer.v4.2.1.min.js"></script>
+	<script type="text/javascript">
+		var player = TCPlayer('player-container-id', { // player-container-id 为播放器容器ID，必须与html中一致
+		    fileID: '5285890799710670616', // 请传入需要播放的视频filID 必须
+		    appID: '1400329073', // 请传入点播账号的appID 必须
+		    //其他参数请在开发文档中查看
+		    plugins: {
+		      ContinuePlay: {
+		        // auto: true // 是否在播放时自动续播
+		      },
+		      ProgressMarker: true,
+		      ContextMenu: {
+		        statistic: true,
+		        levelSwitch: {
+		          open: true, // 打开切换提示
+		          // switchingText: '开始', // 开始切换时文案
+		          // switchedText: '成功', // 切换成功时文案
+		          // switchErrorText: '失败', // 切换失败时文案
+		        }
+		      }
+		    }
+		  });
+	</script>
+</body>
+</html>
