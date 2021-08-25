@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>for-in for-of</title>
+</head>
+<body>
+    <script>
+        let obj = {
+            a: 1,
+            b: 2
+        }
+        let arr = ['a', 'b', 1, 'g']
+
+        for (const key in obj) {
+            console.log(key) // a b  对象属性名
+        }
+
+        for (const key in arr) {
+            console.log("key>>>", key) // 0, 1, 2, 3 数组下标
+        }
+
+        // for (const value of obj) { //  Uncaught TypeError: obj is not iterable
+        //     console.log(value)
+        // }
+
+        for (const value of arr) {
+            console.log(value) // a, b, 1, g 数组值
+        }
+    </script>
+</body>
+</html>
