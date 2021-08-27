@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>水印</title>
+	<style>
+		#watermark {
+			/*border: 1px solid #999;*/
+		}
+	</style>
+</head>
+<body>
+	<div id="watermark">
+		<p>我如果爱你——</p>
+		<p>绝不像攀援的凌霄花，</p>
+		<p>借你的高枝炫耀自己；</p>
+		<p>我如果爱你——</p>
+		<p>绝不学痴情的鸟儿，</p>
+		<p>为绿荫重复单调的歌曲；</p>
+		<p>也不止像泉源，</p>
+		<p>常年送来清凉的慰藉；</p>
+		<p>也不止像险峰，</p>
+		<p>增加你的高度，衬托你的威仪。</p>
+		<p>甚至日光，</p>
+		<p>甚至春雨。</p>
+
+		<p>不，这些都还不够！</p>
+		<p>我必须是你近旁的一株木棉，</p>
+		<p>作为树的形象和你站在一起。</p>
+		<p>根，紧握在地下；</p>
+		<p>叶，相触在云里。</p>
+		<p>每一阵风过，</p>
+		<p>我们都互相致意，</p>
+		<p>但没有人，</p>
+		<p>听懂我们的言语。</p>
+		<p>你有你的铜枝铁干，</p>
+		<p>像刀，像剑，也像戟；</p>
+		<p>我有我红硕的花朵，</p>
+		<p>像沉重的叹息，</p>
+		<p>又像英勇的火炬。</p>
+
+		<p>我们分担寒潮、风雷、霹雳；</p>
+		<p>我们共享雾霭、流岚、虹霓。</p>
+		<p>仿佛永远分离，</p>
+		<p>却又终身相依。</p>
+		<p>这才是伟大的爱情，</p>
+		<p>坚贞就在这里：</p>
+		<p>爱——</p>
+		<p>不仅爱你伟岸的身躯，</p>
+		<p>也爱你坚持的位置，</p>
+		<p>足下的土地。</p>
+	</div>
+
+	<script>
+		class Watermark {
+			constructor ({ el, text = '水印文案', canvasOptions = {} }) {
+				canvasOptions = Object.assign({
+					width: 280,
+					height: 240,
+					fillStyle: 'rgba(12, 12, 12, 0.1)',
+					font: '24px Microsoft Yahei',
+					rotateDegree: 40,
+					translate: {
+						x: 50,
+						y: 40
+					}
+				}, canvasOptions)
+
+				this.options = {
+					el,
+					text,
+					canvasOptions
+				}
+
+				this._canvasDataUrl = this.createCanvas()
+
+				console.log(this.options)
+
+				this.initWatermark()
+			}
+
+			initWatermark () {
+				this.watermarkId = `${this.options.el}-wk-${parseInt(Math.random() * 1000000)}`
+				this.targetNode = document.querySelector(this.options.el)
+				if (!this.targetNode) {
+				  console.error('水印挂载目标元素不存在~')
+				}
+
+				const watermarkDiv = document.createElement('div')
+			    watermarkDiv.setAttribute('id', this.watermarkId)
+			    watermarkDiv.style = `
+			    	position: absolute;
+			    	left: 0;
+			    	right: 0;
+			    	top: 0;
+			    	bottom: 0;
+			    	z-index: 9999;
+			    	pointer-events: none;
+			    	background: url(${this._canvasDataUrl});
+			    `
+			    this.targetNode.style.position = 'relative'
+			    this.targetNode.append(watermarkDiv)
+				
+			}
+
+			// 创建canvas 生成水印图案的url
+			createCanvas () {
+				const canvas = document.createElement('canvas')
+				canvas.width = this.options.canvasOptions.width
+				canvas.height = this.options.canvasOptions.height
+				const ctx = canvas.getContext('2d')
+				ctx.fillStyle = this.options.canvasOptions.fillStyle
+				ctx.font = this.options.canvasOptions.font
+				ctx.translate(this.options.canvasOptions.translate.x, this.options.canvasOptions.translate.y)
+				ctx.rotate(this.options.canvasOptions.rotateDegree * Math.PI / 180)
+				ctx.fillText(this.options.text, 20, 20)
+				return canvas.toDataURL('image/png')
+			}
+		}
+
+		// 使用实例
+		new Watermark({
+			el: '#watermark'
+		})
+	</script>
+</body>
+</html>
