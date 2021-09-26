@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>横向滚动居中tab</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+		.nav-list {
+			width: 400px;
+			height: 50px;
+			border: 1px solid black;
+			margin: 50px auto;
+			position: relative;
+			overflow: auto;
+		}
+		ul {
+			height: 100%;
+			display: flex;
+			align-items: center;
+			position: absolute;
+			left: 0;
+			top: 0;
+			border: 1px solid blue;
+			white-space: nowrap;
+		}
+		li {
+			width: 80px;
+			margin: 0 30px;
+			list-style: none;
+			border: 1px solid green;
+			cursor: pointer;
+		}
+	</style>
+</head>
+<body>
+	<div class="nav-list">
+		<ul>
+			<li>tab1</li>
+			<li>tab22</li>
+			<li>tab333</li>
+			<li>tab4444</li>
+			<li>tab55555</li>
+			<li>tab666</li>
+			<li>tab777</li>
+			<li>tab8</li>
+		</ul>
+	</div>
+	<script>
+		/*
+			实现原理：滚动条横向滑动scrollLeft实现  计算当前tab居中时 scrollleft 滚动的数值（竖直同理）
+
+			步骤：
+				1、计算出当前元素到左边的距离
+				2、计算当前元素居中时到容器左边的距离
+				3、滚动距离等于前两数之差
+
+		*/
+		const navList = document.querySelector('.nav-list');
+		const ul = document.querySelector('ul');
+
+		ul.addEventListener('click', (e) => {
+			if (e.target.tagName === 'LI') {
+				const _navWidth = navList.getBoundingClientRect().width;
+				const _liWidth = e.target.getBoundingClientRect().width;
+				const _liOffsetLeft = e.target.offsetLeft;
+				console.log(_navWidth, _liWidth, _liOffsetLeft)
+
+				const _scrollLeft = _liOffsetLeft - (_navWidth - _liWidth) / 2;
+				console.log(_scrollLeft)
+				
+				// navList.scrollLeft = _scrollLeft;
+
+				navList.scrollTo({
+					top: 0,
+					left: _scrollLeft,
+					behavior: 'smooth'
+				})
+			}
+		})
+
+
+	</script>
+</body>
+</html>
