@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<script>
+        // 适配方案 
+        (function(window, document){
+          function setRem() {
+            let deviceWidth = document.documentElement.clientWidth;
+            deviceWidth = deviceWidth > 680 ? 680 : deviceWidth;
+            document.documentElement.style.fontSize = deviceWidth / 6.8 + "px";
+          }
+          setRem();
+          window.addEventListener("resize", setRem);
+          window.addEventListener('pageshow', function (e) {
+            if (e.persisted) {
+              setRem();
+            }
+          })
+        })(window, document)
+    </script>
+	<style type="text/css">
+		* {
+			margin: 0;
+			padding: 0;
+		}
+		::-webkit-scrollbar {
+		    display: none;
+		}
+		[v-cloak] {
+			display: none;
+		}
+		html, body {
+			scroll-behavior: smooth;
+		}
+		#app {
+			min-height: 100vh;
+			width: 100wh;
+			font-size: 0.2rem;
+		}
+		.banner {
+			height: 2rem;
+			background: url('https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fdingyue.nosdn.127.net%2FwulLPYPMjNJf6ea9JtDVudAtIm8%3DN6ir57o5DQzciZLUf1541332847502compressflag.jpg') no-repeat center / 100%;
+		}
+		.nav-tab-container {
+		    height: 0.8rem;
+		}
+		.nav-tab {
+			width: 100%;
+			height: 0.8rem;
+			position: relative;
+			overflow-x: auto;
+			scrollbar-width: none;
+			/*scroll-behavior: smooth;*/
+		}
+		.nav-tab.fixed-top {
+			background: #fff;
+			position: fixed;
+			top: 0;
+			left: 0;
+			z-index: 10;
+		}
+		.nav-list {
+			height: 0.8rem;
+			box-shadow: 0 0.17rem 0.24rem 0 rgba(211, 223, 237, 0.2);
+			display: flex;
+			position: absolute;
+			left: 0;
+			top: 0;
+			white-space: nowrap;
+		}
+		.nav-item {
+			margin: 0 0.3rem;
+			color: #999;
+			font-size: 0.26rem;
+			font-weight: 500;
+			display: flex;
+			align-items: center;
+		}
+		.nav-item.active {
+			color: #000;
+			font-size: 0.3rem;
+			font-weight: 800;
+			border-bottom: 0.05rem solid #1890FF;
+		}
+		.class-info {
+			height: 5rem;
+			background: skyblue;
+		}
+		.teach-schedule-container {
+			height: 5rem;
+			background: blue;
+		}
+		.course-container-1 {
+			height: 5rem;
+			background: yellowgreen;
+		}
+		.course-container-2 {
+			height: 5rem;
+			background: darkred;
+		}
+		.finalexam-container {
+			height: 5rem;
+			background: green;
+		}
+		.score {
+			height: 5rem;
+			background: blanchedalmond;
+		}
+		.lesson {
+			height: 5rem;
+			background: pink;
+		}
+	</style>
+</head>
+<body>
+	<div id="app" v-cloak>
+		<div class="banner"></div>
+		<div class="nav-tab-container" ref="navTabCon">
+			<div class="nav-tab" :class="{'fixed-top': isFixedTop}">
+				<ul class="nav-list">
+					<li :class="['nav-item', {'active': currentTab===item.name}]" 
+						v-for="item in navList"
+						:key="item.type"
+						@click="changeNavTab($event, item)">
+						{{ item.name }}
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div class="class-info">分班信息</div>
+		<div class="teach-schedule-container">授课日程</div>
+		<div class="course-container-1">必修网课</div>
+		<div class="course-container-2">选修网课</div>
+		<div class="finalexam-container">结业考试</div>
+		<div class="score">我的分数</div>
+		<div class="lesson">我的课程</div>
+	</div>
+
+	<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+	<script>
+		new Vue({	
+			el: '#app',
+			data () {
+				return {
+					navList: [
+						{ type: 1, name: '分班信息', component: '.class-info' },
+						{ type: 2, name: '授课日程', component: '.teach-schedule-container' },
+						{ type: 3, name: '必修网课', component: '.course-container-1' },
+						{ type: 4, name: '选修网课', component: '.course-container-2' },
+						{ type: 5, name: '结业考试', component: '.finalexam-container' },
+						{ type: 6, name: '我的分数', component: '.score' },
+						{ type: 7, name: '我的课程', component: '.lesson' }
+					],
+					currentTab: '分班信息',
+					isFixedTop: false, // 是否吸顶
+					lockScroll: false, // 正在滚动事件 锚点不触发滚动标志
+				}
+			},
+			mounted () {
+				console.log('测试sort排序>>>', [10, 11, 8, 9].sort())
+
+				this.$nextTick(() => {
+					window.addEventListener('scroll', this.scrollhandler)
+				})
+			},
+			beforeDestroy() {
+				window.removeEventListener('scroll', this.scrollhandler);
+			},
+			methods: {
+				// 点击切换tab
+				changeNavTab (e, info) {
+					console.log(info.name)
+					if (this.currentTab === info.name) {
+						return
+					}
+					this.currentTab = info.name
+
+					const _li = e.target
+					const _navWraper = document.querySelector('.nav-tab')
+					const _navWidth = _navWraper.getBoundingClientRect().width
+					console.log(e)
+
+					// tab横向居中滚动
+					this.$nextTick(() => {
+						const _liWidth = _li.getBoundingClientRect().width;
+						const _liLeft = _li.offsetLeft;
+						const _scrollLeft = _liLeft - (_navWidth - _liWidth) / 2;
+						
+						console.log(_scrollLeft)
+						// 方法一
+						// _navWraper.scrollTo({
+						// 	top: 0,
+						// 	left: _scrollLeft,
+						// 	behavior: 'smooth'
+						// });
+						// 方法二
+						_navWraper.scrollLeft = `${_scrollLeft}`
+						// 方法三
+						// this.scrollView(_navWraper, 'horizontal', _scrollLeft, 300)
+					})
+
+					// 处理当前模块滑动距离
+					// const _navHeight = _navWraper.getBoundingClientRect().height
+					// const _node = document.querySelector(info.component)
+
+					// if (_node) {
+					// 	const _nodeTop = _node.offsetTop;
+					// 	const _nodeMarginTop = getComputedStyle(_node).marginTop;
+					// 	// console.log(_nodeTop, _nodeMarginTop)
+					// 	// window.scrollTo({
+					// 	// 	top: _nodeTop - _navHeight - parseFloat(_nodeMarginTop),
+					// 	// 	left: 0,
+					// 	// 	behavior: 'smooth'
+					// 	// })
+					// 	const _scrollTop = _nodeTop - _navHeight - parseFloat(_nodeMarginTop)
+
+					// 	console.log(_scrollTop, this.lockScroll)
+					// 	this.lockScroll = true
+					// 	const scrollEl = document.documentElement || document.body
+					// 	scrollEl.scrollTop = `${_scrollTop}`
+					// 	console.log(this.lockScroll)
+					// 	// this.lockScroll = false
+					// }
+				},
+				// 页面滑动处理函数
+				scrollhandler () {
+					if (!this.lockScroll) {
+						console.log("----", this.lockScroll)
+						// 滚动tab是否吸顶
+						const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+						const _navHeight = document.querySelector(".nav-tab").getBoundingClientRect().height
+						// console.log(this.$refs.navTabCon.getBoundingClientRect().top, scrollTop)
+						this.isFixedTop = this.$refs.navTabCon.getBoundingClientRect().top < 0
+
+						// 滚动页面切换相应tab
+						this.navList.forEach(item => {
+						  const _conOffsetTop = document.querySelector(item.component).offsetTop
+						  // console.log(_conOffsetTop, scrollTop)
+						  if (_conOffsetTop - scrollTop <= _navHeight) {
+						    console.log(item.name)
+						    document.title = item.name
+						    // this.currentTab = item.name
+						    return
+						  }
+						})
+					}
+				},
+				// 滚动
+				scrollView (el, mode, target, duration, callback) {
+					const requestAnimationFrame = (
+		                window.requestAnimationFrame ||
+		                window.webkitRequestAnimationFrame ||
+		                window.mozRequestAnimationFrame ||
+		                window.msRequestAnimationFrame ||
+		                function (callback) {
+		                    return window.setTimeout(callback, 1000 / 60)
+		                }
+		            )
+		            const cancelAnimationFrame = (
+		                window.cancelAnimationFrame ||
+		                function (id) {
+		                    return window.clearTimeout(id)
+		                }
+		            )
+		    		const currentElDistance = mode === 'horizontal' ? el.scrollLeft : el.scrollTop;
+					const steps = Math.round(duration / 24);
+					console.log(">>>", currentElDistance, target, duration, steps, target/steps)
+					let counts = 0;
+					const _scollDistance = target - currentElDistance;
+					const _moveFun = () => {
+						if (mode === 'vertical') {
+		                    el.scrollTop += _scollDistance / steps
+		                } else if (mode === 'horizontal') {
+		                    el.scrollLeft += _scollDistance / steps
+		                    if (++counts < steps) {
+		                    	requestAnimationFrame(_moveFun)
+		                    } else {
+		                    	console.log('执行完毕')
+		                    }
+		                }
+					}
+					this.animationIns = requestAnimationFrame(_moveFun)
+				}
+			}
+		})
+	</script>
+</body>
+</html>
