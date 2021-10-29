@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+    <style>
+    	* {
+    		margin: 0;
+    		padding: 0;
+    		box-sizing: border-box;
+    	}
+      .container {
+      	border: 1px solid black;
+        list-style: none;
+      }
+      .list-item {
+        background-color: #9c9c9c;
+        border: 1px solid #d9d9d9;
+        border-radius: 4px;
+        padding: 10px;
+        color: #fff;
+        line-height: 24px;
+        cursor: pointer;
+        transition: all 1s ease-in-out;
+      }
+      .sort-move {
+        transition: transform 0.3s;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <!-- <transition class="transition-wrapper" name="sort"> -->
+      <div class="container" 
+        ref="container"
+        @dragover="dragOver"
+        @dragend="dragEnd">
+          <p class="list-item"
+            v-for="(item, index) in lists"
+            :key="index"
+            draggable="true"
+            @dragstart="dragStart">
+            {{ item.order }}
+          </p>
+      </div>
+      <!-- </transition> -->
+    </div>
+  </body>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script>
+    var app = new Vue({
+      el: '#app',
+      data () {
+        return {
+          lists: [
+            { order: 1, name: '课程1' },
+            { order: 2, name: '课程2' },
+            { order: 3, name: '课程3' },
+            { order: 4, name: '课程4' },
+            { order: 5, name: '课程5' },
+            { order: 6, name: '课程6' },
+            { order: 7, name: '课程7' },
+          ],
+          dragEle: null, // 被拖拽的对象
+          target: null, //目标对象
+        }
+      },
+      mounted () {
+        //为了防止火狐浏览器拖拽的时候以新标签打开，此代码真实有效
+        document.body.ondrop = (event) => {
+          console.log(event)
+          event.preventDefault();
+          event.stopPropagation();
+        }
+      },
+      methods: {
+        // 拖拽开始
+        dragStart (event) {
+          console.log("drag start", event.target)
+          this.dragEle = event.target;
+        },
+        // 当元素或选中的文本被拖到一个可释放目标上时触发（每100毫秒触发一次）
+        dragOver (event) {
+          console.log('drag move')
+          this.target = event.target;
+
+          // let targetTop = event.target.getBoundingClientRect().top;
+          // let dragEleTop = this.dragEle.getBoundingClientRect().top;
+          
+          if (this.target.nodeName === "P" && this.target !== this.dragEle) {
+            // console.log(this.dragEle, this.target, targetTop, dragEleTop)
+            if (this.target.animated) {
+              return;
+            }
+            console.log(this.getIndex(this.dragEle), this.getIndex(this.target))
+            if (this.getIndex(this.dragEle) < this.getIndex(this.target)) {
+              this.$refs.container.insertBefore(this.target, this.dragEle);
+            } else {
+              this.$refs.container.insertBefore(this.dragEle, this.target);
+            }
+
+            // 动画
+            // this._anim(this.target, targetTop);
+            // this._anim(this.dragEle, dragEleTop);
+          }
+        },
+        getIndex (el) {
+          let pDom = Array.from(this.$refs.container.childNodes);
+          return pDom.findIndex(item => {
+            return item.innerText === el.innerText;
+          });
+        },
+        _anim (el, startPos) {
+          console.log('>>>', el.getBoundingClientRect().top, startPos)
+          let offset = startPos - el.getBoundingClientRect().top;
+          console.log(offset)
+          el.style.transition = "none";
+          el.style.transform = `translateY(${offset}px)`;
+          //触发重绘
+          el.offsetWidth;
+          el.style.transition = "transform .15s";
+          el.style.transform = ``;
+          //触发重绘
+          // setTimeout(()=>{
+          //     el.style.transition="transform .3s";
+          //     el.style.transform=``;
+          // },0)
+          clearTimeout(el.animated);
+          el.animated = setTimeout(() => {
+            el.style.transition = "";
+            el.style.transform = ``;
+            el.animated = false;
+          }, 150)
+        },
+        dragEnd (event) {
+          console.log('drag end', event.target)
+          let nodes = Array.from(this.$refs.container.childNodes);
+          let updateList = nodes.map((item) => {
+            return item.innerText
+          });
+          console.log(updateList)
+        }
+      }
+    })
+  </script>
+</html>

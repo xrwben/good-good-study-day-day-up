@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>H5 拖拽API</title>
+	<style>
+		#container {
+			width: 100px;
+			min-height: 100px;
+			border: 1px solid #ccc;
+			padding: 10px;
+		}
+		# {
+			font-size: 18px;
+			color: greenyellow;
+		}
+	</style>
+</head>
+<body>
+	<div id="container" ondrop="drop(event)" ondragover="drageOver(event)"></div>
+	<br>
+	<img id="img" ondragstart="dragStart(event)" src="https://upload.jianshu.io/users/upload_avatars/23495033/610a62be-dc45-4f44-a62d-25d8613d8e85.png" width="80px">
+
+	<p id="txt" draggable="true" ondrag="drag(event)" ondragstart="dragStart(event)" ondragend="dragEnd(event)" ondragleave="dragLeave(event)">拖拽文本</p>
+
+
+	<script>
+		// 当拖拽元素或选中的文本时触发 多次触发
+		function drag (event) {
+			// console.log('drag>>>', event)
+		}
+
+		// 当拖拽操作结束时触发
+		function dragEnd (event) {
+			console.log('end>>>', event)
+		}
+
+		// 当元素或选中的文本在可释放目标上被释放时触发
+		function dragLeave (event) {
+			console.log('leave>>>', event)
+		}
+
+		// 当用户开始拖拽一个元素或选中的文本时触发
+		function dragStart (event) {
+			console.log(event)
+			event.dataTransfer.setData("content", event.target.id);
+		}
+
+		// 当元素或选中的文本被拖到一个可释放目标上时触发（每100毫秒触发一次）
+		function drageOver (event) {
+			console.log('over>>>', event)
+			// 需要设置允许放置，我们必须阻止对元素的默认处理方式
+			event.preventDefault();
+			event.stopPropagation();
+			// event.dataTransfer.dropEffect = "move";
+		}
+
+		// 当元素或选中的文本在可释放目标上被释放时触发
+		function drop (event) {
+			console.log('drop>>>', event)
+			event.preventDefault(); // 避免浏览器对数据的默认处理
+			event.stopPropagation();
+			let id = event.dataTransfer.getData('content');
+			console.log(id)
+			event.target.appendChild(document.querySelector(`#${id}`));
+		}
+	</script>
+
+	<!-- vue-slicksort 拖拽demo -->
+
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	<script src="https://unpkg.com/vue-slicksort@latest/dist/vue-slicksort.min.js"></script>
+	<script>
+		let { ContainerMixin, ElementMixin, HandleDirective } = window.VueSlicksort;
+	</script>
+</body>
+</html>
