@@ -1,0 +1,16 @@
+{
+    "presets": [
+        [
+            "@babel/preset-env",
+            {
+                "modules": false, // 模块交由rollup转义处理，不需要babel转译
+                "targets": {
+                    "browsers": ["> 1%", "last 2 versions", "not ie <= 8"]
+                },
+                "useBuiltIns": "usage",
+                "corejs": 3
+            }
+        ]
+    ],
+    "plugins": ["@babel/plugin-transform-runtime"] // babelHelpers: 'runtime'配置必须使用这个插件
+}

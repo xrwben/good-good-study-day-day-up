@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Rollup</title>
+</head>
+<body>
+	<p>rollup</p>
+	<!-- <script src="./dist/bundle.js"></script>
+	<script>
+		console.log(dll)
+	</script> -->
+	<script type="module">
+		import { name } from './dist/bundle.js';
+		console.log(name)
+	</script>
+</body>
+</html>
