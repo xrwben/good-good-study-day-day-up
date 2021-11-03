@@ -156,6 +156,7 @@
 						{ type: 7, name: '我的课程', component: '.lesson' }
 					],
 					currentTab: '分班信息',
+          tabHeight: 0,
 					isFixedTop: false, // 是否吸顶
 					lockScroll: false, // 正在滚动事件 锚点不触发滚动标志
 					animationIns: 0,
@@ -168,6 +169,8 @@
 			}, 
 			mounted () {
 				this.$nextTick(() => {
+          this.tabHeight = document.querySelector('.nav-tab').getBoundingClientRect().height;
+
 					window.addEventListener('scroll', this.stickyScroll);
 					window.addEventListener('scroll', this.contentScroll)
 				})
@@ -189,9 +192,13 @@
 					}
 					this.currentTab = info.name
 
-					this.lockScroll = true
-
-					const _li = e.target
+					
+          this.scrollToCenter(e);
+					this.scrollToCurrentContent(info);
+				},
+        // tab滚动居中
+        scrollToCenter (e) {
+          const _li = e.target
 					const _navWraper = document.querySelector('.nav-tab')
 					const _navWidth = _navWraper.getBoundingClientRect().width
 
@@ -213,9 +220,11 @@
 						// 方法三
 						this.scrollViewLeft(_navWraper, _scrollLeft, 300)
 					})
-
-					// 处理当前模块滑动距离
-					const _navHeight = _navWraper.getBoundingClientRect().height
+        },
+        // 滚动到当前内容
+        scrollToCurrentContent (info) {
+          // 处理当前模块滑动距离
+					const _navHeight = document.querySelector('.nav-tab').getBoundingClientRect().height
 					const _node = document.querySelector(info.component)
 
 					if (_node) {
@@ -235,35 +244,37 @@
 						const scrollEl = document.documentElement || document.body
 						// scrollEl.scrollTop = `${_scrollTop}`
 						// 方法三
+						this.lockScroll = true
 						this.scrollViewTop(scrollEl, _scrollTop, 300, () => {
 							console.log('滚动执行完毕')
 							this.lockScroll = false
 						})
-						console.log('>>>>', this.lockScroll)
+						console.log('>>>>锁住滚动', this.lockScroll)
 					}
-				},
+        },
 				// 页面滑动处理函数
 				contentScroll () {
-					console.log("----", this.lockScroll)
-					if (!this.lockScroll) {
-						// // 滚动tab是否吸顶
-						const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-						const _navHeight = document.querySelector(".nav-tab").getBoundingClientRect().height
-						// // console.log(this.$refs.navTabCon.getBoundingClientRect().top, scrollTop)
-						// this.isFixedTop = this.$refs.navTabCon.getBoundingClientRect().top < 0
-
-						// 滚动页面切换相应tab
-						this.navList.forEach(item => {
-						  const _conOffsetTop = document.querySelector(item.component).offsetTop
-						  // console.log(_conOffsetTop, scrollTop)
-						  if (_conOffsetTop - scrollTop <= _navHeight) {
-						    // console.log(item.name)
-						    document.title = item.name
-						    this.currentTab = item.name
-						    return
-						  }
-						})
+					// console.log("----", this.lockScroll)
+					if (this.lockScroll) {
+						console.log('锁住滚动事件')
+            return
 					}
+          console.log('window滚动了')
+          const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+          const _navHeight = document.querySelector(".nav-tab").getBoundingClientRect().height
+          // console.log(this.$refs.navTabCon.getBoundingClientRect().top, scrollTop)
+
+          // 滚动页面切换相应tab
+          this.navList.forEach(item => {
+            const _conOffsetTop = document.querySelector(item.component).offsetTop
+            // console.log(_conOffsetTop, scrollTop)
+            if (_conOffsetTop - scrollTop <= _navHeight) {
+              // console.log(item.name)
+              document.title = item.name
+              this.currentTab = item.name
+              return
+            }
+          })
 				},
 				// 左右滚动
 				scrollViewLeft (el, target, duration) {
@@ -280,20 +291,20 @@
 				// 上下滚动
 				scrollViewTop (el, target, duration, callback) {
 					const requestAnimationFrame = (
-            window.requestAnimationFrame ||
-            window.webkitRequestAnimationFrame ||
-            window.mozRequestAnimationFrame ||
-            window.msRequestAnimationFrame ||
-            function (callback) {
-              return window.setTimeout(callback, 1000 / 60)
-            }
-          );
-          const cancelAnimationFrame = (
-            window.cancelAnimationFrame ||
-            function (id) {
-                return window.clearTimeout(id)
-            }
-          );
+						window.requestAnimationFrame ||
+						window.webkitRequestAnimationFrame ||
+						window.mozRequestAnimationFrame ||
+						window.msRequestAnimationFrame ||
+						function (callback) {
+						return window.setTimeout(callback, 1000 / 60)
+						}
+					);
+					const cancelAnimationFrame = (
+						window.cancelAnimationFrame ||
+						function (id) {
+							return window.clearTimeout(id)
+						}
+					);
 		    	let currentOffset = el.scrollTop;
 					let counts = 0;  // 记录滚动次数
 					const steps = Math.round(duration / 30);  // 需要滚动次数
