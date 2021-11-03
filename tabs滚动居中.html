@@ -137,6 +137,7 @@
 		<div class="finalexam-container">结业考试</div>
 		<div class="score">我的分数</div>
 		<div class="lesson">我的课程</div>
+		<div style="height: 600px;">bottom</div>
 	</div>
 
 	<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
@@ -157,31 +158,42 @@
 					currentTab: '分班信息',
 					isFixedTop: false, // 是否吸顶
 					lockScroll: false, // 正在滚动事件 锚点不触发滚动标志
+					animationIns: 0,
 				}
 			},
+			watch: {
+				currentTab (newVal, oldVal) {
+					console.log(newVal, oldVal)
+				}
+			}, 
 			mounted () {
-				console.log('测试sort排序>>>', [10, 11, 8, 9].sort())
-
 				this.$nextTick(() => {
-					window.addEventListener('scroll', this.scrollhandler)
+					window.addEventListener('scroll', this.stickyScroll);
+					window.addEventListener('scroll', this.contentScroll)
 				})
 			},
 			beforeDestroy() {
-				window.removeEventListener('scroll', this.scrollhandler);
+				window.removeEventListener('scroll', this.stickyScroll);
+				window.removeEventListener('scroll', this.contentScroll);
 			},
 			methods: {
+				// 滚动tab是否吸顶
+				stickyScroll () {
+					this.isFixedTop = this.$refs.navTabCon.getBoundingClientRect().top < 0
+				},
 				// 点击切换tab
 				changeNavTab (e, info) {
-					console.log(info.name)
+					// console.log(info.name)
 					if (this.currentTab === info.name) {
 						return
 					}
 					this.currentTab = info.name
 
+					this.lockScroll = true
+
 					const _li = e.target
 					const _navWraper = document.querySelector('.nav-tab')
 					const _navWidth = _navWraper.getBoundingClientRect().width
-					console.log(e)
 
 					// tab横向居中滚动
 					this.$nextTick(() => {
@@ -189,7 +201,7 @@
 						const _liLeft = _li.offsetLeft;
 						const _scrollLeft = _liLeft - (_navWidth - _liWidth) / 2;
 						
-						console.log(_scrollLeft)
+						// console.log(_scrollLeft)
 						// 方法一
 						// _navWraper.scrollTo({
 						// 	top: 0,
@@ -197,92 +209,118 @@
 						// 	behavior: 'smooth'
 						// });
 						// 方法二
-						_navWraper.scrollLeft = `${_scrollLeft}`
+						// _navWraper.scrollLeft = `${_scrollLeft}`
 						// 方法三
-						// this.scrollView(_navWraper, 'horizontal', _scrollLeft, 300)
+						this.scrollViewLeft(_navWraper, _scrollLeft, 300)
 					})
 
 					// 处理当前模块滑动距离
-					// const _navHeight = _navWraper.getBoundingClientRect().height
-					// const _node = document.querySelector(info.component)
+					const _navHeight = _navWraper.getBoundingClientRect().height
+					const _node = document.querySelector(info.component)
 
-					// if (_node) {
-					// 	const _nodeTop = _node.offsetTop;
-					// 	const _nodeMarginTop = getComputedStyle(_node).marginTop;
-					// 	// console.log(_nodeTop, _nodeMarginTop)
-					// 	// window.scrollTo({
-					// 	// 	top: _nodeTop - _navHeight - parseFloat(_nodeMarginTop),
-					// 	// 	left: 0,
-					// 	// 	behavior: 'smooth'
-					// 	// })
-					// 	const _scrollTop = _nodeTop - _navHeight - parseFloat(_nodeMarginTop)
+					if (_node) {
+						const _nodeTop = _node.offsetTop;
+						const _nodeMarginTop = getComputedStyle(_node).marginTop;
 
-					// 	console.log(_scrollTop, this.lockScroll)
-					// 	this.lockScroll = true
-					// 	const scrollEl = document.documentElement || document.body
-					// 	scrollEl.scrollTop = `${_scrollTop}`
-					// 	console.log(this.lockScroll)
-					// 	// this.lockScroll = false
-					// }
+						// 方法一
+						// window.scrollTo({
+						// 	top: _nodeTop - _navHeight - parseFloat(_nodeMarginTop),
+						// 	left: 0,
+						// 	behavior: 'smooth'
+						// })
+						const _scrollTop = _nodeTop - _navHeight - parseFloat(_nodeMarginTop)
+
+						// console.log(_scrollTop, this.lockScroll)
+						// 方法二
+						const scrollEl = document.documentElement || document.body
+						// scrollEl.scrollTop = `${_scrollTop}`
+						// 方法三
+						this.scrollViewTop(scrollEl, _scrollTop, 300, () => {
+							console.log('滚动执行完毕')
+							this.lockScroll = false
+						})
+						console.log('>>>>', this.lockScroll)
+					}
 				},
 				// 页面滑动处理函数
-				scrollhandler () {
+				contentScroll () {
+					console.log("----", this.lockScroll)
 					if (!this.lockScroll) {
-						console.log("----", this.lockScroll)
-						// 滚动tab是否吸顶
+						// // 滚动tab是否吸顶
 						const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
 						const _navHeight = document.querySelector(".nav-tab").getBoundingClientRect().height
-						// console.log(this.$refs.navTabCon.getBoundingClientRect().top, scrollTop)
-						this.isFixedTop = this.$refs.navTabCon.getBoundingClientRect().top < 0
+						// // console.log(this.$refs.navTabCon.getBoundingClientRect().top, scrollTop)
+						// this.isFixedTop = this.$refs.navTabCon.getBoundingClientRect().top < 0
 
 						// 滚动页面切换相应tab
 						this.navList.forEach(item => {
 						  const _conOffsetTop = document.querySelector(item.component).offsetTop
 						  // console.log(_conOffsetTop, scrollTop)
 						  if (_conOffsetTop - scrollTop <= _navHeight) {
-						    console.log(item.name)
+						    // console.log(item.name)
 						    document.title = item.name
-						    // this.currentTab = item.name
+						    this.currentTab = item.name
 						    return
 						  }
 						})
 					}
 				},
-				// 滚动
-				scrollView (el, mode, target, duration, callback) {
-					const requestAnimationFrame = (
-		                window.requestAnimationFrame ||
-		                window.webkitRequestAnimationFrame ||
-		                window.mozRequestAnimationFrame ||
-		                window.msRequestAnimationFrame ||
-		                function (callback) {
-		                    return window.setTimeout(callback, 1000 / 60)
-		                }
-		            )
-		            const cancelAnimationFrame = (
-		                window.cancelAnimationFrame ||
-		                function (id) {
-		                    return window.clearTimeout(id)
-		                }
-		            )
-		    		const currentElDistance = mode === 'horizontal' ? el.scrollLeft : el.scrollTop;
-					const steps = Math.round(duration / 24);
-					console.log(">>>", currentElDistance, target, duration, steps, target/steps)
-					let counts = 0;
-					const _scollDistance = target - currentElDistance;
-					const _moveFun = () => {
-						if (mode === 'vertical') {
-		                    el.scrollTop += _scollDistance / steps
-		                } else if (mode === 'horizontal') {
-		                    el.scrollLeft += _scollDistance / steps
-		                    if (++counts < steps) {
-		                    	requestAnimationFrame(_moveFun)
-		                    } else {
-		                    	console.log('执行完毕')
-		                    }
-		                }
+				// 左右滚动
+				scrollViewLeft (el, target, duration) {
+					if (duration) {
+						el.scrollTo({
+							top: 0,
+							left: target,
+							behavior: 'smooth'
+						})
+					} else {
+						el.scrollLeft = `${_scrollLeft}`
 					}
-					this.animationIns = requestAnimationFrame(_moveFun)
+				},
+				// 上下滚动
+				scrollViewTop (el, target, duration, callback) {
+					const requestAnimationFrame = (
+            window.requestAnimationFrame ||
+            window.webkitRequestAnimationFrame ||
+            window.mozRequestAnimationFrame ||
+            window.msRequestAnimationFrame ||
+            function (callback) {
+              return window.setTimeout(callback, 1000 / 60)
+            }
+          );
+          const cancelAnimationFrame = (
+            window.cancelAnimationFrame ||
+            function (id) {
+                return window.clearTimeout(id)
+            }
+          );
+		    	let currentOffset = el.scrollTop;
+					let counts = 0;  // 记录滚动次数
+					const steps = Math.round(duration / 30);  // 需要滚动次数
+					const _scollDistance = target - currentOffset; // 需要滚动距离
+					const frames = _scollDistance / steps;  // 每次滚动多远
+
+					console.log(">>>", currentOffset, target, _scollDistance, steps, frames)
+
+					// 如果duration为真 则有慢慢滚动
+					if (duration) {
+						const _moveFun = () => {
+							currentOffset += frames
+							el.scrollTop = currentOffset
+							console.log(counts, currentOffset, el.scrollTop)
+	            if (++counts < steps) {
+	            	this.animationIns = requestAnimationFrame(_moveFun)
+	            } else {
+	            	callback && callback();
+	            }
+						}
+						_moveFun()
+					} else {
+						el.scrollTo({
+							left: 0,
+							top: target
+						})
+					}
 				}
 			}
 		})
