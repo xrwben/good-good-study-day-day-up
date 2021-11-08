@@ -32,9 +32,9 @@
 		[v-cloak] {
 			display: none;
 		}
-		html, body {
+		/* html, body {
 			scroll-behavior: smooth;
-		}
+		} */
 		#app {
 			min-height: 100vh;
 			width: 100wh;
@@ -116,8 +116,8 @@
 	</style>
 </head>
 <body>
-	<div id="app" v-cloak>
-		<div class="banner"></div>
+	<div id="app" v-cloak @click="showScrollTop">
+		<!-- <div class="banner"></div> -->
 		<div class="nav-tab-container" ref="navTabCon">
 			<div class="nav-tab" :class="{'fixed-top': isFixedTop}">
 				<ul class="nav-list">
@@ -172,7 +172,7 @@
           this.tabHeight = document.querySelector('.nav-tab').getBoundingClientRect().height;
 
 					window.addEventListener('scroll', this.stickyScroll);
-					window.addEventListener('scroll', this.contentScroll)
+					window.addEventListener('scroll', this.contentScroll, true)
 				})
 			},
 			beforeDestroy() {
@@ -180,6 +180,9 @@
 				window.removeEventListener('scroll', this.contentScroll);
 			},
 			methods: {
+        showScrollTop () {
+          // console.log('body>', (document.documentElement || document.body).scrollTop)
+        },
 				// 滚动tab是否吸顶
 				stickyScroll () {
 					this.isFixedTop = this.$refs.navTabCon.getBoundingClientRect().top < 0
@@ -246,17 +249,17 @@
 						// 方法三
 						this.lockScroll = true
 						this.scrollViewTop(scrollEl, _scrollTop, 300, () => {
-							console.log('滚动执行完毕')
-							this.lockScroll = false
+              this.lockScroll = false
+							console.log('滚动执行完毕', this.lockScroll)
 						})
 						console.log('>>>>锁住滚动', this.lockScroll)
 					}
         },
 				// 页面滑动处理函数
 				contentScroll () {
-					// console.log("----", this.lockScroll)
+          // console.log('>>>>sroll', this.lockScroll)
 					if (this.lockScroll) {
-						console.log('锁住滚动事件')
+						console.log('锁住滚动事件--', this.lockScroll)
             return
 					}
           console.log('window滚动了')
@@ -265,16 +268,29 @@
           // console.log(this.$refs.navTabCon.getBoundingClientRect().top, scrollTop)
 
           // 滚动页面切换相应tab
-          this.navList.forEach(item => {
-            const _conOffsetTop = document.querySelector(item.component).offsetTop
-            // console.log(_conOffsetTop, scrollTop)
-            if (_conOffsetTop - scrollTop <= _navHeight) {
-              // console.log(item.name)
-              document.title = item.name
-              this.currentTab = item.name
-              return
-            }
-          })
+          // const len = this.navList.length;
+          // var i;
+          // for (i = 0; i < len; i++) {
+          //   console.log(this.navList[i].component)
+          //   const _conOffsetTop = document.querySelector(this.navList[i].component).offsetTop
+          //   console.log(_conOffsetTop, scrollTop)
+          //   if (_conOffsetTop - scrollTop <= _navHeight) {
+          //     console.log(this.navList[i].name)
+          //     document.title = this.navList[i].name
+          //     this.currentTab = this.navList[i].name
+          //     return
+          //   }
+          // }
+          // this.navList.forEach(item => {
+          //   const _conOffsetTop = document.querySelector(item.component).offsetTop
+          //   // console.log(_conOffsetTop, scrollTop)
+          //   if (_conOffsetTop - scrollTop <= _navHeight) {
+          //     // console.log(item.name)
+          //     document.title = item.name
+          //     this.currentTab = item.name
+          //     return
+          //   }
+          // })
 				},
 				// 左右滚动
 				scrollViewLeft (el, target, duration) {
@@ -290,13 +306,17 @@
 				},
 				// 上下滚动
 				scrollViewTop (el, target, duration, callback) {
+          // console.log(el, target, duration, callback)
+          // el.scrollTop = target
+          // callback && callback()
+          // return
 					const requestAnimationFrame = (
 						window.requestAnimationFrame ||
 						window.webkitRequestAnimationFrame ||
 						window.mozRequestAnimationFrame ||
 						window.msRequestAnimationFrame ||
 						function (callback) {
-						return window.setTimeout(callback, 1000 / 60)
+						  return window.setTimeout(callback, 1000 / 60)
 						}
 					);
 					const cancelAnimationFrame = (
@@ -305,33 +325,56 @@
 							return window.clearTimeout(id)
 						}
 					);
-		    	let currentOffset = el.scrollTop;
+		    	let currentOffset = el.scrollTop;  // 点击时的滚动条距离
 					let counts = 0;  // 记录滚动次数
 					const steps = Math.round(duration / 30);  // 需要滚动次数
-					const _scollDistance = target - currentOffset; // 需要滚动距离
-					const frames = _scollDistance / steps;  // 每次滚动多远
+					const _distance = target - currentOffset; // 需要滚动距离
+					const frames = _distance / steps;  // 每次滚动多远
 
-					console.log(">>>", currentOffset, target, _scollDistance, steps, frames)
+          const isDown = target > currentOffset;
+
+					console.log("当前页面scrollTop>>>", currentOffset)
+					console.log("滚动到>>>", target)
+					console.log("滚动距离>>>", _distance, frames)
+					// console.log(">>>", currentOffset, target, _distance, steps, frames)
+
+          // const isDown = currentOffset < target;
+          // const frames = duration === 0 ? 1 : Math.round(duration / 16);
+          // const step = (target - currentOffset) / frames;
+          // console.log(isDown, frames, step)
+          // function animate() {
+          //   currentOffset += step;
+
+          //   if ((isDown && currentOffset > target) || (!isDown && currentOffset < target)) {
+          //     currentOffset = target;
+          //   }
+
+          //   el.scrollTop = currentOffset
+
+          //   if ((isDown && currentOffset < target) || (!isDown && currentOffset > target)) {
+          //     requestAnimationFrame(animate);
+          //   } else if (callback) {
+          //     callback();
+          //   }
+          // }
+          // animate();
 
 					// 如果duration为真 则有慢慢滚动
-					if (duration) {
-						const _moveFun = () => {
-							currentOffset += frames
-							el.scrollTop = currentOffset
-							console.log(counts, currentOffset, el.scrollTop)
-	            if (++counts < steps) {
-	            	this.animationIns = requestAnimationFrame(_moveFun)
-	            } else {
-	            	callback && callback();
-	            }
-						}
-						_moveFun()
-					} else {
-						el.scrollTo({
-							left: 0,
-							top: target
-						})
-					}
+          const _moveFun = () => {
+            currentOffset = parseFloat((currentOffset + frames).toFixed(6))
+            el.scrollTop = currentOffset
+            // console.log('滚动过后的scrollTop', counts, currentOffset, this.lockScroll)
+            counts++
+            if (counts < steps) {
+              this.animationIns = requestAnimationFrame(_moveFun)
+            } else {
+              callback && callback();
+              // setTimeout(() => {
+              //   callback && callback();
+              // }, 1000)
+            }
+          }
+          _moveFun()
 				}
 			}
 		})
