@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+		#app {
+			width: 100vw;
+			height: 100vh;
+			border: 1px solid red;
+		}
+		.area {
+			height: 50%;
+			border: 1px solid blue;
+		}
+		.area canvas {
+			width: 100%;
+			height: 100%;
+		}
+		.btn {
+			width: 100px;
+			border: 1px solid green;
+			background: none;
+			color: green;
+			padding: 5px;
+			margin: 0 auto;
+		}
+		.preview {
+			width: 100%;
+			height: calc(50% - 30px);
+			background: #f5f5f5;
+		}
+	</style>
+</head>
+<body>
+	<div id="app">
+		<div class="area">
+			<canvas ref="canvas"
+				@mousedown="mouseDown"
+				@mousemove="mouseMove"
+				@mouseup="mouseUp" 
+	  		@touchstart="touchStart"
+	  		@touchmove="touchMove"
+	  		@touchend="touchEnd">
+	  	</canvas>	
+		</div>
+		<button class="btn">预览</button>
+		<button class="btn">清空</button>
+		<button class="btn">撤销</button>
+		<div class="preview">
+			
+		</div>
+	</div>
+
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	<script>
+		new Vue({
+			el: '#app',
+		  props: {
+		    lineWidth: {
+		      type: Number,
+		      default: 4
+		    },
+		    lineColor: {
+		      type: String,
+		      default: '#000'
+		    },
+		    isCrop: {
+		      type: Boolean,
+		      default: false
+		    }
+		  },
+		  data () {
+		    return {
+		    	canvasWidth: 0,  // 宽
+		    	canvasHeight: 0,  // 高
+		      hasDrew: false,
+		      resultImg: '',
+		      points: [],  // 记录每步操作
+		      ctx: null,  // 画笔对象
+		      startX: 0,
+		      startY: 0,
+		      isDrawing: false,
+		    }
+		  },
+		  computed: {
+		    myBg () {
+		      return this.bgColor;
+		    }
+		  },
+		  // beforeMount () {
+		  //   window.addEventListener('resize', this.init)
+		  // },
+		  // beforeDestroy () {
+		  //   window.removeEventListener('resize', this.init)
+		  // },
+		  mounted () {
+		    this.init()
+
+		    // 在画板以外松开鼠标后冻结画笔
+		    document.onmouseup = () => {
+		      this.isDrawing = false
+		    }
+		  },
+		  methods: {
+		    init () {
+		      const canvas = this.$refs.canvas;
+		      
+		      this.canvasWidth = canvas.getBoundingClientRect().width;
+		      this.canvasHeight = canvas.getBoundingClientRect().height;
+
+		      canvas.width = this.canvasWidth;
+		      canvas.height = this.canvasHeight;
+
+		      this.ctx = canvas.getContext('2d')
+		    },
+		    // pc
+		    mouseDown (e) {
+		      e = e || event
+		      e.preventDefault()
+		      this.isDrawing = true
+		      this.hasDrew = true
+		      let obj = {
+		        x: e.offsetX,
+		        y: e.offsetY
+		      }
+		      this.drawStart(obj)
+		    },
+		    mouseMove (e) {
+		      e = e || event
+		      e.preventDefault()
+		      if (this.isDrawing) {
+		        let obj = {
+		          x: e.offsetX,
+		          y: e.offsetY
+		        }
+		        this.drawMove(obj)
+		      }
+		    },
+		    mouseUp (e) {
+		      e = e || event
+		      e.preventDefault()
+		      let obj = {
+		        x: e.offsetX,
+		        y: e.offsetY
+		      }
+		      this.drawEnd(obj)
+		      this.isDrawing = false
+		    },
+		    // mobile
+		    touchStart (e) {
+		      e = e || event
+		      e.preventDefault()
+		      this.hasDrew = true
+		      if (e.touches.length === 1) {
+		        let obj = {
+		          x: e.targetTouches[0].clientX - this.$refs.canvas.getBoundingClientRect().left,
+		          y: e.targetTouches[0].clientY - this.$refs.canvas.getBoundingClientRect().top
+		        }
+		        this.drawStart(obj)
+		      }
+		    },
+		    touchMove (e) {
+		      e = e || event
+		      e.preventDefault()
+		      if (e.touches.length === 1) {
+		        let obj = {
+		          x: e.targetTouches[0].clientX - this.$refs.canvas.getBoundingClientRect().left,
+		          y: e.targetTouches[0].clientY - this.$refs.canvas.getBoundingClientRect().top
+		        }
+		        this.drawMove(obj)
+		      }
+		    },
+		    touchEnd (e) {
+		      e = e || event
+		      e.preventDefault()
+		      if (e.touches.length === 1) {
+		        let obj = {
+		          x: e.targetTouches[0].clientX - this.$refs.canvas.getBoundingClientRect().left,
+		          y: e.targetTouches[0].clientY - this.$refs.canvas.getBoundingClientRect().top
+		        }
+		        this.drawEnd(obj)
+		      }
+		    },
+		    // 绘制
+		    drawStart (obj) {
+		      this.startX = obj.x
+		      this.startY = obj.y
+		      this.ctx.beginPath()
+		      this.ctx.moveTo(this.startX, this.startY)
+		      this.ctx.lineTo(obj.x, obj.y)
+		      this.ctx.lineCap = 'round'
+		      this.ctx.lineJoin = 'round'
+		      this.ctx.lineWidth = this.lineWidth
+		      this.ctx.stroke()
+		      this.ctx.closePath()
+		      this.points.push(obj)
+		    },
+		    drawMove (obj) {
+		      this.ctx.beginPath()
+		      this.ctx.moveTo(this.startX, this.startY)
+		      this.ctx.lineTo(obj.x, obj.y)
+		      this.ctx.strokeStyle = this.lineColor
+		      this.ctx.lineWidth = this.lineWidth
+		      this.ctx.lineCap = 'round'
+		      this.ctx.lineJoin = 'round'
+		      this.ctx.stroke()
+		      this.ctx.closePath()
+		      this.startY = obj.y
+		      this.startX = obj.x
+		      this.points.push(obj)
+		    },
+		    drawEnd (obj) {
+		      this.ctx.beginPath()
+		      this.ctx.moveTo(this.startX, this.startY)
+		      this.ctx.lineTo(obj.x, obj.y)
+		      this.ctx.lineCap = 'round'
+		      this.ctx.lineJoin = 'round'
+		      this.ctx.stroke()
+		      this.ctx.closePath()
+		      this.points.push(obj)
+		      this.points.push({x: -1, y: -1})
+		    },
+		    // 操作
+		    generate () {
+		      const pm =  new Promise((resolve, reject) => {
+		        if (!this.hasDrew) {
+		          reject(`Warning: Not Signned!`)
+		          return
+		        }
+		        var resImgData = this.ctx.getImageData(0, 0, this.$refs.canvas.width, this.$refs.canvas.height)
+		        this.ctx.globalCompositeOperation = "destination-over"
+		        this.ctx.fillStyle = this.myBg
+		        this.ctx.fillRect(0,0,this.$refs.canvas.width ,this.$refs.canvas.height)
+		        this.resultImg = this.$refs.canvas.toDataURL()
+		        var resultImg = this.resultImg
+		        this.ctx.clearRect(0, 0, this.$refs.canvas.width ,this.$refs.canvas.height)
+		        this.ctx.putImageData(resImgData, 0, 0)
+		        this.ctx.globalCompositeOperation = "source-over"
+		        if (this.isCrop) {
+		          const crop_area = this.getCropArea(resImgData.data)
+		          var crop_canvas = document.createElement('canvas')
+		          const crop_ctx = crop_canvas.getContext('2d')
+		          crop_canvas.width = crop_area[2] - crop_area[0]
+		          crop_canvas.height = crop_area[3] - crop_area[1]
+		          const crop_imgData = this.ctx.getImageData(...crop_area)
+		          crop_ctx.globalCompositeOperation = "destination-over"
+		          crop_ctx.putImageData(crop_imgData, 0, 0)
+		          crop_ctx.fillStyle = this.myBg
+		          crop_ctx.fillRect(0, 0, crop_canvas.width , crop_canvas.height)
+		          resultImg = crop_canvas.toDataURL()
+		          crop_canvas = null
+		        }
+		        resolve(resultImg)
+		      })
+		      return pm
+		    },
+		    reset () {
+		      this.ctx.clearRect(0, 0, this.$refs.canvas.width, this.$refs.canvas.height)
+		      this.points = []
+		      this.hasDrew = false
+		      this.resultImg = ''
+		    },
+		    getCropArea (imgData) {
+		      var topX = this.$refs.canvas.width;
+		      var btmX = 0;
+		      var topY = this.$refs.canvas.height;
+		      var btnY = 0;
+		      for (var i = 0; i < this.$refs.canvas.width; i++) {
+		        for (var j = 0; j < this.$refs.canvas.height; j++) {
+		          var pos = (i + this.$refs.canvas.width * j) * 4
+		          if (imgData[pos] > 0 || imgData[pos + 1] > 0 || imgData[pos + 2] || imgData[pos + 3] > 0) {
+		            btnY = Math.max(j, btnY)
+		            btmX = Math.max(i, btmX)
+		            topY = Math.min(j, topY)
+		            topX = Math.min(i, topX)
+		          }
+		        }
+		      }
+		      topX++
+		      btmX++
+		      topY++
+		      btnY++
+		      const data = [topX, topY, btmX, btnY]
+		      return data
+		    }
+		  }
+		})
+	</script>
+</body>
+</html>
