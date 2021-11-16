@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="viewport" content="width=device-width,initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
 	<title>Document</title>
 	<style>
 		* {
@@ -10,8 +10,12 @@
 			padding: 0;
 			box-sizing: border-box;
 		}
+		html, body {
+			width: 100%;
+			height: 100%;
+		}
 		#app {
-			width: 100vw;
+			width: 100%;
 			height: 100vh;
 			border: 1px solid red;
 		}
@@ -24,37 +28,46 @@
 			height: 100%;
 		}
 		.btn {
-			width: 100px;
+			width: 18%;
 			border: 1px solid green;
 			background: none;
 			color: green;
 			padding: 5px;
 			margin: 0 auto;
+			/*float: left;*/
 		}
 		.preview {
 			width: 100%;
-			height: calc(50% - 30px);
+			min-height: calc(50% - 30px);
 			background: #f5f5f5;
 		}
+		/*.preview img {
+			width: 100%;
+		}*/
 	</style>
 </head>
 <body>
+	<!-- <div style="height: 200px;"></div> -->
 	<div id="app">
 		<div class="area">
 			<canvas ref="canvas"
-				@mousedown="mouseDown"
-				@mousemove="mouseMove"
-				@mouseup="mouseUp" 
 	  		@touchstart="touchStart"
 	  		@touchmove="touchMove"
 	  		@touchend="touchEnd">
-	  	</canvas>	
+	  	</canvas>
+	  	<!-- <canvas ref="canvas"
+				@mousedown="mouseDown"
+				@mousemove="mouseMove"
+				@mouseup="mouseUp">
+	  	</canvas> -->
 		</div>
-		<button class="btn">预览</button>
-		<button class="btn">清空</button>
-		<button class="btn">撤销</button>
+		<button class="btn" @click="preview">预览</button>
+		<button class="btn" @click="revert">撤销</button>
+		<button class="btn" @click="clear">清空</button>
+		<button class="btn" @click="save">保存</button>
+		<button class="btn" @click="clip">裁剪</button>
 		<div class="preview">
-			
+			<img src="" alt="">
 		</div>
 	</div>
 
@@ -78,27 +91,23 @@
 		  },
 		  data () {
 		    return {
-		    	canvasWidth: 0,  // 宽
-		    	canvasHeight: 0,  // 高
-		      hasDrew: false,
-		      resultImg: '',
-		      points: [],  // 记录每步操作
+		    	canvasRect: null, // 宽高clientRect数据
 		      ctx: null,  // 画笔对象
 		      startX: 0,
 		      startY: 0,
-		      isDrawing: false,
+		      endX: 0,
+		      endY: 0,
+		      storageSteps: [], // 记录每步操作
+		      hasDrew: false,
+		      // resultImg: '',
+		      isDrawing: false, // 是否正在绘制
+		      isEmpty: true, // 画板是否为空
 		    }
 		  },
-		  computed: {
-		    myBg () {
-		      return this.bgColor;
-		    }
-		  },
-		  // beforeMount () {
-		  //   window.addEventListener('resize', this.init)
-		  // },
-		  // beforeDestroy () {
-		  //   window.removeEventListener('resize', this.init)
+		  // computed: {
+		  //   myBg () {
+		  //     return this.bgColor;
+		  //   }
 		  // },
 		  mounted () {
 		    this.init()
@@ -111,184 +120,238 @@
 		  methods: {
 		    init () {
 		      const canvas = this.$refs.canvas;
-		      
-		      this.canvasWidth = canvas.getBoundingClientRect().width;
-		      this.canvasHeight = canvas.getBoundingClientRect().height;
 
-		      canvas.width = this.canvasWidth;
-		      canvas.height = this.canvasHeight;
+		      this.canvasRect = canvas.getBoundingClientRect();
+		      console.log(this.canvasRect)
+
+		      canvas.width = this.canvasRect.width;
+		      canvas.height = this.canvasRect.height;
 
 		      this.ctx = canvas.getContext('2d')
 		    },
 		    // pc
 		    mouseDown (e) {
-		      e = e || event
+		      console.log(e)
 		      e.preventDefault()
 		      this.isDrawing = true
-		      this.hasDrew = true
-		      let obj = {
-		        x: e.offsetX,
-		        y: e.offsetY
-		      }
-		      this.drawStart(obj)
+
+		      this.startX = e.offsetX;
+	      	this.startY = e.offsetY;
+
+	      	this.endX = this.startX;
+		      this.endY = this.startY;
+
+		      this.draw()
 		    },
 		    mouseMove (e) {
-		      e = e || event
 		      e.preventDefault()
 		      if (this.isDrawing) {
-		        let obj = {
-		          x: e.offsetX,
-		          y: e.offsetY
-		        }
-		        this.drawMove(obj)
+		    		// console.log(e)
+		        this.endX = e.offsetX;
+	      		this.endY = e.offsetY;
+
+		        this.draw()
+
+		      	this.startX = this.endX;
+			      this.startY = this.endY;
 		      }
 		    },
 		    mouseUp (e) {
-		      e = e || event
+		      // console.log(e)
 		      e.preventDefault()
-		      let obj = {
-		        x: e.offsetX,
-		        y: e.offsetY
-		      }
-		      this.drawEnd(obj)
-		      this.isDrawing = false
+		      this.isDrawing = false;
+
+		      let imgData = this.ctx.getImageData(0, 0, this.canvasRect.width, this.canvasRect.height);
+	        this.storageSteps.push(imgData)
 		    },
 		    // mobile
 		    touchStart (e) {
-		      e = e || event
-		      e.preventDefault()
-		      this.hasDrew = true
-		      if (e.touches.length === 1) {
-		        let obj = {
-		          x: e.targetTouches[0].clientX - this.$refs.canvas.getBoundingClientRect().left,
-		          y: e.targetTouches[0].clientY - this.$refs.canvas.getBoundingClientRect().top
-		        }
-		        this.drawStart(obj)
-		      }
+		      e.preventDefault();
+		      // this.hasDrew = true
+
+	      	this.startX = e.targetTouches[0].clientX - this.canvasRect.left;
+	      	this.startY = e.targetTouches[0].clientY - this.canvasRect.top;
+
+	      	this.endX = this.startX;
+		      this.endY = this.startY;
+
+	      	this.draw();
 		    },
 		    touchMove (e) {
-		      e = e || event
-		      e.preventDefault()
-		      if (e.touches.length === 1) {
-		        let obj = {
-		          x: e.targetTouches[0].clientX - this.$refs.canvas.getBoundingClientRect().left,
-		          y: e.targetTouches[0].clientY - this.$refs.canvas.getBoundingClientRect().top
-		        }
-		        this.drawMove(obj)
-		      }
+		      e.preventDefault();
+
+	        this.endX = e.targetTouches[0].clientX - this.canvasRect.left;
+	        this.endY = e.targetTouches[0].clientY - this.canvasRect.top;
+	        this.draw()
+	        this.startX = this.endX;
+		      this.startY = this.endY;
 		    },
 		    touchEnd (e) {
-		      e = e || event
-		      e.preventDefault()
-		      if (e.touches.length === 1) {
-		        let obj = {
-		          x: e.targetTouches[0].clientX - this.$refs.canvas.getBoundingClientRect().left,
-		          y: e.targetTouches[0].clientY - this.$refs.canvas.getBoundingClientRect().top
-		        }
-		        this.drawEnd(obj)
-		      }
+		      e.preventDefault();
+		      // console.log(e)
+		      this.endX = e.changedTouches[0].clientX - this.canvasRect.left;
+	        this.endY = e.changedTouches[0].clientY - this.canvasRect.top;
+
+	        // this.draw()
+	        // console.log(this.points)
+
+	        let imgData = this.ctx.getImageData(0, 0, this.canvasRect.width, this.canvasRect.height)
+	        console.log(imgData)
+	        this.storageSteps.push(imgData)
+	        // console.log(this.storageSteps)
 		    },
 		    // 绘制
-		    drawStart (obj) {
-		      this.startX = obj.x
-		      this.startY = obj.y
-		      this.ctx.beginPath()
-		      this.ctx.moveTo(this.startX, this.startY)
-		      this.ctx.lineTo(obj.x, obj.y)
-		      this.ctx.lineCap = 'round'
-		      this.ctx.lineJoin = 'round'
-		      this.ctx.lineWidth = this.lineWidth
-		      this.ctx.stroke()
-		      this.ctx.closePath()
-		      this.points.push(obj)
-		    },
-		    drawMove (obj) {
-		      this.ctx.beginPath()
-		      this.ctx.moveTo(this.startX, this.startY)
-		      this.ctx.lineTo(obj.x, obj.y)
-		      this.ctx.strokeStyle = this.lineColor
-		      this.ctx.lineWidth = this.lineWidth
-		      this.ctx.lineCap = 'round'
-		      this.ctx.lineJoin = 'round'
-		      this.ctx.stroke()
-		      this.ctx.closePath()
-		      this.startY = obj.y
-		      this.startX = obj.x
-		      this.points.push(obj)
-		    },
-		    drawEnd (obj) {
-		      this.ctx.beginPath()
-		      this.ctx.moveTo(this.startX, this.startY)
-		      this.ctx.lineTo(obj.x, obj.y)
-		      this.ctx.lineCap = 'round'
-		      this.ctx.lineJoin = 'round'
-		      this.ctx.stroke()
-		      this.ctx.closePath()
-		      this.points.push(obj)
-		      this.points.push({x: -1, y: -1})
+		    draw () {
+		      this.ctx.beginPath();
+		      this.ctx.moveTo(this.startX, this.startY);
+		      this.ctx.lineTo(this.endX, this.endY);
+		      this.ctx.lineCap = 'round';
+		      this.ctx.lineJoin = 'round';
+		      this.ctx.lineWidth = this.lineWidth;
+		      this.ctx.strokeStyle = this.lineColor;
+		      this.ctx.stroke();
+		      this.ctx.closePath();
+
+		      this.isEmpty = false;
 		    },
 		    // 操作
-		    generate () {
-		      const pm =  new Promise((resolve, reject) => {
-		        if (!this.hasDrew) {
-		          reject(`Warning: Not Signned!`)
-		          return
-		        }
-		        var resImgData = this.ctx.getImageData(0, 0, this.$refs.canvas.width, this.$refs.canvas.height)
-		        this.ctx.globalCompositeOperation = "destination-over"
-		        this.ctx.fillStyle = this.myBg
-		        this.ctx.fillRect(0,0,this.$refs.canvas.width ,this.$refs.canvas.height)
-		        this.resultImg = this.$refs.canvas.toDataURL()
-		        var resultImg = this.resultImg
-		        this.ctx.clearRect(0, 0, this.$refs.canvas.width ,this.$refs.canvas.height)
-		        this.ctx.putImageData(resImgData, 0, 0)
-		        this.ctx.globalCompositeOperation = "source-over"
-		        if (this.isCrop) {
-		          const crop_area = this.getCropArea(resImgData.data)
-		          var crop_canvas = document.createElement('canvas')
-		          const crop_ctx = crop_canvas.getContext('2d')
-		          crop_canvas.width = crop_area[2] - crop_area[0]
-		          crop_canvas.height = crop_area[3] - crop_area[1]
-		          const crop_imgData = this.ctx.getImageData(...crop_area)
-		          crop_ctx.globalCompositeOperation = "destination-over"
-		          crop_ctx.putImageData(crop_imgData, 0, 0)
-		          crop_ctx.fillStyle = this.myBg
-		          crop_ctx.fillRect(0, 0, crop_canvas.width , crop_canvas.height)
-		          resultImg = crop_canvas.toDataURL()
-		          crop_canvas = null
-		        }
-		        resolve(resultImg)
-		      })
-		      return pm
+		    // generate () {
+		    //   return new Promise((resolve, reject) => {
+		    //     if (!this.hasDrew) {
+		    //       reject(`Warning: Not Signned!`)
+		    //       return
+		    //     }
+		    //     var resImgData = this.ctx.getImageData(0, 0, this.$refs.canvas.width, this.$refs.canvas.height)
+		    //     this.ctx.globalCompositeOperation = "destination-over"
+		    //     this.ctx.fillStyle = this.myBg
+		    //     this.ctx.fillRect(0,0,this.$refs.canvas.width ,this.$refs.canvas.height)
+		    //     this.resultImg = this.$refs.canvas.toDataURL()
+		    //     var resultImg = this.resultImg
+		    //     this.ctx.clearRect(0, 0, this.$refs.canvas.width ,this.$refs.canvas.height)
+		    //     this.ctx.putImageData(resImgData, 0, 0)
+		    //     this.ctx.globalCompositeOperation = "source-over"
+		    //     if (this.isCrop) {
+		    //       const crop_area = this.getCropArea(resImgData.data)
+		    //       var crop_canvas = document.createElement('canvas')
+		    //       const crop_ctx = crop_canvas.getContext('2d')
+		    //       crop_canvas.width = crop_area[2] - crop_area[0]
+		    //       crop_canvas.height = crop_area[3] - crop_area[1]
+		    //       const crop_imgData = this.ctx.getImageData(...crop_area)
+		    //       crop_ctx.globalCompositeOperation = "destination-over"
+		    //       crop_ctx.putImageData(crop_imgData, 0, 0)
+		    //       crop_ctx.fillStyle = this.myBg
+		    //       crop_ctx.fillRect(0, 0, crop_canvas.width , crop_canvas.height)
+		    //       resultImg = crop_canvas.toDataURL()
+		    //       crop_canvas = null
+		    //     }
+		    //     resolve(resultImg)
+		    //   })
+		    // },
+		    // 预览
+		    preview () {
+		    	const base64 = this.$refs.canvas.toDataURL('image/png');
+		    	console.log(base64)
+		    	const img = document.querySelector('.preview img');
+		    	img.src = base64;
+		    	img.width = this.canvasRect.width;
+		    	img.height = this.canvasRect.height;
 		    },
-		    reset () {
-		      this.ctx.clearRect(0, 0, this.$refs.canvas.width, this.$refs.canvas.height)
+		    // 撤销
+		    revert () {
+		    	this.storageSteps.pop()
+		    	const len = this.storageSteps.length;
+		    	if (len) {
+		    		this.ctx.putImageData(this.storageSteps[len - 1], 0, 0);
+		    	} else {
+		    		this.clear()
+		    	}
+		    	// console.log('>>>', this.storageSteps)
+		    },
+		    // 清空
+		    clear () {
+		      this.ctx.clearRect(0, 0, this.canvasRect.width, this.canvasRect.height);
+		      this.storageSteps = [];
+
+		      this.isEmpty = true;
+
 		      this.points = []
 		      this.hasDrew = false
 		      this.resultImg = ''
 		    },
+		    // 保存
+		    save () {
+		    	if (this.isEmpty) {
+		    		console.log('画布为空！')
+		    		return
+		    	}
+		    	const name = prompt('请输入名称', 'canvas签名');
+		    	if (name && name.trim()) {
+		    		// console.log(name)
+		    		const a = document.createElement('a');
+		    		a.download = name;
+		    		a.href = this.$refs.canvas.toDataURL('image/png');
+		    		// console.log(a)
+		    		a.dispatchEvent(new MouseEvent('click')); // IE可能存在兼容性 可以把标签渲染出来再触发click事件
+		    	}
+		    },
+		    // 裁剪
+		    clip () {
+		    	if (this.isEmpty) {
+		    		console.log('画布为空！')
+		    		return
+		    	}
+		    	const imgData = this.ctx.getImageData(0, 0, this.canvasRect.width, this.canvasRect.height);
+		    	const clipArea = this.getCropArea(imgData.data)
+		    	console.log(clipArea)
+
+		    	const _canvas = document.createElement('canvas')
+		    	_canvas.width = clipArea.x2 - clipArea.x1;
+		    	_canvas.height = clipArea.y2 - clipArea.y1;
+		    	const _ctx = _canvas.getContext('2d');
+
+		    	const imageData = this.ctx.getImageData(clipArea.x1, clipArea.y1, _canvas.width, _canvas.height);
+		    	_ctx.putImageData(imageData, 0, 0)
+		    	const base64 = _canvas.toDataURL('image/png');
+
+		    	// const name = prompt('请输入名称', 'canvas签名');
+		    	// if (name && name.trim()) {
+		    	// 	const a = document.createElement('a');
+		    	// 	a.download = name;
+		    	// 	a.href = base64;
+		    	// 	a.dispatchEvent(new MouseEvent('click')); // IE可能存在兼容性 可以把标签渲染出来再触发click事件
+		    	// }
+
+		    	const img = document.querySelector('.preview img');
+		    	img.src = base64;
+		    	img.width = _canvas.width;
+		    	img.height = _canvas.height;
+
+		    },
+		    // 计算空白区域
 		    getCropArea (imgData) {
-		      var topX = this.$refs.canvas.width;
-		      var btmX = 0;
-		      var topY = this.$refs.canvas.height;
-		      var btnY = 0;
-		      for (var i = 0; i < this.$refs.canvas.width; i++) {
-		        for (var j = 0; j < this.$refs.canvas.height; j++) {
-		          var pos = (i + this.$refs.canvas.width * j) * 4
+		    	let x1 = Math.round(this.canvasRect.width);
+		    	let y1 = Math.round(this.canvasRect.height);
+		    	let x2 = 0;
+		    	let y2 = 0;
+		    	console.log([x1, y1, x2, y2])
+
+		    	for (let i = 0; i < Math.round(this.canvasRect.width); i++) {
+		        for (let j = 0; j < Math.round(this.canvasRect.height); j++) {
+		          let pos = (i + Math.round(this.canvasRect.width) * j) * 4;
 		          if (imgData[pos] > 0 || imgData[pos + 1] > 0 || imgData[pos + 2] || imgData[pos + 3] > 0) {
-		            btnY = Math.max(j, btnY)
-		            btmX = Math.max(i, btmX)
-		            topY = Math.min(j, topY)
-		            topX = Math.min(i, topX)
+		          	// console.log(pos, imgData[pos+3])
+		            x1 = Math.min(i, x1);
+		            y1 = Math.min(j, y1);
+		            x2 = Math.max(i, x2)
+		            y2 = Math.max(j, y2)
 		          }
 		        }
 		      }
-		      topX++
-		      btmX++
-		      topY++
-		      btnY++
-		      const data = [topX, topY, btmX, btnY]
-		      return data
+		      x1++
+		      y1++
+		      x2++
+		      y2++
+		      return { x1, y1, x2, y2 }
 		    }
 		  }
 		})
