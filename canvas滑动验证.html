@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+		[v-cloak] {
+			display: none;
+		}
+		#app {
+			width: 100vw;
+			height: 100vh;
+		}
+		.verify-container {
+			/*width: 350px;*/
+			/*border: 1px solid #e4e4e4;*/
+			margin: 20px auto;
+			position: relative;
+			overflow: hidden;
+			user-select:none;
+		}
+		.pic {
+			width: 100%;
+			position: relative;
+		}
+		.canvas_img {
+			display: block;
+		}
+		.canvas_block {
+			position: absolute;
+			left: 0;
+			top: 0;
+		}
+		.slider {
+			/*width: 100%;*/
+			height: 40px;
+			border: 1px solid #e4e4e4;
+			background: #f7f7f7;
+			position: relative;
+		}
+		.tip {
+			width: 100%;
+			height: 100%;
+			color: #666;
+			font-size: 14px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			position: absolute;
+		}
+		.bar {
+			height: 100%;
+			position: absolute;
+			left: 0;
+			top: 0;
+		}
+		.active {
+			background: #D1E9FE;
+			border: 1px solid #1991FA;
+		}
+		.success {
+			background: #D2F4EF;
+			border: 1px solid #52CCBA;
+		}
+		.fail {
+			background: #fce1e1;
+			border: 1px solid #f57a7a;
+		}
+		.slider-icon {
+			width: 40px;
+			height: 100%;
+			background: rgba(225, 225, 225, 0.6);
+			/*box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);*/
+			border: 1px solid #e3e3e3;
+			color: #666;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			position: absolute;
+			left: 0;
+			top: 0;
+			cursor: pointer;
+		}
+		.slider-icon.success {
+			background: #52CCBA;
+		}
+		.slider-icon.active {
+			color: #fff;
+			background: #1991FA;
+			border: 1px solid #1991FA;
+		}
+		.slider-icon.success {
+			color: #fff;
+			background: #52CCBA;
+			border: 1px solid #52CCBA;
+		}
+		.slider-icon.fail {
+			color: #fff;
+			background: #f57a7a;
+			border: 1px solid #f57a7a;
+		}
+		.refresh {
+			display: flex;
+			position: absolute;
+			right: 10px;
+			top: 10px;
+			z-index: 2;
+			cursor: pointer;
+		}
+	</style>
+</head>
+<body>
+	<div id="app" v-cloak>
+		<div class="verify-container" :style="{width: `${width}px`}">
+			<div class="refresh" @click="reset">
+				<svg t="1637315258145" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2420" width="20" height="20"><path d="M960 416V192l-73.056 73.056a447.712 447.712 0 0 0-373.6-201.088C265.92 63.968 65.312 264.544 65.312 512S265.92 960.032 513.344 960.032a448.064 448.064 0 0 0 415.232-279.488 38.368 38.368 0 1 0-71.136-28.896 371.36 371.36 0 0 1-344.096 231.584C308.32 883.232 142.112 717.024 142.112 512S308.32 140.768 513.344 140.768c132.448 0 251.936 70.08 318.016 179.84L736 416h224z" p-id="2421" fill="#8a8a8a"></path></svg>
+			</div>
+			<div class="pic">
+				<canvas class="canvas_img" ref="canvas_img" :width="width" :height="height"></canvas>
+				<canvas class="canvas_block" ref="canvas_block" :width="width" :height="height" :style="{left: blockLeft+'px'}"></canvas>
+			</div>
+			<div class="slider" :style="{height: blockW+'px'}">
+				<div class="tip" v-if="showText">向右滑动完成验证</div>
+				<div :class="['bar', slideState]" :style="{width: sliderLeft + 'px'}"></div>
+				<div :class="['slider-icon', slideState]"
+					:style="{left: sliderLeft + 'px'}" 
+					@touchstart="touchStart"
+					@touchmove="touchMove"
+					@touchEnd="touchEnd">
+					{{ { active: '>', fail: 'x', success: '√' }[slideState] || '>' }}
+				</div>
+				<!-- <div ref="slider-icon"
+					:class="['slider-icon', slideState]"
+					:style="{left: sliderLeft + 'px'}">
+					>
+				</div> -->
+			</div>
+		</div>
+		<br>
+	</div>
+
+	<script src="https://unpkg.com/vue@next"></script>
+	<script>
+		const App = {
+			props: {
+				width: {
+					type: Number,
+					default: 320
+				},
+				height: {
+					type: Number,
+					default: 160
+				},
+				blockW: { // 裁剪canvas宽高
+					type: Number,
+					default: 40
+				},
+				accuracy: {  // 精度
+					type: Number,
+					default: 1
+				},
+				images: {
+					type: Array,
+					default: [
+						'https://img2.baidu.com/it/u=172118635,3843440198&fm=26&fmt=auto',
+						'https://img2.baidu.com/it/u=2726247805,538885610&fm=26&fmt=auto',
+						'https://img1.baidu.com/it/u=1078976348,1462740125&fm=26&fmt=auto'
+					]
+				}
+			},
+			data() {
+				return {
+					bgImg: null,  // 背景图
+					ctxImg: null, // 背景画笔
+					ctxBlock: null, // 滑块画笔
+
+					blockRect: {  // 滑块宽、圆半径、坐标
+						w: this.blockW + 2 * this.blockW / 4,
+						r: this.blockW / 4,
+						x: 0,
+						y: 0
+					},
+					blockLeft: 0, // 裁剪后left属性
+					startX: 0, // 滑动起点
+					EndX: 0, // 结束位置
+					sliderLeft: 0,  // 拖动滑块的滑动距离
+					slideState: '' , // success fail active
+					timeIns: null,
+					showText: true, // 是否显示滑动提示
+					isMouseDown: false,
+				}
+			},
+			mounted () {
+				this.init()
+
+				// 如果是pc端则用mouse事件
+				// this.mouseEvent()
+			},
+			beforeDestroy () {
+				clearTimeout(this.timeIns)
+			},
+			methods: {
+				init () {
+					this.ctxImg = this.$refs['canvas_img'].getContext('2d');
+					this.ctxBlock = this.$refs['canvas_block'].getContext('2d');
+
+					this.getImg()
+				},
+				getImg () {
+					const img = document.createElement('img');
+					const imagesLen = this.images.length;
+					const randomIndex = Math.floor(Math.random() * imagesLen);
+					img.crossOrigin = "Anonymous"; 
+					img.src = this.images[randomIndex];
+					this.bgImg = img;
+
+					img.onload = () => {
+						console.log('图片加载完成')
+						this.ctxImg.drawImage(this.bgImg, 0, 0, this.width, this.height);
+						this.getBlockPostion()
+						this.ctxBlock.drawImage(this.bgImg, 0, 0, this.width, this.height);
+
+						// console.log(this.blockRect.x, this.blockRect.y, this.blockRect.w)
+						const _yPos = this.blockRect.y - 2 * this.blockRect.r;
+						const imageData = this.ctxBlock.getImageData(this.blockRect.x, _yPos, this.blockRect.w, this.blockRect.w + 1);
+						this.$refs['canvas_block'].width = this.blockRect.w;
+            this.ctxBlock.putImageData(imageData, 0, _yPos)
+					}
+					console.log(this.bgImg)
+				},
+				getBlockPostion () {
+					const xPos = Math.floor(this.width / 2 +  Math.random() * (this.width / 2 - this.blockRect.w));
+					const yPos = Math.floor(30 + Math.random() * (this.height - this.blockRect.w -30));
+					// console.log(xPos, yPos)
+					this.blockRect.x = xPos;
+					this.blockRect.y = yPos;
+
+					this.draw(this.ctxImg, 'fill');
+					this.draw(this.ctxBlock, 'clip')
+
+				},
+				draw (ctx, operation) {
+					const { r, x, y } = this.blockRect;
+					const _w = this.blockW;
+					ctx.beginPath();
+					ctx.moveTo(x, y);
+					ctx.arc(x + _w / 2, y - r + 2, r, 0.72 * Math.PI, 2.26 * Math.PI);
+					ctx.lineTo(x + _w, y);
+					ctx.arc(x + _w + r - 2, y + _w / 2, r, 1.21 * Math.PI, 2.78 * Math.PI);
+					ctx.lineTo(x + _w, y + _w);
+          ctx.lineTo(x, y + _w);
+          ctx.arc(x + r - 2, y + _w / 2, r + 0.4, 2.76 * Math.PI, 1.24 * Math.PI, true);
+          ctx.lineTo(x, y);
+					ctx.closePath();
+					ctx.fillStyle = 'rgba(225, 225, 225, 0.8)';
+					ctx.strokeStyle = 'rgba(225, 225, 225, 0.8)';
+					ctx.lineWidth = 2;
+					ctx.stroke();
+					ctx[operation]();
+				},
+				// pc
+				mouseEvent () {
+					this.$refs['slider-icon'].addEventListener('mousedown', this.mouseDown);
+					document.addEventListener('mousemove', this.mouseMove);
+					document.addEventListener('mouseup', this.mouseUp);
+				},
+				mouseDown (e) {
+					console.log(e)
+					this.startX = e.pageX;
+					this.showText = false;
+					this.isMouseDown = true;
+				},
+				mouseMove (e) {
+					if (!this.isMouseDown) {
+						return
+					}
+					// console.log(e)
+					this.endX = e.pageX - this.startX;
+					// 禁止超出边界
+					if (this.endX < 0 || this.endX > this.width - this.blockW) {
+						return
+					}
+					// 拖动的距离
+					this.sliderLeft = this.endX;
+					this.blockLeft = this.sliderLeft / (this.width - this.blockW) * (this.width - this.blockRect.w);
+					this.slideState = 'active';
+				},
+				mouseUp (e) {
+					if (!this.isMouseDown || this.startX === e.clientX) {
+						return
+					}
+					this.isMouseDown = false;
+					const isPass = this.verify();
+					console.log(isPass)
+					if (isPass) {
+						this.slideState = 'success';
+					} else {
+						this.slideState = 'fail';
+						// 如果失败则1000毫秒后重置
+						this.timeIns = setTimeout(() => {
+                this.reset()
+            }, 1000)
+					}
+				},
+				// mobile
+				touchStart (e) {
+					// console.log(e)
+					this.startX = e.changedTouches[0].pageX;
+					this.showText = false;
+				},
+				touchMove (e) {
+					this.endX = e.changedTouches[0].pageX - this.startX;
+					// 禁止超出边界
+					if (this.endX < 0 || this.endX > this.width - this.blockW) {
+						return
+					}
+					// 拖动的距离
+					this.sliderLeft = this.endX;
+					this.blockLeft = this.sliderLeft / (this.width - this.blockW) * (this.width - this.blockRect.w);
+					this.slideState = 'active';
+				},
+				touchEnd (e) {
+					const isPass = this.verify()
+					console.log(isPass)
+					if (isPass) {
+						this.slideState = 'success';
+					} else {
+						this.slideState = 'fail';
+						// 如果失败则1000毫秒后重置
+						this.timeIns = setTimeout(() => {
+                this.reset()
+            }, 1000)
+					}
+				},
+				// 判断精度
+				verify () {
+					console.log(Math.abs(this.blockLeft - this.blockRect.x))
+					return Math.abs(this.blockLeft - this.blockRect.x) <= this.accuracy
+				},
+				// 重置
+				reset () {
+					this.showText = true;
+					this.slideState = '';
+					this.sliderLeft = 0;
+					this.blockLeft = 0;
+					this.$refs['canvas_block'].width = this.width;
+					this.ctxImg.clearRect(0, 0, this.width, this.height);
+					this.ctxBlock.clearRect(0, 0, this.width, this.height);
+					this.getImg();
+				}
+			}
+		}
+		Vue.createApp(App).mount('#app');
+	</script>
+
+</body>
+</html>
