@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+		[v-cloak] {
+			display: none;
+		}
+		#app {
+			width: 100vw;
+			height: 100vh;
+			overflow: hidden;
+		}
+		.verify-character {
+			margin: 20px auto;
+			overflow: hidden;
+			user-select:none;
+			/*border: 1px solid red;*/
+		}
+		.canvas_character {
+			display: block;
+		}
+		.verfify-input {
+			height: 30px;
+			border: 1px solid #999;
+			display: flex;
+		}
+		.verfify-input .input {
+			flex: 1;
+			border: none;
+			outline: none;
+			border-right: 1px solid #999;
+			color: #666;
+			padding: 0 10px;
+		}
+		.verfify-input button {
+			padding: 0 20px;
+			border: none;
+			background: none;
+			color: #666;
+		}
+		.result {
+			color: blue;
+			line-height: 40px;
+			text-align: center;
+		}
+		.confirm {
+			width: 200px;
+			height: 30px;
+			border: none;
+			/*background: #337AB7;*/
+			color: #fff;
+			outline: none;
+			margin: 0 auto;
+			display: block;
+		}
+		.confirm.active {
+			background: #1991FA;
+		}
+		.confirm.success {
+			background: #52CCBA;
+		}
+		.confirm.fail {
+			background: #f57a7a;
+		}
+	</style>
+</head>
+<body>
+	<div id="app" v-cloak>
+		<div class="verify-character" :style="{width: `${width}px`}">
+			<canvas class="canvas_character"
+				ref="canvas_character"
+				:width="width"
+				:height="height"
+				@click="reset">
+			</canvas>
+			<div class="verfify-input">
+				<input class="input" type="text" v-model="inputCharacter">
+				<button @click="reset">重新加载</button>
+			</div>
+		</div>
+		<button :class="['confirm', state]" @click="verify">
+			{{ {active:'验证', success:'验证通过', fail:'验证失败'}[state] }}
+		</button>
+	</div>
+	
+	<script src="https://unpkg.com/vue@next"></script>
+	<script>
+		const App = {
+			props: {
+				width: {
+					type: Number,
+					default: 320
+				},
+				height: {
+					type: Number,
+					default: 60
+				},
+				length: {
+					type: Number,
+					default: 4
+				},
+				accuracy: { // 精度控制 是否判断大小写 0区分大小写
+					type: Number,
+					default: 0
+				}
+			},
+			data() {
+				return {
+					codeCharacter: '', // 生成字符
+					inputCharacter: '', // 验证字符
+					state: 'active', // 验证 成功 失败
+				}
+			},
+			mounted () {
+				this.init()
+			},
+			methods: {
+				init () {
+					this.$nextTick(() => {
+						this.ctx = this.$refs['canvas_character'].getContext('2d');
+
+						this.drawCharater();
+					})
+				},
+				// 绘制图形码
+				drawCharater () {
+					// this.ctx.textBaseline = 'bottom';
+					this.ctx.fillStyle = this.randomColor(180, 240);
+					this.ctx.fillRect(0, 0, this.width, this.height);
+
+					const strLen = 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789abcdefghijklmnpqrstuvwxyz';
+
+					for (let i = 0; i < this.length; i++) {
+						let txt = strLen[this.randomNum(0, strLen.length)];
+						
+						// 随机生成字体颜色
+						this.ctx.fillStyle = this.randomColor(50, 160);
+						// 随机生成字体大小(0.5 - 0.75)高的范围
+						this.ctx.font = this.randomNum(this.height * 2 / 4, this.height * 3 / 4) + 'px SimHei';
+						// 字体对齐位置
+						this.ctx.textBaseline = 'top';
+
+						let x = 20 + i * (this.width / this.length);
+						let y = this.randomNum(5, this.height / 4);
+						let deg = this.randomNum(-45, 45);
+						this.ctx.translate(x, y);
+						this.ctx.rotate(deg * Math.PI / 180);
+						this.ctx.fillText(txt, 0, 0);
+						// // 恢复坐标原点和旋转角度
+						this.ctx.rotate(-deg * Math.PI / 180);
+						this.ctx.translate(-x, -y);
+
+						// 保存生成的字符串
+						this.codeCharacter += txt;
+					}
+					// 绘制干扰线
+					for (let j = 0; j < this.length; j++) {
+						this.ctx.strokeStyle = this.randomColor(40, 180)
+						this.ctx.beginPath()
+						this.ctx.moveTo(this.randomNum(0, this.width), this.randomNum(0, this.height))
+						this.ctx.lineTo(this.randomNum(0, this.width), this.randomNum(0, this.height))
+						this.ctx.stroke()
+					}
+					// 绘制干扰点
+					for (let k = 0; k < 30; k++) {
+						this.ctx.fillStyle = this.randomColor(0, 255)
+						this.ctx.beginPath()
+						this.ctx.arc(this.randomNum(0, this.width), this.randomNum(0, this.height), 1, 0, 2 * Math.PI)
+						this.ctx.fill()
+					}
+				},
+				randomColor (min, max) {
+					let r = this.randomNum(min, max)
+					let g = this.randomNum(min, max)
+					let b = this.randomNum(min, max)
+					return 'rgb(' + r + ',' + g + ',' + b + ')'
+				},
+				randomNum (min, max) {
+					return Math.floor(Math.random() * (max - min) + min)
+				},
+				reset () {
+					this.codeCharacter = '';
+					this.inputCharacter = '';
+					this.verifyResult = false;
+					this.state = 'active';
+					this.drawCharater();
+				},
+				verify () {
+					// console.log('输入>>>', this.inputCharacter)
+					// console.log('生成>>>', this.codeCharacter)
+					// console.log(this.inputCharacter === this.codeCharacter)
+					if (!this.inputCharacter || !this.codeCharacter) {
+						return
+					}
+
+					let result = false;
+					if (this.accuracy === 0) {
+						result = this.inputCharacter.toUpperCase() === this.codeCharacter.toUpperCase()
+					} else {
+						result = this.inputCharacter === this.codeCharacter;
+					}
+					this.state = result ? 'success' : 'fail';
+					
+					this.$emit('verify', result); // 暴露给父组件使用
+				}
+			}
+		}
+		Vue.createApp(App).mount('#app');
+	</script>
+
+</body>
+</html>
