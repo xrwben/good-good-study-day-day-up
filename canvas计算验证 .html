@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+		[v-cloak] {
+			display: none;
+		}
+		#app {
+			width: 100vw;
+			height: 100vh;
+			overflow: hidden;
+		}
+		.verify-character {
+			margin: 20px auto;
+			overflow: hidden;
+			user-select:none;
+			/*border: 1px solid red;*/
+		}
+		.canvas_character {
+			display: block;
+		}
+		.verfify-input {
+			height: 30px;
+			border: 1px solid #999;
+			display: flex;
+		}
+		.verfify-input .input {
+			flex: 1;
+			border: none;
+			outline: none;
+			border-right: 1px solid #999;
+			color: #666;
+			padding: 0 10px;
+		}
+		.verfify-input button {
+			padding: 0 20px;
+			border: none;
+			background: none;
+			color: #666;
+		}
+		.confirm {
+			width: 200px;
+			height: 30px;
+			border: none;
+			background: #337AB7;
+			color: #fff;
+			outline: none;
+			margin: 0 auto;
+			display: block;
+		}
+	</style>
+</head>
+<body>
+	<div id="app" v-cloak>
+		<div class="verify-character" :style="{width: `${width}px`}">
+			<canvas class="canvas_character"
+				ref="canvas_character"
+				:width="width"
+				:height="height"
+				@click="reset">
+				</canvas>
+			<div class="verfify-input">
+				<input class="input" type="text" v-model="inputValue">
+				<button @click="reset">重新加载</button>
+			</div>
+		</div>
+		<br>
+		<button class="confirm" @click="verify">验证</button>
+	</div>
+	
+	<script src="https://unpkg.com/vue@next"></script>
+	<script>
+		const App = {
+			props: {
+				width: {
+					type: Number,
+					default: 320
+				},
+				height: {
+					type: Number,
+					default: 60
+				},
+				range: {
+					type: Number,
+					default: 100
+				}
+			},
+			data() {
+				return {
+					num1: 0,
+					num2: 0,
+					symbol: '+',
+					result: 0, // 计算结果
+					inputValue: ''
+				}
+			},
+			mounted () {
+				this.init()
+			},
+			methods: {
+				init () {
+					this.$nextTick(() => {
+						this.ctx = this.$refs['canvas_character'].getContext('2d');
+
+						this.drawFormula();
+					})
+				},
+				// 绘制图形码
+				drawFormula () {
+					this.ctx.fillStyle = this.randomColor(180, 240);
+					this.ctx.fillRect(0, 0, this.width, this.height);
+
+					// 绘制干扰线
+					for (let j = 0; j < 3; j++) {
+						this.ctx.strokeStyle = this.randomColor(40, 180)
+						this.ctx.beginPath()
+						this.ctx.moveTo(this.randomNum(0, this.width), this.randomNum(0, this.height))
+						this.ctx.lineTo(this.randomNum(0, this.width), this.randomNum(0, this.height))
+						this.ctx.stroke()
+					}
+					// 绘制干扰点
+					for (let k = 0; k < 30; k++) {
+						this.ctx.fillStyle = this.randomColor(0, 255)
+						this.ctx.beginPath()
+						this.ctx.arc(this.randomNum(0, this.width), this.randomNum(0, this.height), 1, 0, 2 * Math.PI)
+						this.ctx.fill()
+					}
+
+					let formula = ''; // 公式字符串
+					this.num1 = Math.floor(Math.random() * this.range);
+					this.num2 = Math.floor(Math.random() * this.range);
+					this.symbol = ['+', '-'][Math.floor(Math.random() * 2)];
+					console.log(this.num1, this.num2, this.symbol)
+					if (this.symbol === '+') {
+						formula = `${this.num1}+${this.num2}=?`
+						this.result = this.num1 + this.num2;
+					} else {
+						if (this.num1 >= this.num2) {
+							formula = `${this.num1}-${this.num2}=?`
+						} else {
+							formula = `${this.num2}-${this.num1}=?`
+						}
+						this.result = Math.abs(this.num1 - this.num2);
+					}
+					console.log(formula)
+
+					for (let i = 0; i < formula.length; i++) {
+						
+						// 随机生成字体颜色
+						this.ctx.fillStyle = this.randomColor(50, 160);
+						// 随机生成字体大小(0.5 - 0.75)高的范围
+						this.ctx.font = this.randomNum(this.height * 2 / 4, this.height * 3 / 4) + 'px SimHei';
+						// 字体对齐位置
+						this.ctx.textBaseline = 'top';
+
+						let x = 20 + i * (this.width / formula.length);
+						let y = this.randomNum(5, this.height / 4);
+						this.ctx.fillText(formula[i], x, y);
+					}
+					
+				},
+				randomColor (min, max) {
+					let r = this.randomNum(min, max)
+					let g = this.randomNum(min, max)
+					let b = this.randomNum(min, max)
+					return 'rgb(' + r + ',' + g + ',' + b + ')'
+				},
+				randomNum (min, max) {
+					return Math.floor(Math.random() * (max - min) + min)
+				},
+				reset () {
+					this.result = 0;
+					this.inputValue = '';
+					this.drawFormula();
+				},
+				verify () {
+					console.log('输入>>>', parseInt(this.inputValue))
+					console.log('生成>>>', this.result)
+					console.log(parseInt(this.inputValue) === this.result)
+
+					let res = parseInt(this.result) === parseInt(this.inputValue);
+					
+
+					this.$emit('verify', res);
+				}
+			}
+		}
+		Vue.createApp(App).mount('#app');
+	</script>
+
+</body>
+</html>
