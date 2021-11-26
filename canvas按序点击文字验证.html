@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+		[v-cloak] {
+			display: none;
+		}
+		#app {
+			width: 100vw;
+			height: 100vh;
+			overflow: hidden;
+		}
+		.verify-container {
+			/*border: 1px solid #e4e4e4;*/
+			margin: 20px auto;
+			position: relative;
+			overflow: hidden;
+			user-select:none;
+		}
+		.pic {
+			position: relative;
+		}
+		.canvas {
+			display: block;
+		}
+		.pointer {
+			background: #1abd6c;
+			border-radius: 50%;
+			padding: 15px;
+			position: absolute;
+		}
+		.pointer i {
+			color: #fff;
+			font-style: normal;
+			font-size: 12px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			position: absolute;
+			left: 0;
+			top: 0;
+			right: 0;
+			bottom: 0;
+		}
+		.toolbar {
+			width: 100%;
+			height: 40px;
+			border: 1px solid #e4e4e4;
+			background: #f7f7f7;
+			color: #666;
+			font-size: 14px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			position: relative;
+		}
+		.toolbar.active {
+			color: #fff;
+			background: #1991FA;
+			border: 1px solid #1991FA;
+		}
+		.toolbar.success {
+			color: #fff;
+			background: #52CCBA;
+			border: 1px solid #52CCBA;
+		}
+		.toolbar.fail {
+			color: #fff;
+			background: #f57a7a;
+			border: 1px solid #f57a7a;
+		}
+		.refresh {
+			display: flex;
+			position: absolute;
+			right: 10px;
+			top: 10px;
+			z-index: 2;
+			cursor: pointer;
+		}
+	</style>
+</head>
+<body>
+	<div id="app" v-cloak>
+		<div class="verify-container" :style="{width: `${width}px`}">
+			<div class="refresh" @click="reset">
+				<svg t="1637315258145" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2420" width="20" height="20"><path d="M960 416V192l-73.056 73.056a447.712 447.712 0 0 0-373.6-201.088C265.92 63.968 65.312 264.544 65.312 512S265.92 960.032 513.344 960.032a448.064 448.064 0 0 0 415.232-279.488 38.368 38.368 0 1 0-71.136-28.896 371.36 371.36 0 0 1-344.096 231.584C308.32 883.232 142.112 717.024 142.112 512S308.32 140.768 513.344 140.768c132.448 0 251.936 70.08 318.016 179.84L736 416h224z" p-id="2421" fill="#8a8a8a"></path></svg>
+			</div>
+			<div class="pic">
+				<canvas class="canvas" ref="canvas" :width="width" :height="height" @click="createPointer"></canvas>
+				<span class="pointer"
+					v-for="(item, index) in pointer"
+					:style="{left: `${item.x}px`, top: `${item.y}px`}">
+					<i>{{ index + 1 }}</i>
+				</span>
+			</div>
+			<div :class="['toolbar', state]">
+				<p v-if="state==='fail'">验证失败</p>
+				<p v-else-if="state==='success'">验证通过</p>
+				<p v-else>请顺序点击【<span v-for="(item, index) in tips" :key="index">{{ item.character }}</span>】</p>
+			</div>
+		</div>
+		<br>
+	</div>
+	
+	<script src="https://unpkg.com/vue@next"></script>
+	<script>
+		const App = {
+			props: {
+				width: {
+					type: Number,
+					default: 320
+				},
+				height: {
+					type: Number,
+					default: 160
+				},
+				fontStr: {
+					type: String,
+					default: '赵钱孙李周吴郑王朱秦尤许何吕施张孔曹严华金魏陶姜戚谢邹喻柏水窦章云苏潘葛奚范彭郎鲁韦昌马苗凤花方俞任袁柳酆鲍史唐'
+				},
+				fontNum: {  // 显示几个
+					type: Number,
+					default: 5
+				},
+				checkNum: {  // 点击验证数
+					type: Number,
+					default: 3
+				},
+				accuracy: {  // 精度
+					type: Number,
+					default: 1
+				},
+				images: {
+					type: Array,
+					default: [
+						'https://img2.baidu.com/it/u=172118635,3843440198&fm=26&fmt=auto',
+						'https://img2.baidu.com/it/u=2726247805,538885610&fm=26&fmt=auto',
+						'https://img1.baidu.com/it/u=1078976348,1462740125&fm=26&fmt=auto'
+					]
+				}
+			},
+			data() {
+				return {
+					bgImg: null,  // 背景图
+					ctx: null, // 背景画笔
+					fontArr: [], // 显示的字符
+					tips: [], // 提示文字
+					pointer: [], // 点击序号
+					state: '' , // success fail active
+					timeIns: null,
+				}
+			},
+			mounted () {
+				this.init()
+			},
+			beforeDestroy () {
+				clearTimeout(this.timeIns)
+			},
+			methods: {
+				init () {
+					this.ctx = this.$refs['canvas'].getContext('2d');
+
+					this.getImg();
+				},
+				getImg () {
+					const img = document.createElement('img');
+					const imagesLen = this.images.length;
+					const randomIndex = Math.floor(Math.random() * imagesLen);
+					img.crossOrigin = "Anonymous"; 
+					img.src = this.images[randomIndex];
+					this.bgImg = img;
+
+					img.onload = () => {
+						console.log('图片加载完成')
+						this.draw();
+					}
+					console.log(this.bgImg)
+				},
+				draw () {
+					// 绘制背景图
+					this.ctx.drawImage(this.bgImg, 0, 0, this.width, this.height);
+
+
+					for (let i = 0; i < this.fontNum; i++) {
+						const character = this.getRandomCharacter();
+						console.log(character)
+						const fontSize = this.randomNum(20, this.height * 1 / 4);
+						const fontWeight = Math.random() > 0.5 ? 'bold' : 'normal';
+						const fontStyle = Math.random() > 0.5 ? 'italic' : 'normal';
+						const fontFamily = Math.random() > 0.5 ? 'sans-serif' : 'serif'
+						const x = this.width / this.fontNum * i + 10;
+						const y = Math.random() * (this.height - fontSize);
+
+						this.ctx.fillStyle = this.randomColor(0, 255);
+						this.ctx.font = `${fontStyle} ${fontWeight} ${fontSize}px ${fontFamily}`;
+						this.ctx.textBaseline = 'top';
+						this.ctx.fillText(character, x, y);
+
+						this.fontArr.push({
+							character,
+							// fontSize,
+							x,
+							y
+						})
+					}
+					console.log(this.fontArr)
+
+					for (let i = 0; i < this.checkNum; i++) {
+						const randomIndex = Math.floor(Math.random() * this.fontArr.length);
+						const character = this.fontArr.splice([randomIndex], 1)[0];
+						this.tips.push(character);
+						// console.log(character, this.fontArr)
+					}
+					console.log(this.tips)
+				},
+				// 获取随机字符
+				getRandomCharacter () {
+					const fontStrLen = this.fontStr.length;
+					const randomIndex = Math.floor(Math.random() * fontStrLen);
+					const character = this.fontStr.charAt([randomIndex]);
+
+					// debugger
+					const isSome = this.fontArr.some(item => {
+						return item.character === character;
+					})
+					if (isSome) {
+						console.log(`>>>${character}已存在>>>`)
+						return this.getRandomCharacter();
+					} else {
+						return character;
+					}
+				},
+				randomColor (min, max) {
+					let r = this.randomNum(min, max)
+					let g = this.randomNum(min, max)
+					let b = this.randomNum(min, max)
+					return 'rgb(' + r + ',' + g + ',' + b + ')'
+				},
+				randomNum (min, max) {
+					return Math.floor(Math.random() * (max - min) + min)
+				},
+				createPointer (e) {
+					// console.log(e)
+					const canvasRect = this.$refs.canvas.getBoundingClientRect();
+					const x = e.offsetX - 15;
+					const y = e.offsetY - 15;
+
+					if (this.pointer.length < this.tips.length) {
+						this.pointer.push({x, y});
+						// console.log(this.pointer.length)
+						// this.verify()
+						this.state = 'active'
+					}
+					if (this.pointer.length === this.tips.length) {
+						const isPass = this.verify();
+						if (isPass) {
+							this.state = 'success';
+						} else {
+							this.state = 'fail';
+							// 如果失败则1000毫秒后重置
+							this.timeIns = setTimeout(() => {
+				                this.reset()
+				            }, 1000)
+						}
+					}
+				},
+				// 判断精度
+				verify () {
+					console.log("验证")
+					const result = this.pointer.every((item, index) => {
+						const _left = item.x > this.tips[index].x - 15;
+						const _right = item.x < this.tips[index].x + 15;
+						const _top = item.y > this.tips[index].y - 15;
+						const _bottom = item.y < this.tips[index].y + 15;
+						return _left && _right && _top && _bottom;
+					})
+					console.log(result)
+					return result;
+				},
+				// 重置
+				reset () {
+					this.fontArr = [];
+					this.tips = [];
+					this.pointer = [];
+					this.state = '';
+					this.ctx.clearRect(0, 0, this.width, this.height);
+					this.getImg();
+				}
+			}
+		}
+		Vue.createApp(App).mount('#app');
+	</script>
+
+</body>
+</html>
