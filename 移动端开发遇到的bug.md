@@ -71,3 +71,5 @@
 22、当我们使用flex布局，子元素设置了flex:1 后再设置width会无效，因为flex:1 是简写 flex-grow、flex-shrink、flex-basis，如果要设置宽度需要通过flex-basis指定宽度
 
 23、ios11.1.2使用es6'...'扩展运算符报错SyntaxError: Unexpected token '…'. Expected a property name，解决方法就是使用es5语法
+
+24、webpack打包然后访问出现 'Provisional headers are shown' 提示，可能是地址栏https协议导致的，切换到http即可
