@@ -136,7 +136,7 @@
 				},
 				accuracy: {  // 精度
 					type: Number,
-					default: 1
+					default: 15
 				},
 				images: {
 					type: Array,
@@ -276,10 +276,10 @@
 				verify () {
 					console.log("验证")
 					const result = this.pointer.every((item, index) => {
-						const _left = item.x > this.tips[index].x - 15;
-						const _right = item.x < this.tips[index].x + 15;
-						const _top = item.y > this.tips[index].y - 15;
-						const _bottom = item.y < this.tips[index].y + 15;
+						const _left = item.x > this.tips[index].x - this.accuracy;
+						const _right = item.x < this.tips[index].x + this.accuracy;
+						const _top = item.y > this.tips[index].y - this.accuracy;
+						const _bottom = item.y < this.tips[index].y + this.accuracy;
 						return _left && _right && _top && _bottom;
 					})
 					console.log(result)
