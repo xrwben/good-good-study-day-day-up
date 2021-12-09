@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<script>
+    // 适配方案 
+    (function(window, document){
+      function setRem() {
+        let deviceWidth = document.documentElement.clientWidth;
+        deviceWidth = deviceWidth > 750 ? 750 : deviceWidth;
+        document.documentElement.style.fontSize = deviceWidth / 7.5 + "px";
+      }
+      setRem();
+      window.addEventListener("resize", setRem);
+      window.addEventListener('pageshow', function (e) {
+        if (e.persisted) {
+          setRem();
+        }
+      })
+    })(window, document)
+  </script>
+	<style type="text/css">
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+		[v-cloak] {
+			display: none;
+		}
+		#app {
+			width: 100vw;
+			min-height: 100vh;
+		}
+		.swiper-container {
+			width: 80%;
+		  height: 3rem;
+		  border: 1px solid black;
+		  margin: 0 auto;
+		  position: relative;
+		}
+		.swiper-wrapper {
+			width: 100%;
+			height: 100%;
+			position: relative;
+			overflow: hidden;
+		}
+		.swiper-item {
+			width: 100%;
+			height: 100%;
+			position: absolute;
+			left: 0;
+			top: 0;
+			transform: translate3d(-100%, 0, 0);
+			/*display: none;*/
+		}
+		.swiper-item.active {
+			display: block;
+			transform: translate3d(0, 0, 0);
+		}
+		.content {
+			height: 100%;
+			font-size: 30px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+		.content-1 {
+			background: green;
+			color: #fff;
+		}
+		.content-2 {
+			background: pink;
+			color: #fff;
+		}
+		.content-3 {
+			background: skyblue;
+			color: #fff;
+		}
+		.content-4 {
+			background: yellowgreen;
+			color: #fff;
+		}
+		.swiper-indicators {
+			width: 100%;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			position: absolute;
+			left: 0;
+			bottom: 10px;
+			z-index: 100;
+		}
+		.indicator {
+			width: 8px;
+			height: 8px;
+			background: rgba(255, 255, 255, 0.5);
+			border-radius: 50%;
+			margin: 0 3px;
+		}
+		.indicator.active {
+			background: #fff;
+		}
+	</style>
+</head>
+<body>
+	<div id="app" v-cloak>
+		<div class="swiper-container" ref="swiper">
+			<div class="swiper-wrapper">
+				<div class="swiper-item" :class="{'active': i===currentIndex}" v-for="(item, i) in navList">
+					<div :class="['content', 'content-'+(i+1)]" @click="clickItem(i)">{{ i + 1 }}</div>
+				</div>
+			</div>
+			<div class="swiper-indicators" v-if="indicator">
+				<div :class="['indicator', {'active': i===currentIndex}]" v-for="(item, i) in navList" @click="changeTo(i)"></div>
+			</div>
+			<div class="swiper-btn" v-if="false">
+				<div class="prev"><</div>
+				<div class="next">></div>
+			</div>
+		</div>
+	</div>
+
+	<script src="https://unpkg.com/vue@next"></script>
+	<script>
+		console.log(Vue)
+		const App = {
+			props: {
+				disabled: { // 禁止拖动
+					type: Boolean,
+					default: false
+				},
+				loop: { // 是否循环
+					type: Boolean,
+					default: true
+				},
+				autoplay: { // 自动播放时间间隔
+					type: Number,
+					default: 3000
+				},
+				speed: { // 过度时间
+					type: Number,
+					default: 300
+				},
+				distance: { // 移动超过百分比则换页
+					type: Number,
+					default: 0.5
+				},
+				indicator: {
+					type: Boolean,
+					default: true
+				}
+			},
+			data () {
+				return {
+					navList: [
+						{ type: 1, name: 'slid-1', pic: 'https://i1.mifile.cn/a4/xmad_15535933141925_ulkYv.jpg' },
+						{ type: 2, name: 'slid-2', pic: 'https://i1.mifile.cn/a4/xmad_15532384207972_iJXSx.jpg' },
+						{ type: 3, name: 'slid-3', pic: 'https://i1.mifile.cn/a4/xmad_15517939170939_oiXCK.jpg' },
+						{ type: 4, name: 'slid-4', pic: 'https://i1.mifile.cn/a4/xmad_15532384207972_iJXSx.jpg' },
+					],
+					draging: false, // 是否正在拖动
+					translateing: false, // 正在拖动中
+					currentIndex: 0, // 当前项索引
+					pageList: [], // 轮播列表
+					dragState: {}, // 拖动详情
+					timerIns: null, // 定时器
+				}
+			},
+			mounted () {
+				this.$nextTick(() => {
+					this.init()
+				})
+			},
+			beforeDestroy() {
+				this.timerIns && clearInterval(this.timeIns);
+			},
+			methods: {
+				clickItem (i) {
+					console.log(i)
+				},
+				init () {
+					const swiper = this.$refs.swiper;
+
+					// 记录容器宽高
+					this.dragState.swiperWidth = swiper.getBoundingClientRect().width;
+
+					// 获取所有轮播列表
+					const children = swiper.querySelectorAll('.swiper-wrapper .swiper-item');
+					this.pageList = children;
+
+					// children.forEach(child => {
+					// 	this.pageList.push(child)
+					// })
+					// console.log(this.pageList)
+
+					// 自动轮播
+					this.autoplayEvent();
+					// if (this.autoplay) {
+					// 	this.timerIns = setInterval(() => {
+					// 		!this.draging && !this.translateing && this.slideTo('autoplay');
+					// 	}, this.autoplay)
+					// }
+
+					// 禁止拖动
+					if (this.disabled || this.pageList.length <= 1) {
+						return
+					}
+					swiper.addEventListener('touchstart', this.dragStartEvent);
+					swiper.addEventListener('touchmove', this.dragMoveEvent);
+					swiper.addEventListener('touchend', this.dragEndEvent);
+
+					// swiper.addEventListener('mousedown', this.dragStartEvent);
+					// swiper.addEventListener('mousemove', this.dragMoveEvent);
+					// swiper.addEventListener('mouseup', this.dragEndEvent);
+				},
+				autoplayEvent () {
+					if (this.autoplay) {
+						this.timerIns = setInterval(() => {
+							!this.draging && !this.translateing && this.slideTo('autoplay');
+						}, this.autoplay)
+					}
+				},
+				dragStartEvent (e) {
+					// e.preventDefault();
+					const touch = e.changedTouches ? e.changedTouches[0] : e;
+
+					// 开始拖动标志
+					this.draging = true;
+					// 记录开始时间
+					this.dragState.startTime = Date.now();
+					// 记录开始X坐标
+					this.dragState.startX = touch.pageX;
+
+					const isLoop = this.loop && this.pageList.length > 1;
+
+					// 上一个item
+					this.dragState.prevPage = !this.pageList[this.currentIndex - 1] && isLoop ? this.pageList[this.pageList.length - 1] : this.pageList[this.currentIndex - 1];
+					// 当前item
+					this.dragState.currentPage = this.pageList[this.currentIndex];
+					// 下一个item
+					this.dragState.nextPage = !this.pageList[this.currentIndex + 1] && isLoop ? this.pageList[0] : this.pageList[this.currentIndex + 1];
+				},
+				dragMoveEvent (e) {
+					const touch = e.changedTouches ? e.changedTouches[0] : e;
+
+					// 记录移动的当前坐标x
+					this.dragState.endX = touch.pageX;
+
+					const distance = this.dragState.endX - this.dragState.startX;
+					const otherPage = distance < 0 ? this.dragState.nextPage : this.dragState.prevPage;
+					const otherDistance = distance < 0 ? distance + this.dragState.swiperWidth : distance - this.dragState.swiperWidth;
+					// 当前元素拖动
+					this.translate(this.dragState.currentPage, distance);
+					// 根据滑动方向，选择拖动的前后元素
+					this.translate(otherPage, otherDistance);
+				},
+				dragEndEvent (e) {
+					const touch = e.changedTouches ? e.changedTouches[0] : e;
+
+					// 结束拖动标志
+					this.draging = false;
+					// 记录结束坐标x
+					this.dragState.endX = touch.pageX;
+					console.log(this.dragState);
+
+					const dragDuration = Date.now() - this.dragState.startTime;
+
+					const distance = this.dragState.endX - this.dragState.startX;
+					const toward = this.dragState.endX - this.dragState.startX > 0 ? 'prev' : 'next';
+
+					if (this.dragState.startX === this.dragState.endX) {
+						return
+					}
+					// 满足切换条件
+					if (dragDuration <= 300 || Math.abs(distance) >= this.dragState.swiperWidth * 0.5) {
+						if (toward === 'prev') {
+							const callback = () => {
+								this.currentIndex = this.currentIndex <= 0 ? this.pageList.length - 1 : this.currentIndex - 1;
+							}
+							this.translate(this.dragState.currentPage, this.dragState.swiperWidth, 300, callback);
+							this.translate(this.dragState.prevPage, 0, 300);
+						}
+						if (toward === 'next') {
+							const callback = () => {
+								this.currentIndex = this.currentIndex >= this.pageList.length - 1 ? 0 : this.currentIndex + 1;
+								console.log(this.currentIndex, this.pageList.length)
+							}
+							this.translate(this.dragState.currentPage, -this.dragState.swiperWidth, 300, callback);
+							this.translate(this.dragState.nextPage, 0, 300);
+						}
+					} else {
+						// 不满足还原
+						this.translate(this.dragState.currentPage, 0, 300);
+						if (toward === 'prev') {
+							this.translate(this.dragState.prevPage, -this.dragState.swiperWidth, 300);
+						}
+						if (toward === 'next') {
+							this.translate(this.dragState.nextPage, this.dragState.swiperWidth, 300);
+						}
+					}
+				},
+				changeTo (i) {
+					this.slideTo(i)
+				},
+				slideTo (index) {
+					console.log(index)
+					const isLoop = this.loop && this.pageList.length > 1;
+
+					if (index === 'autoplay') {
+						// 上一个item
+						this.dragState.prevPage = !this.pageList[this.currentIndex - 1] && isLoop ? this.pageList[this.pageList.length - 1] : this.pageList[this.currentIndex - 1];
+						// 当前item
+						this.dragState.currentPage = this.pageList[this.currentIndex];
+						// 下一个item
+						this.dragState.nextPage = !this.pageList[this.currentIndex + 1] && isLoop ? this.pageList[0] : this.pageList[this.currentIndex + 1];
+
+						this.translate(this.dragState.nextPage, this.dragState.swiperWidth);
+						const callback = () => {
+							this.currentIndex = this.currentIndex >= this.pageList.length - 1 ? 0 : this.currentIndex + 1;
+							// this.autoplayEvent();
+						}
+						setTimeout(() => {
+							this.translate(this.dragState.currentPage, -this.dragState.swiperWidth, 300, callback);
+							this.translate(this.dragState.nextPage, 0, 300);
+						}, 0)
+					} else {
+						if (index > this.currentIndex) {
+							// 上一个item
+							this.dragState.prevPage = !this.pageList[this.currentIndex - 1] && isLoop ? this.pageList[this.pageList.length - 1] : this.pageList[this.currentIndex - 1];
+							// 当前item
+							this.dragState.currentPage = this.pageList[this.currentIndex];
+							// 下一个item
+							this.dragState.nextPage = this.pageList[index];
+
+							this.translate(this.dragState.nextPage, this.dragState.swiperWidth);
+							const callback = () => {
+								this.currentIndex = index;
+							}
+							setTimeout(() => {
+								this.translate(this.dragState.currentPage, -this.dragState.swiperWidth, 300, callback);
+								this.translate(this.dragState.nextPage, 0, 300);
+							}, 0)
+						}
+						if (index < this.currentIndex) {
+							// 上一个item
+							this.dragState.prevPage = this.pageList[index];
+							// 当前item
+							this.dragState.currentPage = this.pageList[this.currentIndex];
+							// 下一个item
+							this.dragState.nextPage = !this.pageList[this.currentIndex + 1] && isLoop ? this.pageList[0] : this.pageList[this.currentIndex + 1];
+
+							const callback = () => {
+								this.currentIndex = index;
+							}
+							setTimeout(() => {
+								this.translate(this.dragState.currentPage, this.dragState.swiperWidth, 300, callback);
+								this.translate(this.dragState.prevPage, 0, 300);
+							}, 0)
+						}
+					}
+				},
+				translate (element, distance, speed, callback) {
+					// 有speed参数表示自动拖动，反之表示
+					if (speed) {
+						this.translateing = true;
+						element.style.transition= `transform ${speed}ms ease-in-out`;
+						element.style.transform = `translate3d(${distance}px, 0, 0)`;
+						// 过度完成后的回调
+						const transitionendCallback = () => {
+							// element.style.transition = '';
+							// element.style.transform = '';
+							this.dragState.currentPage.style.transform = '';
+							this.dragState.currentPage.style.transition = '';
+							this.dragState.prevPage.style.transform = '';
+							this.dragState.prevPage.style.transition = '';
+							this.dragState.nextPage.style.transform = '';
+							this.dragState.nextPage.style.transition = '';
+							this.translateing = false;
+							callback && callback();
+							element.removeEventListener('transitionend', transitionendCallback);
+						}
+						element.addEventListener('transitionend', transitionendCallback);
+					} else {
+						element.style.transform = `translate3d(${distance}px, 0, 0)`;
+					}
+				}
+			}
+		}
+		Vue.createApp(App).mount('#app')
+	</script>
+</body>
+</html>
