@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>custom element</title>
+</head>
+<body>
+	<popup-info
+		img="https://mdn.github.io/web-components-examples/popup-info-box-web-component/img/alt.png"
+		data-text="Tip: custom element">
+		<button>提示</button>
+	</popup-info>
+
+	<script>
+		class PopupInfo extends HTMLElement {
+			constructor () {
+				super();
+				console.log(this)
+
+				console.log(this.innerHTML)
+
+				const shadow = this.attachShadow({mode: 'open'});
+				console.log(shadow)
+
+				// Create html
+		    const app = document.createElement('div');
+		    app.setAttribute('id', 'app');
+
+		    const button = document.createElement('button');
+				button.setAttribute('class', 'button');
+				button.innerText = '提示';
+
+				const popup = document.createElement('div');
+				popup.setAttribute('class', 'popup');
+
+		    const img = document.createElement('img');
+		    img.src = this.getAttribute('img');
+		    popup.appendChild(img);
+
+		    const tip = document.createElement('p');
+		    tip.setAttribute('class', 'tip');
+		    tip.innerText = this.getAttribute('data-text');
+		    popup.appendChild(tip);
+
+		    // Create some CSS to apply to the shadow dom
+		    const style = document.createElement('style');
+		    console.log(style.isConnected);
+
+		    style.textContent = `
+		    	* {
+		    		margin: 0;
+		    		padding: 0;
+		    	}
+		      #app {
+		        margin: 100px;
+		        display: inline-block;
+		        position: relative;
+		      }
+		      .button {
+		      	color: blue;
+		      	background: #fff;
+		      	border: 1px solid blue;
+		      	border-radius: 5px;
+		      	padding: 5px 20px;
+		      	cursor: pointer;
+		      }
+		      .popup {
+		      	font-size: 14px;
+		        padding: 10px 20px;
+		        background: #2c2c2c;
+		        border-radius: 5px;
+		        display: flex;
+		        align-items: center;
+		        opacity: 0;
+		        transition: all 0.3s ease-in-out;
+		        position: absolute;
+		        bottom: 40px;
+		        left: 50%;
+		        transform: translate3d(-50%, 0, 0)
+		      }
+		      .popup::after {
+				    content: "";
+				    width: 8px;
+				    height: 8px;
+				    background: #2c2c2c;
+				    transform: rotate(45deg);
+		      	position: absolute;
+		      	left: 0;
+		      	right: 0;
+		      	bottom: -4px;
+		      	margin: auto;
+		      }
+		      .tip {
+		        font-size: 1rem;
+		        color: #fff;
+		        margin-left: 10px;
+		        flex: 0 0 auto;
+		        white-space: nowrap;
+		      }
+		      img {
+		        width: 20px;
+		        height: 20px;
+		      }
+		      .button:hover +.popup {
+		        opacity: 1;
+		      }
+		    `;
+
+		    // Attach the created elements to the shadow dom
+		    shadow.appendChild(style);
+		    console.log(style.isConnected);
+		    shadow.appendChild(app);
+		    app.appendChild(button);
+		    app.appendChild(popup);
+			}
+		}
+
+		customElements.define('popup-info', PopupInfo);
+	</script>
+</body>
+</html>
