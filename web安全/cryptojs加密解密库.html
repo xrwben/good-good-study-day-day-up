@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>crypto-js库</title>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js" integrity="sha512-E8QSvWZ0eCLGk4km3hxSsNmGWbLtSCSUcewDQPQWZF6pEU8GlT8a5fF32wOl1i8ftdMhssTrF/OhyGWwonTcXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+<body>
+	
+	<script type="text/javascript">
+		console.log(CryptoJS)
+
+		/*
+			MD5加密
+		*/
+		const md5_text = CryptoJS.MD5("Message");
+		console.log("md5>>>", md5_text);
+
+		/*
+			SHA256加密
+		*/
+		const sha256_text = CryptoJS.MD5("Message");
+		console.log("sha256>>>", sha256_text.toString());
+
+		/*
+			AES加密
+		*/
+
+		// Encrypt
+    const ciphertext = CryptoJS.AES.encrypt('my message', 'secret key 123').toString();
+    console.log(ciphertext)
+
+    // Decrypt
+    const bytes = CryptoJS.AES.decrypt(ciphertext, 'secret key 123');
+    const originalText = bytes.toString(CryptoJS.enc.Utf8);
+    console.log(bytes, originalText)
+
+    console.log('-------------------')
+    var md5 = CryptoJS.MD5("111111") + "";
+    console.log(md5);
+    var SHA1 =CryptoJS.SHA1("111111") + "";
+    console.log(SHA1);
+    var SHA256 = CryptoJS.SHA256("111111") + "";
+    console.log(SHA256);
+    var HmacSHA1 = CryptoJS.HmacSHA1("111111", "123") + "";
+    console.log(HmacSHA1);
+    var HmacMD5 = CryptoJS.HmacMD5("111111", "123") + "";
+    console.log(HmacMD5);
+    // 下面这种算法算出来的值跟上面是一样的
+    var hasher = CryptoJS.algo.SHA256.create();
+    hasher.update("111");
+    var hash = hasher.finalize("111") + "";
+    console.log(hash);
+	</script>
+</body>
+</html>
