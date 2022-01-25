@@ -107,6 +107,18 @@
 		.indicator.active {
 			background: #fff;
 		}
+		.swiper-btn .prev {
+			position: absolute;
+			left: 0;
+			top: 50%;
+			transform: translateY(-50%);
+		}
+		.swiper-btn .next {
+			position: absolute;
+			right: 0;
+			top: 50%;
+			transform: translateY(-50%);
+		}
 	</style>
 </head>
 <body>
@@ -118,11 +130,11 @@
 				</div>
 			</div>
 			<div class="swiper-indicators" v-if="indicator">
-				<div :class="['indicator', {'active': i===currentIndex}]" v-for="(item, i) in swiperList" @click.stop.prevent="slidTo(i)"></div>
+				<div :class="['indicator', {'active': i===currentIndex}]" v-for="(item, i) in swiperList" @click.stop="slideTo(i)"></div>
 			</div>
-			<div class="swiper-btn" v-if="false">
-				<div class="prev"><</div>
-				<div class="next">></div>
+			<div class="swiper-btn" v-if="true">
+				<div class="prev" @click="slidePrev"><</div>
+				<div class="next" @click="slideNext">></div>
 			</div>
 		</div>
 	</div>
@@ -142,7 +154,7 @@
 				},
 				autoplay: { // 自动播放时间间隔
 					type: Number,
-					default: 3000
+					default: 4000
 				},
 				vertical: {
 					type: Boolean,
@@ -150,15 +162,21 @@
 				},
 				speed: { // 过度时间
 					type: Number,
-					default: 300
+					default: 500
 				},
 				threshold: { // 移动超过百分比则换页
 					type: Number,
 					default: 0.5
 				},
+				// 是否显示索引
 				indicator: {
 					type: Boolean,
 					default: true
+				},
+				// 默认索引
+				defaultIndex: {
+					type: Number,
+					default: 1
 				}
 			},
 			data () {
@@ -171,7 +189,6 @@
 					],
 					pageList: [], // 轮播列表
 					draging: false, // 是否正在拖动
-					translateing: false, // 正在拖动中
 					currentIndex: 0, // 当前项索引
 					currentOffset: 0, // 当前容器偏移量
 					dragState: {}, // 拖动详情
@@ -179,17 +196,27 @@
 				}
 			},
 			computed: {
+				// swiper页数
+				count () {
+					return this.pageList.length
+				},
+				// 容器宽
 				swiperWidth () {
 					return this.$refs.swiper.getBoundingClientRect().width;
 				},
+				// 偏移的最小值
 				minOffset () {
-					return this.swiperWidth * (this.pageList.length - 1)
+					return -this.swiperWidth * (this.pageList.length - 1)
 				},
 				wrapperStyle () {
 					return {
 						transform: `translate${this.vertical ? 'Y' : 'X'}(${this.currentOffset}px)`,
 						transition: `transform ${this.draging ? 0 : this.speed}ms ease`
 					}
+				},
+				// 是否循环
+				isLoop () {
+					return this.loop && this.pageList.length > 1;
 				}
 			},
 			mounted () {
@@ -208,43 +235,60 @@
 					const swiper = this.$refs.swiper;
 					const wrapper = this.$refs.wrapper;
 
-					// 记录容器宽高
-					// this.dragState.swiperWidth = swiper.getBoundingClientRect().width;
-
 					// 获取所有轮播列表
 					const children = wrapper.querySelectorAll('.swiper-item');
 					this.pageList = children;
 
+					// 处理默认索引
+					this.draging = true;
+					this.currentIndex = this.defaultIndex;
+					this.currentOffset = -this.defaultIndex * this.swiperWidth
+
 					// 自动轮播
-					// this.autoplayEvent();
+					this.startAutoplay();
 
 					// 禁止拖动
 					if (this.disabled || this.pageList.length <= 1) {
 						return
 					}
-					swiper.addEventListener('touchstart', this.dragStartEvent);
-					swiper.addEventListener('touchmove', this.dragMoveEvent);
-					swiper.addEventListener('touchend', this.dragEndEvent);
+					wrapper.addEventListener('touchstart', this.dragStartEvent);
+					wrapper.addEventListener('touchmove', this.dragMoveEvent);
+					wrapper.addEventListener('touchend', this.dragEndEvent);
+					// wrapper.addEventListener('transitionend', this.transitionEndEvent)
 
 					// swiper.addEventListener('mousedown', this.dragStartEvent);
 					// swiper.addEventListener('mousemove', this.dragMoveEvent);
 					// swiper.addEventListener('mouseup', this.dragEndEvent);
+
+					window.addEventListener('visibilitychange', this.onVisibilityChange)
 				},
-				starAutoplay () {
+				startAutoplay () {
+					console.log('start开始播放')
 					if (this.autoplay) {
-						this.timerIns = setInterval(() => {
-							!this.draging && !this.translateing && this.slideTo('autoplay');
+						this.timerIns && clearTimeout(this.timerIns)
+						this.timerIns = setTimeout(() => {
+							this.slideNext();
+							this.startAutoplay()
 						}, this.autoplay)
 					}
 				},
 				stopAutoplay () {
-					this.timerIns && clearInterval(this.timeIns)
+					this.timerIns && clearTimeout(this.timerIns)
 					console.log('stop自动播放')
 				},
+				// 页面可见性
+				onVisibilityChange () {
+					console.log(document.visibilityState);
+					if (document.visibilityState === 'visible') {
+						this.startAutoplay()
+					} else {
+						this.stopAutoplay()
+					}
+				},
 				dragStartEvent (e) {
-					console.log(e)
+					console.log(e, this.currentIndex, this.currentOffset)
 					// 开始拖动则停止自动轮播
-					// this.autoplayStop()
+					this.stopAutoplay()
 
 					const touch = e.changedTouches ? e.changedTouches[0] : e;
 
@@ -276,89 +320,92 @@
 					const dragDuration = Date.now() - this.dragState.startTime;
 
 					const distance = this.dragState.endX - this.dragState.startX;
-					const toward = distance > 0 ? 'prev' : 'next';
 
-					if (this.dragState.startX === this.dragState.endX) {
-						return
-					}
+					// if (this.dragState.startX === this.dragState.endX) {
+					// 	return
+					// }
 					// 满足切换条件
-					if (dragDuration <= 300 || Math.abs(distance) >= this.swiperWidth * this.threshold) {
-						toward === 'next' ? this.currentIndex++ : this.currentIndex--
+					if (Math.abs(distance/dragDuration) >= 0.25 || Math.abs(distance) >= this.swiperWidth * this.threshold) {
+						distance < 0 ? this.currentIndex++ : this.currentIndex--
 						this.translate(0)
 					} else {
 						// 不满足还原
 						this.translate(0);	
 					}
+					this.startAutoplay()
 				},
 				translate (distance) {
-					// 是否循环
-					const isLoop = this.loop && this.pageList.length > 1
-
-					if (!isLoop) {
-						if (this.currentIndex > this.pageList.length - 1) {
-							this.currentIndex = this.pageList.length - 1
-						} else if (this.currentIndex < 0) {
-							this.currentIndex = 0
-						}
-					}
-
 					// 目标索引
-					let targetIndex = this.currentIndex
+					let targetIndex = (this.currentIndex + this.pageList.length) % this.pageList.length
 					// 滑动的目标距离
 					let targetOffset = -(this.currentIndex * this.swiperWidth) + distance
 
 					// 循环处理
-					if (isLoop) {
-						// minOffset = 
-						if (distance < 0) {
-							if (targetOffset <= -this.minOffset) {
-								this.pageList[0].style = `transform: translateX(${this.pageList.length * this.swiperWidth}px`
-								this.pageList[this.pageList.length - 1].removeAttribute('style')
-							} else {
-								this.pageList[0].removeAttribute('style')
-							}
+					if (this.isLoop) {
+						if (targetOffset <= this.minOffset) {
+							this.pageList[0].style = `transform: translateX(${this.pageList.length * this.swiperWidth}px`
+						} else {
+							this.pageList[0].removeAttribute('style')
 						}
-						if (distance > 0) {
-							if (targetOffset >= 0) {
-								this.pageList[0].removeAttribute('style')
-								this.pageList[this.pageList.length - 1].style = `transform: translateX(-${this.pageList.length * this.swiperWidth}px`
-							} else {
-								this.pageList[this.pageList.length - 1].removeAttribute('style')
-							}
-						}
-						targetIndex = (this.currentIndex + this.pageList.length) % this.pageList.length
-					} else {
 						if (targetOffset >= 0) {
-							targetOffset = 0
+							this.pageList[this.pageList.length - 1].style = `transform: translateX(-${this.pageList.length * this.swiperWidth}px`
+						} else {
+							this.pageList[this.pageList.length - 1].removeAttribute('style')
 						}
-						if (targetOffset <= -this.minOffset) {
-							targetOffset = -this.minOffset
-						}
+					} else {
+						// 不循环时偏移和当前索引的边界处理
+						targetOffset = targetOffset >= 0 ? 0 : (targetOffset <= this.minOffset ? this.minOffset : targetOffset)
+						targetIndex = this.currentIndex > this.pageList.length - 1 ? this.pageList.length - 1 : (this.currentIndex < 0 ? 0 : targetIndex)
 					}
 
-					console.log("targetIndex>>", targetIndex)
+					// console.log("targetIndex>>", targetIndex)
 					this.currentIndex = targetIndex
 					this.currentOffset = targetOffset
 				},
+				// 修改偏移位置
+				correctionPosition () {
+					// console.log("correctionPosition>>>", this.currentIndex, this.currentOffset)
+					if (this.currentOffset === this.swiperWidth || this.currentOffset === -this.swiperWidth * this.pageList.length) {
+						this.draging = true
+						let targetOffset = -this.currentIndex * this.swiperWidth
+						this.currentOffset = targetOffset
+						this.pageList[0].removeAttribute('style')
+						this.pageList[this.pageList.length - 1].removeAttribute('style')
+					}
+				},
 				// 点击跳转到指定位置
-				slidTo (i) {
+				slideTo (i) {
 					if (this.currentIndex === i) {
 						return
 					}
-					let targetOffset = -this.currentIndex * this.swiperWidth
-					console.log(this.$refs.wrapper, targetOffset)
 
-					this.$refs.wrapper.style = `
-						transform: translate${this.vertical ? 'Y' : 'X'}(${targetOffset}px);
-						transition: transform 0 ease;
-					`
-
-					// this.currentIndex = i
-					this.translate(0)
-
-					this.pageList[0].removeAttribute('style')
-					this.pageList[this.pageList.length - 1].removeAttribute('style')
+					this.correctionPosition()
+					this.currentIndex = i
+					requestAnimationFrame(() => {
+						this.draging = false
+						this.translate(0)
+					})
 				},
+				// 上一张
+				slidePrev () {
+					this.correctionPosition()
+					this.currentIndex--
+					requestAnimationFrame(() => {
+						this.draging = false
+						this.translate(0)
+					})	
+				},
+				// 下一张
+				slideNext () {
+					this.correctionPosition()
+					this.currentIndex++
+					requestAnimationFrame(() => {
+						requestAnimationFrame(() => {
+							this.draging = false
+							this.translate(0)
+						})
+					})
+				}
 			}
 		}
 		Vue.createApp(App).mount('#app')
