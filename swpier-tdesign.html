@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<script>
+    // 适配方案 
+    (function(window, document){
+      function setRem() {
+        let deviceWidth = document.documentElement.clientWidth;
+        deviceWidth = deviceWidth > 750 ? 750 : deviceWidth;
+        document.documentElement.style.fontSize = deviceWidth / 7.5 + "px";
+      }
+      setRem();
+      window.addEventListener("resize", setRem);
+      window.addEventListener('pageshow', function (e) {
+        if (e.persisted) {
+          setRem();
+        }
+      })
+    })(window, document)
+  </script>
+	<style type="text/css">
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+		[v-cloak] {
+			display: none;
+		}
+		html, body {
+			overflow: hidden;
+		}
+		#app {
+			width: 302px;
+			/*min-height: 100vh;*/
+		  margin: 50px auto;
+		  /*overflow: hidden;*/
+		  border: 1px solid black;
+		}
+		.swiper-container {
+			width: 100%;
+		  height: 3rem;
+		  position: relative;
+			/*overflow: hidden;*/
+		}
+		.track-horizontal {
+			width: auto;
+			height: 100%;
+			display: flex;
+		}
+		.track-vertical {
+			width: 100%;
+			height: 100%;
+		/*	display: flex;
+			flex-direction: column;*/
+		}
+		.swiper-item {
+			width: 100%;
+			height: 100%;
+			flex-shrink: 0;
+			position: relative;
+		}
+		.swiper-item img {
+			width: 100%;
+			height: 100%;
+		}
+		.content {
+			height: 100%;
+			font-size: 30px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+		.content-1 {
+			background: green;
+			color: #fff;
+		}
+		.content-2 {
+			background: pink;
+			color: #fff;
+		}
+		.content-3 {
+			background: skyblue;
+			color: #fff;
+		}
+		.content-4 {
+			background: yellowgreen;
+			color: #fff;
+		}
+		.swiper-indicators {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			position: absolute;
+			z-index: 100;
+		}
+		.indicators-horizontal {
+			width: 100%;
+			left: 0;
+			bottom: 10px;
+		}
+		.indicators-vertical {
+			flex-direction: column;
+			height: 100%;
+			top: 0;
+			right: 10px;
+		}
+		.indicator {
+			width: 8px;
+			height: 8px;
+			background: rgba(255, 255, 255, 0.5);
+			border-radius: 50%;
+			margin: 3px;
+		}
+		.indicator.active {
+			background: #fff;
+		}
+		.swiper-btn .prev, .swiper-btn .next {
+			width: 20px;
+			height: 20px;
+			background: rgba(0, 0, 0, 0.5);
+			border-radius: 50%;
+			color: #fff;
+			font-size: 0;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+		.swiper-btn .prev {
+			position: absolute;
+			left: 10px;
+			top: 50%;
+			transform: translateY(-50%);
+		}
+		.swiper-btn .prev::before {
+			content: '';
+			width: 6px;
+			height: 6px;
+			border: 2px solid #fff;
+			border-right: none;
+			border-top: none;
+			transform: translateX(1px) rotate(45deg);
+		}
+		.swiper-btn .next {
+			position: absolute;
+			right: 10px;
+			top: 50%;
+			transform: translateY(-50%);
+		}
+		.swiper-btn .next::before {
+			content: '';
+			width: 6px;
+			height: 6px;
+			border: 2px solid #fff;
+			border-left: none;
+			border-bottom: none;
+			transform: translateX(-1px) rotate(45deg);
+		}
+	</style>
+</head>
+<body>
+	<div id="app" v-cloak>
+		<div class="swiper-container" ref="swiper">
+			<div :class="[vertical ? 'track-vertical' : 'track-horizontal']" ref="track" :style="trackStyle">
+				<div class="swiper-item" v-for="(item, i) in swiperList" :data-index="i">
+					<div :class="['content', 'content-'+(i+1)]" @click="clickItem(i)">{{ i + 1 }}</div>
+					<!-- <img :src="item.pic" alt=""> -->
+				</div>
+			</div>
+			<div :class="['swiper-indicators', vertical ? 'indicators-vertical' : 'indicators-horizontal']" v-if="indicator">
+				<div :class="['indicator', {'active': i===currentIndex}]" v-for="(item, i) in swiperList" @click.stop="slideTo(i)"></div>
+			</div>
+			<div class="swiper-btn" v-if="showButton">
+				<div class="prev" @click="slidePrev"></div>
+				<div class="next" @click="slideNext"></div>
+			</div>
+		</div>
+	</div>
+
+	<script src="https://unpkg.com/vue@next"></script>
+	<script>
+		console.log(Vue)
+		const App = {
+			props: {
+				disabled: { // 禁止拖动
+					type: Boolean,
+					default: false
+				},
+				loop: { // 是否循环
+					type: Boolean,
+					default: true
+				},
+				autoplay: { // 自动播放时间间隔
+					type: Number,
+					default: 4000
+				},
+				vertical: {
+					type: Boolean,
+					default: false
+				},
+				speed: { // 过度时间
+					type: Number,
+					default: 400
+				},
+				threshold: { // 移动超过百分比则换页
+					type: Number,
+					default: 0.5
+				},
+				// 是否显示索引
+				indicator: {
+					type: Boolean,
+					default: true
+				},
+				// 默认索引
+				defaultIndex: {
+					type: Number,
+					default: 1
+				},
+				// 是否显示
+				showButton: {
+					type: Boolean,
+					default: true
+				}
+			},
+			data () {
+				return {
+					swiperList: [
+						{ type: 1, name: 'slid-1', pic: 'https://i1.mifile.cn/a4/xmad_15535933141925_ulkYv.jpg' },
+						{ type: 2, name: 'slid-2', pic: 'https://i1.mifile.cn/a4/xmad_15532384207972_iJXSx.jpg' },
+						{ type: 3, name: 'slid-3', pic: 'https://i1.mifile.cn/a4/xmad_15517939170939_oiXCK.jpg' },
+						// { type: 4, name: 'slid-4', pic: 'https://i1.mifile.cn/a4/xmad_15532384207972_iJXSx.jpg' },
+					],
+					pageList: [], // 轮播列表
+					draging: false, // 是否正在拖动
+					currentIndex: 0, // 当前项索引
+					currentOffset: 0, // 当前容器偏移量
+					dragState: {}, // 拖动详情
+					timerIns: null, // 定时器
+				}
+			},
+			computed: {
+				// swiper页数
+				count () {
+					return this.pageList.length
+				},
+				// 容器宽高
+				swiperSize () {
+					const direction = this.vertical ? 'height' : 'width';
+					return this.$refs.swiper.getBoundingClientRect()[direction];
+				},
+				trackStyle () {
+					return {
+						transform: `translate${this.vertical ? 'Y' : 'X'}(${this.currentOffset}px)`,
+						transition: `transform ${this.draging ? 0 : this.speed}ms ease`
+					}
+				},
+				// 是否循环
+				isLoop () {
+					return this.loop && this.pageList.length > 1;
+				}
+			},
+			mounted () {
+				this.$nextTick(() => {
+					this.init()
+				})
+			},
+			beforeDestroy() {
+				this.timerIns && clearInterval(this.timeIns);
+			},
+			methods: {
+				clickItem (i) {
+					console.log("click>>>", i)
+				},
+				init () {
+					const swiper = this.$refs.swiper;
+					const track = this.$refs.track;
+
+					// 获取所有轮播列表
+					const children = track.querySelectorAll('.swiper-item');
+					this.pageList = children;
+
+					// 循环前后添加一个clone元素
+					if (this.isLoop) {
+						const firstClone = this.pageList[0].cloneNode(true);
+						const lastClone = this.pageList[this.pageList.length - 1].cloneNode(true);
+						track.insertBefore(lastClone, this.pageList[0])
+						track.appendChild(firstClone)
+					}
+
+					// 处理默认索引
+					this.currentIndex = this.defaultIndex;
+					this.correctionPosition();
+
+					// 自动轮播
+					this.startAutoplay();
+
+					// 禁止拖动
+					if (this.disabled || this.pageList.length <= 1) {
+						return
+					}
+					track.addEventListener('touchstart', this.dragStartEvent);
+					track.addEventListener('touchmove', this.dragMoveEvent);
+					track.addEventListener('touchend', this.dragEndEvent);
+					track.addEventListener('transitionend', this.transitionEndEvent)
+
+					// swiper.addEventListener('mousedown', this.dragStartEvent);
+					// swiper.addEventListener('mousemove', this.dragMoveEvent);
+					// swiper.addEventListener('mouseup', this.dragEndEvent);
+
+					window.addEventListener('visibilitychange', this.onVisibilityChange)
+				},
+				// 开始自动播放
+				startAutoplay () {
+					console.log('start开始播放')
+					if (this.autoplay && this.isLoop) {
+						this.stopAutoplay();
+						this.timerIns = setTimeout(() => {
+							this.slideNext();
+							this.startAutoplay()
+						}, this.autoplay)
+					}
+				},
+				// 停止自动播放
+				stopAutoplay () {
+					this.timerIns && clearTimeout(this.timerIns)
+					// console.log('stop自动播放')
+				},
+				// 页面可见性
+				onVisibilityChange () {
+					console.log(document.visibilityState);
+					if (document.visibilityState === 'visible') {
+						this.startAutoplay()
+					} else {
+						this.stopAutoplay()
+					}
+				},
+				dragStartEvent (e) {
+					console.log('dragStartEvent')
+					// 开始拖动则停止自动轮播
+					this.stopAutoplay()
+
+					const touch = e.changedTouches ? e.changedTouches[0] : e;
+
+					// 开始拖动标志
+					this.draging = true;
+					// 记录开始时间
+					this.dragState.startTime = Date.now();
+					// 记录开始X、Y坐标
+					this.dragState.startX = touch.pageX;
+					this.dragState.startY = touch.pageY;
+				},
+				dragMoveEvent (e) {
+					const touch = e.changedTouches ? e.changedTouches[0] : e;
+
+					// 记录移动的当前X、Y坐标
+					this.dragState.endX = touch.pageX;
+					this.dragState.endY = touch.pageY;
+
+					const offset = this.vertical ? this.dragState.endY - this.dragState.startY : this.dragState.endX - this.dragState.startX;
+					// 拖动
+					this.move(offset);
+				},
+				dragEndEvent (e) {
+					console.log('dragEndEvent')
+					const touch = e.changedTouches ? e.changedTouches[0] : e;
+					// 结束拖动标志
+					this.draging = false;
+					// 记录结束X、Y坐标
+					this.dragState.endX = touch.pageX;
+					this.dragState.endY = touch.pageY;
+					// console.log(this.dragState);
+
+					const dragDuration = Date.now() - this.dragState.startTime;
+
+					const offset = this.vertical ? this.dragState.endY - this.dragState.startY : this.dragState.endX - this.dragState.startX;
+
+					// 满足切换条件则改变索引
+					if (Math.abs(offset / dragDuration) >= 0.25 || Math.abs(offset) >= this.swiperSize * this.threshold) {
+						offset < 0 ? this.currentIndex++ : this.currentIndex--
+						console.log('满足切换')
+					}
+					this.move(0);
+					this.startAutoplay()
+				},
+				move (offset) {
+					const num = this.isLoop ? 1 : 0;
+					// 目标索引
+					let targetIndex = (this.currentIndex + this.pageList.length) % this.pageList.length;
+					// 目标距离
+					let targetOffset = -(this.currentIndex + num) * this.swiperSize + offset;
+
+					// 非循环边界处理
+					if (!this.isLoop) {
+						if (this.currentIndex <= 0) {
+							targetIndex = 0;
+						}
+						if (this.currentIndex >= this.pageList.length - 1) {
+							targetIndex = this.pageList.length - 1
+						}
+						if (targetOffset >= 0) {
+							targetOffset = 0
+						}
+						if (targetOffset <= -(this.pageList.length - 1) * this.swiperSize) {
+							targetOffset = -(this.pageList.length - 1) * this.swiperSize
+						}
+					}
+
+					// console.log("targetIndex>>", targetIndex, targetOffset)
+					this.currentIndex = targetIndex
+					this.currentOffset = targetOffset
+				},
+				// transition结束事件
+				transitionEndEvent () {
+					// console.log('transitionEnd')
+					if (this.isLoop) {
+						this.correctionPosition()
+					}
+					this.startAutoplay()
+				},
+				// 修改偏移位置
+				correctionPosition () {
+					const num = this.isLoop ? 1 : 0;
+					// console.log("correctionPosition>>>", this.currentIndex, this.currentOffset)
+					if (this.currentOffset === 0 || this.currentOffset === -this.swiperSize * (this.pageList.length + 1)) {
+						console.log('正在修正')
+						this.draging = true
+						const targetOffset = -(this.currentIndex + num) * this.swiperSize
+						this.currentOffset = targetOffset
+					}
+				},
+				// 点击跳转到指定位置
+				slideTo (i) {
+					if (this.currentIndex === i) {
+						return
+					}
+					this.stopAutoplay()
+					this.currentIndex = i
+					requestAnimationFrame(() => {
+						this.draging = false
+						this.move(0)
+					})
+				},
+				// 上一张
+				slidePrev () {
+					this.stopAutoplay()
+					this.currentIndex--
+					requestAnimationFrame(() => {
+						this.draging = false
+						this.move(0)
+					})	
+				},
+				// 下一张
+				slideNext () {
+					this.stopAutoplay()
+					this.currentIndex++
+					requestAnimationFrame(() => {
+						this.draging = false
+						this.move(0)
+					})
+				}
+			}
+		}
+		Vue.createApp(App).mount('#app')
+	</script>
+</body>
+</html>
