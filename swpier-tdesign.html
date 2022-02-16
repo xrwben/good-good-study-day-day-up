@@ -44,7 +44,7 @@
 			width: 100%;
 		  height: 3rem;
 		  position: relative;
-			/*overflow: hidden;*/
+			overflow: hidden;
 		}
 		.track-horizontal {
 			width: auto;
@@ -166,8 +166,8 @@
 		<div class="swiper-container" ref="swiper">
 			<div :class="[vertical ? 'track-vertical' : 'track-horizontal']" ref="track" :style="trackStyle">
 				<div class="swiper-item" v-for="(item, i) in swiperList" :data-index="i">
-					<div :class="['content', 'content-'+(i+1)]" @click="clickItem(i)">{{ i + 1 }}</div>
-					<!-- <img :src="item.pic" alt=""> -->
+					<!-- <div :class="['content', 'content-'+(i+1)]" @click="clickItem(i)">{{ i + 1 }}</div> -->
+					<img :src="item.pic" alt="">
 				</div>
 			</div>
 			<div :class="['swiper-indicators', vertical ? 'indicators-vertical' : 'indicators-horizontal']" v-if="indicator">
@@ -228,10 +228,9 @@
 			data () {
 				return {
 					swiperList: [
-						{ type: 1, name: 'slid-1', pic: 'https://i1.mifile.cn/a4/xmad_15535933141925_ulkYv.jpg' },
-						{ type: 2, name: 'slid-2', pic: 'https://i1.mifile.cn/a4/xmad_15532384207972_iJXSx.jpg' },
+						{ type: 1, name: 'slid-1', pic: 'https://tdesign.gtimg.com/site/swiper/02.png' },
+						{ type: 2, name: 'slid-2', pic: 'https://tdesign.gtimg.com/site/swiper/03.png' },
 						{ type: 3, name: 'slid-3', pic: 'https://i1.mifile.cn/a4/xmad_15517939170939_oiXCK.jpg' },
-						// { type: 4, name: 'slid-4', pic: 'https://i1.mifile.cn/a4/xmad_15532384207972_iJXSx.jpg' },
 					],
 					pageList: [], // 轮播列表
 					draging: false, // 是否正在拖动
