@@ -75,3 +75,5 @@
 24、webpack打包然后访问出现 'Provisional headers are shown' 提示，可能是地址栏https协议导致的，切换到http即可
 
 25、微信扫码链接不自动跳转，先显示链接地址，点击才能跳转，解决方法就是链接需要加上协议
+
+26、ios微信内置浏览器只能打开一个页面，使用window.open()方法跳转可能失败，解决方法就是改为location.href
