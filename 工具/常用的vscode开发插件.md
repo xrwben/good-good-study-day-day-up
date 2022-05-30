@@ -60,4 +60,13 @@ vue3开发必备插件
     "vue",
     "sass"
 ],
+// vue单文件html和css提示
+"emmet.includeLanguages": {
+        "vue-html": "html",
+        "vue": "html",
+        "javascript": "javascriptreact"
+    },
+    "files.associations": {
+        "*.vue": "html"
+    }
 ```
