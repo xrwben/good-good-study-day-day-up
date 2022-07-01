@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+  <style>
+    .contentEdit {
+      width: 500px;
+      height: 100px;
+      border: 1px solid red;
+    }
+  </style>
+</head>
+<body>
+	<div class="content">我是要被复制的文字</div>
+  <input class="input" type="text" placeholder="请粘贴复制的内容">
+  <br>
+  <button class="forbid">禁止复制粘贴</button>
+  <button class="enabled">解除禁止</button>
+
+  <br>
+
+  <div class="contentEdit" contenteditable="true" spellcheck="false"></div>
+
+  <br>
+
+  <iframe src="./textarea空格换行格式.html"></iframe>
+
+  <script type="text/javascript">
+    const content = document.querySelector(".content")
+    const input = document.querySelector('.input')
+    const forbid = document.querySelector('.forbid')
+    const enabled = document.querySelector('.enabled')
+
+    // document.oncopy = (e) => {
+    //   console.log(e)
+    //   alert("禁止复制")
+    //   return false
+    // }
+
+    // document.onpaste = (e) => {
+    //   console.log(e)
+    //   alert("禁止粘贴")
+    //   return false
+    // }
+
+
+    /*
+      事件监听 阻止默认事件
+    */
+    // document.addEventListener('copy', e => {
+    //   console.log(e.clipboardData)
+    //   alert("禁止复制")
+    //   e.preventDefault()
+    // })
+
+    // document.addEventListener('paste', e => {
+    //   console.log(e)
+    //   alert("禁止粘贴")
+    //   e.preventDefault()
+    // })
+
+    const copyPasteEvent = (e) => {
+      console.log('禁止粘贴复制~')
+      e.preventDefault()
+    }
+
+    forbid.addEventListener('click', () => {
+      alert("禁止复制粘贴")
+      document.addEventListener('copy', copyPasteEvent)
+      document.addEventListener('paste', copyPasteEvent)
+
+      const iframe = document.querySelector('iframe').contentWindow.document
+      console.log(iframe)
+      // console.log(iframe.contentWindow || iframe.contentDocument.defaultView)
+      iframe.addEventListener('copy', copyPasteEvent)
+      iframe.addEventListener('paste', copyPasteEvent)
+    })
+
+    enabled.addEventListener('click', () => {
+      alert("解除禁止")
+      document.removeEventListener('copy', copyPasteEvent)
+      document.removeEventListener('paste', copyPasteEvent)
+    })
+  </script>
+</body>
+</html>
