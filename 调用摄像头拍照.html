@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<!-- <script src="http://contentcenter-ecs.test-caagw.yunassess.com/content-center/lib/contentCenter.js"></script> -->
+	<style>
+		.video {
+			width: 500px;
+			height: 260px;
+			border: 1px solid black;
+			background: #000;
+		}
+		.canvas {
+			border: 1px solid green;
+		}
+	</style>
+</head>
+<body>
+	<video class="video" src=""></video>
+	<canvas class="canvas" width="300" height="160"></canvas>
+	<button class="device">获取设备</button>
+	<button class="start">开启摄像头</button>
+	<button class="photo">拍照</button>
+	<img class="pic" src="" alt="">
+	<script>
+		/*
+			调摄像头必要条件：
+			localhost、 120.0.0.1、 file://、 https
+
+			处理办法，设置安全域名
+			chrome://flags/#unsafely-treat-insecure-origin-as-secure
+		*/
+
+		new Promise((resolve, reject) => {
+			const script = document.createElement('script')
+			script.src = 'http://dev.ntsapps.oa.com/content-center/lib/contentCenter.js'
+			script.onload = () => {
+				console.log(contentCenter)
+			}
+			console.log(document.querySelector('head'))
+			document.querySelector('head').appendChild(script)
+		})
+
+
+		const video = document.querySelector('.video')
+		const _canvas = document.querySelector('.canvas')
+		const device = document.querySelector('.device')
+		const start = document.querySelector('.start')
+		const _photo = document.querySelector('.photo')
+		const _pic = document.querySelector('.pic')
+
+		start.addEventListener('click', (e) => {
+			// alert('开始考试请允许开启摄像头！！！')
+			const media = navigator.mediaDevices.getUserMedia({
+				audio: false,
+				video: true
+				// video: {
+				// 	width: 1280, // 分辨率
+				// 	height: 720
+				// } 
+			}).then(stream => {
+				console.log("stream>>>>>", stream)
+				video.srcObject = stream
+				video.onloadedmetadata = (e) => {
+			    video.play()
+			  }
+			}).catch(err => {
+				console.error(err)
+				alert("摄像头异常")
+			})
+		})
+
+		const getDevice = () => {
+			if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
+			  console.log("不支持 enumerateDevices() .");
+			  return;
+			}
+
+			// 列出相机和麦克风。
+
+			navigator.mediaDevices.enumerateDevices().then((devices) => {
+				console.log('devices>>>>>>>>>', devices)
+			  devices.forEach((device) => {
+			    console.log(device.kind + ": " + device.label + " id = " + device.deviceId)
+			  });
+			}).catch((err) => {
+			  console.log(err.name + ": " + err.message)
+			})
+		}
+		
+		device.addEventListener('click', getDevice)
+
+		// 拍照
+		const ctx = _canvas.getContext('2d')
+		_photo.addEventListener('click', () => {
+			ctx.drawImage(video, 0, 0, 300, 160)
+			dataURL = _canvas.toDataURL("image/jpeg", 1)
+			console.log('drawImage>>>>', dataURL)
+			_pic.src = dataURL
+
+			// fetch('http://test.portal.learn.oa.com/training-portal-common/api/v1/portal/user/common/uploadOperateSignature').then(res => {
+			// 	console.log(res)
+			// })
+		})
+	</script>
+</body>
+</html>
