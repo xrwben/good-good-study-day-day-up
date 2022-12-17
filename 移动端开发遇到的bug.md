@@ -79,3 +79,5 @@
 26、ios微信内置浏览器只能打开一个页面，使用window.open()方法跳转可能失败，解决方法就是改为location.href
 
 27、点击按钮自动触发input点击click()事件需要连续点击两次才能触发，例如:`this.$refs['takePhotoRef'].click()`,原因是fastClick插件导致，解决方法同问题6
+
+28、transfrom属性会让fixed属性全局定位失效，表现行为退化为position: absolute
