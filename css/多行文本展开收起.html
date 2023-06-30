@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+		.wrapper {
+			display: flex;
+		  margin: 50px auto;
+		  width: 400px;
+		  overflow: hidden;
+		  border-radius: 8px;
+		  padding: 15px ;
+		  box-shadow: 20px 20px 60px #bebebe, -20px -20px 60px #ffffff;
+		  resize: horizontal;
+		}
+		.text {
+			width: 100%;
+			/*height: 90px;*/
+			/*max-height: 90px;*/
+			border: 1px solid red;
+			color: #666;
+			font-size: 14px;
+			text-align: justify;
+			line-height: 24px;
+			display: -webkit-box;
+			-webkit-line-clamp: 3;
+			-webkit-box-orient: vertical;
+			overflow: hidden;
+			position: relative;
+		}
+		.text:before {
+			content: '';
+			width: 1px;
+			height: calc(100% - 24px);
+			/*height: 100%;*/
+			background: green;
+			float: right;
+		}
+		.text::after {
+	    content: '';
+	    width: 100%;
+	    height: 100%;
+	    position: absolute;
+	    background: red;
+		}
+		.text .btn {
+			width: 50px;
+			height: 24px;
+			float: right;
+			clear: both;
+			margin-left: 12px;
+		}
+	</style>
+</head>
+<body>
+	<!-- 第一种 -->
+	<div class="wrapper">
+		<div class="text">
+			<button class="btn">展开</button>
+			如果大地的每个角落都充满了光明 谁还需要星星 谁还会在夜里凝望 寻找遥远的安慰 谁不愿意每天都是一首诗 每个字都是一颗星 像蜜蜂在心头颤动
+			如果大地的每个角落都充满了光明 谁还需要星星 谁还会在夜里凝望 寻找遥远的安慰 谁不愿意每天都是一首诗 每个字都是一颗星 像蜜蜂在心头颤动
+		</div>
+	</div>
+
+	<!-- 
+		第二种： 使用行高来撑开高度，然后手动添加省略号
+
+			缺点：不能设置行高 只能根据字体大小设置行高倍数，不过可以手动计算
+
+			例如行高要设为24px, font-size为14px，则line-height为24 / 14 = 1.7142857142857142 max-height为 3 * 1.714
+	-->
+	<style>
+		.text2 {
+			width: 100%;
+			max-height: 5.5em;
+			border: 1px solid blue;
+			color: #666;
+			font-size: 14px;
+			text-align: justify;
+			line-height: 1.8;
+			overflow: hidden;
+		}
+		.text2.expand {
+			max-height: none;
+		}
+		.text2:before {
+			content: '';
+			width: 1px;
+			height: calc(100% - 24px);
+			background: green;
+			float: right;
+		}
+		.btn2 {
+			width: 50px;
+			height: 24px;
+			background: #3464e0;
+			border-radius: 4px;
+			color: #fff;
+			font-size: 14px;
+			text-align: center;
+			line-height: 24px;
+			float: right;
+			clear: both;
+			margin-left: 26px;
+			position: relative;
+		}
+		.btn2::before {
+		  content: '...';
+		  width: 20px;
+		  position: absolute;
+		  left: -10px;
+		  color: #666;
+		  vertical-align: bottom;
+		  transform: translateX(-100%);
+		}
+		.btn2.expand {
+			margin-left: 0;
+		}
+		.btn2.expand::before {
+			content: "";
+		}
+	</style>
+	<div id="app" class="wrapper">
+		<div class="text2" :class="{'expand': expand}">
+			<span class="btn2" :class="{'expand': expand}" @click="expand = !expand">{{ expand ? '收起' : '展开' }}</span>
+			如果大地的每个角落都充满了光明 谁还需要星星 谁还会在夜里凝望 寻找遥远的安慰 谁不愿意每天都是一首诗 每个字都是一颗星 像蜜蜂在心头颤动
+			如果大地的每个角落都充满了光明 谁还需要星星 谁还会在夜里凝望 寻找遥远的安慰 谁不愿意每天都是一首诗 每个字都是一颗星 像蜜蜂在心头颤动
+		</div>
+	</div>
+
+	<script src="https://unpkg.com/vue@next"></script>
+	<script type="text/javascript">
+		Vue.createApp({
+			setup () {
+				let expand = Vue.ref(false)
+				return {
+					expand
+				}
+			}
+		}).mount('#app')
+	</script>
+
+	<!-- 第三种 -->
+	<style>
+		.wrapper3 {
+		  width: 400px;
+		  margin: 50px auto;
+		  overflow: hidden;
+		  border-radius: 8px;
+		  padding: 15px ;
+		  box-shadow: 20px 20px 60px #bebebe, -20px -20px 60px #ffffff;
+		  resize: horizontal;
+		  display: flex;
+		}
+		.text3 {
+			width: 100%;
+			max-height: 6em;
+			color: #666;
+			font-size: 14px;
+			text-align: justify;
+			line-height: 2;
+			overflow: hidden;
+			position: relative;
+		}
+		.btn-float {
+			height: 100%;
+			float: right;
+			display: flex;
+			align-items: flex-end;
+			shape-outside: inset(calc(100% - 28px) 0 0 0);
+			position: relative;
+			margin-left: 22px;
+		}
+		.btn3 {
+			width: 50px;
+			height: 28px;
+			background: #3464e0;
+			border-radius: 4px;
+			color: #fff;
+			font-size: 12px;
+			text-align: center;
+			line-height: 28px;
+			display: block;
+			cursor: pointer;
+		}
+		.btn-float::before {
+		  content: '...';
+		  width: 20px;
+		  position: absolute;
+		  left: 0;
+		  color: #666;
+		  vertical-align: bottom;
+		  transform: translateX(-100%);
+		}
+		.text3.expand3 {
+			max-height: none;
+		}
+		.text3.expand3 .btn-float::before {
+			display: none;
+		}
+	</style>
+	<div id="app3" class="wrapper3">
+		<div class="text3" :class="{'expand3': expand3}">
+			<div class="btn-float">
+				<span class="btn3" :class="{'expand3': expand3}" @click="expand3 = !expand3">{{ expand3 ? '收起' : '展开' }}</span>	
+			</div>
+			如果大地的每个角落都充满了光明 谁还需要星星 谁还会在夜里凝望 寻找遥远的安慰 谁不愿意每天都是一首诗 每个字都是一颗星 像蜜蜂在心头颤动
+			如果大地的每个角落都充满了光明 谁还需要星星 谁还会在夜里凝望 寻找遥远的安慰 谁不愿意每天都是一首诗 每个字都是一颗星 像蜜蜂在心头颤动
+		</div>
+	</div>
+	<script type="text/javascript">
+		Vue.createApp({
+			setup () {
+				let expand3 = Vue.ref(false)
+
+				return {
+					expand3
+				}
+			}
+		}).mount('#app3')
+	</script>
+</body>
+</html>
