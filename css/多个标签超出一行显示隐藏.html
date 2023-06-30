@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>多个标签超出隐藏</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+		body {
+			padding: 0 16px;
+		}
+		.title {
+			text-align: center;
+			margin: 40px auto 0;
+		}
+		.list-con {
+			max-width: 375px;
+			height: 62px;
+			margin: 20px auto 0;
+			overflow: hidden;
+/*      border: 1px solid red;*/
+			display: flex;
+			flex-wrap: wrap;
+		}
+		.list-con-3, .list-con-4 {
+			height: 62px;
+		}
+		.list-expand {
+			height: auto;
+		}
+		.label {
+			max-width: 132px;
+			max-width: calc(100% - 72px);
+			height: 24px;
+			border-radius: 22px;
+			background: #ecf2fe;
+			color: #0052d9;
+			font-size: 10px;
+			line-height: 24px;
+			text-align: center;
+			padding: 0 12px;
+			margin: 0 8px 8px 0;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			overflow: hidden;
+		}
+		.expand {
+			width: 50px;
+			font-size: 12px;
+			color: #666;
+			text-align: center;
+			margin: 5px auto;
+/*      cursor: pointer;*/
+		}
+		.expand-btn {
+			max-width: 100px;
+/*      cursor: pointer;*/
+			margin-right: 0;
+		}
+	</style>
+</head>
+<body>
+	<p class="title">样式一（按钮与容器分开）：通过第一个标签偏移值判断</p>
+	<div class="list-con list-con-1">
+		<div class="label">人工智能</div>
+		<div class="label">人工智能与应用</div>
+		<div class="label">行业分析与市场数据</div>
+		<div class="label">标签标签标签标签标签标签标签标签</div>
+		<div class="label">标签</div>
+		<div class="label">啊啊啊</div>
+		<div class="label">宝宝贝贝</div>
+		<div class="label">微信</div>
+		<div class="label">吧啊啊</div>
+		<div class="label">哦哦哦哦哦哦哦哦</div>
+	</div>
+	<div class="expand expand-1">展开 ∨</div>
+
+	<script>
+		/*
+			方法一： 通过第一个标签左偏移值对比，如果有几个相同则说明有几个换行
+		*/
+		const listCon = document.querySelector('.list-con-1')
+		const expandBtn = document.querySelector('.expand-1')
+
+		console.log(listCon.children)
+		// HTMLCollection对象 item()、namedItem()方法 length属性
+
+		let firstLabelOffsetLeft = 0 // 第一个标签左侧偏移
+		let line = 1 // 记录行
+		const len = listCon.children.length
+		for(let i = 0; i < len; i++) {
+			const _offsetLeft = listCon.children.item(i).offsetLeft
+			if (i === 0) {
+				firstLabelOffsetLeft = _offsetLeft
+			} else if (firstLabelOffsetLeft === _offsetLeft) {
+				line++
+				console.log(line + '行')
+			}
+		}
+
+		// 如果大于一行则隐藏
+		if (line > 2) {
+			expandBtn.style = 'display: show'
+		} else {
+			expandBtn.style = 'display: none'
+		}
+		expandBtn.addEventListener('click', () => {
+			const _classList = listCon.classList
+			if (_classList.contains('list-expand')) {
+				expandBtn.innerHTML = '展开 ∨'
+			} else {
+				expandBtn.innerHTML = '收起 ∧'
+			}
+			_classList.toggle('list-expand') // 这个更简洁
+		})
+
+	</script>
+
+
+	<p class="title">样式一（按钮与容器分开）： 通过高度判断</p>
+	<div class="list-con list-con-2">
+		<div class="label">人工智能</div>
+		<div class="label">人工智能与应用</div>
+		<div class="label">行业分析与市场数据</div>
+		<div class="label">标签标签标签标签标签标签标签标签</div>
+		<div class="label">标签</div>
+		<div class="label">啊啊啊</div>
+		<div class="label">宝宝贝贝</div>
+		<div class="label">微信</div>
+		<div class="label">吧啊啊</div>
+		<div class="label">哦哦哦哦哦哦哦哦</div>
+	</div>
+	<div class="expand expand-2">展开 ∨</div>
+
+	<script>
+		console.log('-----------样式1：高度比较--------------')
+		/*
+			方法二： 通过计算标签上top距离是否大于容器高
+
+			这种方法有个条件 就是必须要设定容器高度
+		*/
+		const listCon2 = document.querySelector('.list-con-2')
+		const expandBtn2 = document.querySelector('.expand-2')
+
+		console.log(listCon2.children)
+		const listCon2Height = listCon2.getBoundingClientRect().bottom
+		console.log(listCon2Height)
+		const len2 = listCon2.children.length
+		for(let i = 0; i < len2; i++) {
+		//   console.log(listCon2.children.item(i).offsetWidth)
+			const _top = listCon2.children.item(i).getBoundingClientRect().top
+			// 通过宽度判断如果所有标签大于容器则隐藏
+			if (_top >= listCon2Height) {
+				expandBtn2.style = 'display: show'
+				break
+			} else {
+				expandBtn2.style = 'display: none'
+			}
+		}
+
+		expandBtn2.addEventListener('click', () => {
+			const _classList = listCon2.classList
+			// console.log(_classList)
+			if (_classList.contains('list-expand')) {
+				expandBtn2.innerHTML = '展开 ∨'
+			} else {
+				expandBtn2.innerHTML = '收起 ∧'
+			}
+			_classList.toggle('list-expand')
+		})
+
+	</script>
+
+
+	<p class="title">样式二： 展开隐藏按钮和标签同级 - 通过高度判断</p>
+	<div id="app3">
+		<div class="list-con list-con-3" :class="{'list-expand': isExpand}">
+			<div class="label" v-for="item in labelArr.slice(0, labelLength)">{{ item }}</div>
+			<div class="label expand-btn" v-if="showExpandBtn" @click="changeExpand">{{ !isExpand ? '展开 ▼' : '隐藏 ▲' }}</div>
+		</div>
+	</div>
+
+	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+	<script>
+		console.log('------------样式2：高度判断---------------')
+		/*
+			方法一： 通过计算所有标记宽度与容器宽比较，如果超出容器宽的n倍则表示标签大于n行需隐藏？？？
+
+			似乎行不通 如果剩余空白较大就无法计算了
+
+			方法二： 通过容器底部与标签top比较，如果有top值大于容器顶部bottom则表示超出容器隐藏
+		*/
+		const { createApp, nextTick } = Vue
+		createApp({
+			props: {
+				maxLine: {
+					type: Number,
+					default: 2
+				}
+			},
+			data () {
+				return {
+					labelArr: [],
+					isExpand: false,
+					showExpandBtn: false,
+					labelLength: 0,
+					hideLength: 0
+				}
+			},
+			mounted () {
+				const labels = ['人工智能', '人工智能与应用', '行业分析与市场数据', '标签标签标签标签标签标签标签', '标签A', '啊啊啊', '宝宝贝贝', '微信', '吧啊啊', '哦哦哦哦哦哦哦哦', '人工智能', '人工智能与应用']
+				
+				this.labelArr = labels
+				this.labelLength = labels.length
+				nextTick(() => {
+					this.init()
+				})
+			},
+			methods: {
+				init () {
+					const listCon = document.querySelector('.list-con-3')
+					const labels = listCon.querySelectorAll('.label:not(.expand-btn)')
+					const expandBtn = listCon.querySelector('.expand-btn')
+
+					let labelIndex = 0 // 渲染到第几个
+					const listConBottom = listCon.getBoundingClientRect().bottom // 容器底部距视口顶部距离
+					for(let i = 0; i < labels.length; i++) {
+						const _top = labels[i].getBoundingClientRect().top
+						if (_top >= listConBottom ) { // 如果有标签顶部距离超过容器底部则表示超出容器隐藏
+							this.showExpandBtn = true
+							console.log('第几个索引标签停止', i)
+							labelIndex = i
+							// this.hideLength = i
+							break
+						} else {
+							this.showExpandBtn = false
+						}
+					}
+					if (!this.showExpandBtn) {
+						return
+					}
+					nextTick(() => {
+            const listConRect = listCon.getBoundingClientRect()
+            const expandBtn = listCon.querySelector('.expand-btn')
+            const expandBtnWidth = expandBtn.getBoundingClientRect().width
+            const labelMaringRight = parseInt(window.getComputedStyle(labels[0]).marginRight)
+            for (let i = labelIndex -1; i >= 0; i--) {
+              const labelRight = labels[i].getBoundingClientRect().right - listConRect.left
+              if (labelRight + labelMaringRight + expandBtnWidth <= listConRect.width) {
+                this.hideLength = i + 1
+                this.labelLength = this.hideLength
+                break
+              }
+            }    
+          })
+				},
+				changeExpand () {
+					this.isExpand = !this.isExpand
+					console.log(this.labelLength)
+					if (this.isExpand) {
+						this.labelLength = this.labelArr.length
+					} else {
+						this.labelLength = this.hideLength
+					}
+				}
+			}
+		}).mount('#app3')
+	</script>
+
+
+	<p class="title">样式二： 展开隐藏按钮和标签同级 - 通过计算行数判断</p>
+	<div id="app4">
+		<div class="list-con list-con-4" :class="{'list-expand': isExpand}">
+			<div class="label" v-for="item in labelList.slice(0, labelLength)">{{ item }}</div>
+			<div class="label expand-btn" v-if="showExpandBtn" @click="changeExpand">{{ !isExpand ? '展开 ▼' : '隐藏 ▲' }}</div>
+		</div>
+	</div>
+
+	<!-- <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script> -->
+	<script>
+		console.log('-------------样式2：通过行判断--------------')
+		/*
+			方法二： 通过所有标签与第一个标签左偏移值比较，有几个相同的则表示有几行
+			
+			情况1： 标签宽度如果不限制, 则会出现标签和按钮大于容器的情况，所以要限制宽度
+
+		*/
+		// const { createApp, nextTick } = Vue
+		createApp({
+			data () {
+				return {
+					labelList: [],
+					isExpand: false,
+					showExpandBtn: false,
+					labelLength: 0,
+					hideLength: 0
+				}
+			},
+			mounted () {
+				const labels = ['人工智能', '人工智能与应用', '行业分析与市场数据报告行业分析与市场数据报告', '标签标签标签标签标签标签标签', '标签A', '啊啊啊', '宝宝贝贝', '微信', '吧啊啊', '哦哦哦哦哦哦哦哦', '人工智能', '人工智能与应用']
+				this.labelList = labels
+				this.labelLength = labels.length
+				
+				nextTick(() => {
+					this.init()
+				})
+				
+			},
+			methods: {
+				init () {
+					const listCon = document.querySelector('.list-con-4')
+					const labels = listCon.querySelectorAll('.label:not(.expand-btn)')
+					const firstLabelOffsetLeft = labels[0].getBoundingClientRect().left // 第一个标签左侧偏移量
+          const labelMaringRight = parseInt(window.getComputedStyle(labels[0]).marginRight)
+					let line = 0 // 几行
+					let labelIndex = 0 // 渲染第几个
+					for(let i = 0; i < labels.length; i++) {
+						const _offsetLeft = labels[i].getBoundingClientRect().left
+						if (firstLabelOffsetLeft === _offsetLeft) {
+							line += 1
+						}
+						console.log(line, i)
+						if (line > 2) {
+							this.showExpandBtn = true
+							labelIndex = i
+							// this.labelLength = this.hideLength
+							break
+						} else {
+							this.showExpandBtn = false
+						}
+					}
+					if (!this.showExpandBtn) {
+						return
+					}
+					nextTick(() => {
+						const listConRect = listCon.getBoundingClientRect()
+						const expandBtn = listCon.querySelector('.expand-btn')
+						console.log(listConRect, expandBtn.getBoundingClientRect())
+						const expandBtnWidth = expandBtn.getBoundingClientRect().width
+						for (let i = labelIndex -1; i >= 0; i--) {
+							console.log(labels[i])
+							const labelRight = labels[i].getBoundingClientRect().right - listConRect.left
+              console.log(labelRight, expandBtnWidth, labelMaringRight)
+							if (labelRight + labelMaringRight + expandBtnWidth <= listConRect.width) {
+								this.hideLength = i + 1
+								this.labelLength = this.hideLength
+								break
+							}
+						}    
+					})
+				},
+				changeExpand () {
+					this.isExpand = !this.isExpand
+					if (this.isExpand) {
+						this.labelLength = this.labelList.length
+					} else {
+						this.labelLength = this.hideLength
+					}
+				}
+			}
+		}).mount('#app4')
+	</script>
+</body>
+</html>
