@@ -11,3 +11,8 @@ https://lhammer.cn/You-need-to-know-css/#/zh-cn/
 ## CSS3选择其中的单冒号：和双冒号：：
 
 单冒号(:)用于CSS3伪类，双冒号(::)用于CSS3伪元素
+
+
+## stylelint配置
+
+https://segmentfault.com/a/1190000004588228?sort=votes

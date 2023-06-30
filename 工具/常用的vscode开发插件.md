@@ -70,3 +70,7 @@ vue3开发必备插件
         "*.vue": "html"
     }
 ```
+
+### 参考配置
+
+https://maomao.fe-mm.com/efficiency/software/vscode
