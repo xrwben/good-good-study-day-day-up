@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>倒计时</title>
+	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body>
+	<div id="app">
+		<h3>>>>>>>>>> 【 setInterval 】 <<<<<<<<</h3>
+		<h4>{{ setIntervalRemain }}</h4>
+		<hr>
+
+		<h3>>>>>>>>>> 【 setTimeout 】 <<<<<<<<</h3>
+		<h4>{{ setTimeoutRemain }}</h4>
+		<hr>
+
+		<h3>>>>>>>>>> 【 requestAnimationFrame 】 <<<<<<<<</h3>
+		<h4>{{ formatTime }}</h4>
+		<button @click="start">start</button>
+		<button @click="pause">pause</button>
+		<button @click="reset">reset</button>
+		<hr>
+
+
+	</div>
+	<script>
+		function calcFun (arr) {
+			const len = arr.length - 1
+			for (i = len; i >= 0; i--) {
+				if (arr[i] === 9) {
+					arr[i] = 0
+					if (i === 0) {
+						arr.unshift(1)
+					}
+				} else {
+					arr[i] += 1
+				}
+			}
+			return arr
+		}
+
+		console.log(calcFun([1, 2, 3]))
+		console.log(calcFun([9, 9, 9]))
+		console.log(calcFun([1, 9, 9]))
+
+		// 解析毫秒为时分秒
+		function parseTimeData (time) {
+			const SECOND = 1000;
+			const MINUTE = 60 * SECOND;
+			const HOUR = 60 * MINUTE;
+			const DAY = 24 * HOUR;
+
+		  const days = Math.floor(time / DAY);
+		  const hours = Math.floor((time % DAY) / HOUR);
+		  const minutes = Math.floor((time % HOUR) / MINUTE);
+		  const seconds = Math.floor((time % MINUTE) / SECOND);
+		  const milliseconds = Math.floor(time % SECOND);
+
+		  return {
+		    days,
+		    hours,
+		    minutes,
+		    seconds,
+		    milliseconds,
+		  }
+		}
+		// 格式化 先看有没有天数，有则替换没有把天数化为小时，然后计算时分秒
+		function parseFormat (format, timeDate) {
+			let { days, hours, minutes, seconds, milliseconds } = timeDate
+
+			if (format.includes('DD')) {
+				format = format.replace('DD', padZero(days))
+			} else {
+				hours = hours + days * 24
+			}
+			if (format.includes('HH')) {
+				format = format.replace('HH', padZero(hours))
+			} else {
+				minutes = minutes + hours * 60
+			}
+			if (format.includes('mm')) {
+				format = format.replace('mm', padZero(minutes))
+			} else {
+				seconds = seconds + minutes * 60
+			}
+			if (format.includes('ss')) {
+				format = format.replace('ss', padZero(seconds))
+			} else {
+				ms = ms + seconds * 1000
+			}
+			if (format.includes('ms')) {
+				format = format.replace('ms', padZero(milliseconds).slice(0, 2))
+			}
+			return format
+		}
+		// 补零 
+		function padZero(num, targetLength = 2) {
+		  let str = num + '';
+		  while (str.length < targetLength) {
+		    str = '0' + str;
+		  }
+		  return str;
+		}
+
+
+		const { createApp, ref, computed, watch } = Vue
+		createApp({
+			props: {
+				// 倒计时时长（毫秒）
+				time: {
+					type: Number,
+					default: 3 * 60 * 1000
+				},
+				// 自动开始
+				autoStart: {
+					type: Boolean,
+					default: true
+				},
+				// 倒计时格式（DD-天、HH-时、mm-分、ss-秒、ms-毫秒）
+				format: {
+			    type: String,
+			    default: 'HH:mm:ss:ms',
+			  },
+			  millisecond: {
+			    type: Boolean,
+			    default: false,
+			  },
+			},
+			emits: ['finish', 'change'],
+			setup (props, ctx) {
+				const setIntervalRemain = ref(0)
+				let setIntervalTime = 3 * 60 * 1000
+				const setIntervalId = setInterval(() => {
+					if (setIntervalTime <= 0) {
+						clearInterval(setIntervalId)
+						return
+					}
+					setIntervalTime -= 1000
+					const { hours, minutes, seconds } = parseTimeData(setIntervalTime)
+					// setIntervalRemain.value = `${hours}:${minutes}:${seconds}`
+					setIntervalRemain.value = parseFormat(props.format, parseTimeData(setIntervalTime))
+				}, 1000)
+
+				// ---------------
+
+				const setTimeoutRemain = ref(0)
+				let setTimeoutTime = 3 * 60 * 1000
+				let setTimeoutId = null
+				const setTimeoutFun = () => {
+					setTimeoutId = setTimeout(() => {
+						if (setTimeoutTime <= 0) {
+							clearTimeout(setTimeoutId)
+							return
+						}
+						setTimeoutTime -= 1000
+						const { hours, minutes, seconds } = parseTimeData(setTimeoutTime)
+						setTimeoutRemain.value = `${hours}:${minutes}:${seconds}`
+						setTimeoutFun()
+					}, 1000)
+				}
+				setTimeoutFun()
+
+				// ---------------
+
+				const formatTime = computed(() => {
+					return parseFormat(props.format, parseTimeData(remainTime.value))
+				})
+
+				const endTime = ref(0) // 结束时间
+				const remainTime = ref(0) // 剩余时间
+				const counting = ref(false) // 是否正在计时
+				let requestAnimationFrameId = null
+
+				const countDown = () => {
+					remainTime.value = Math.max(0, endTime.value - Date.now())
+					ctx.emit('change', parseTimeData(remainTime.value))
+					if (remainTime.value <= 0) {
+						cancelAnimationFrame(requestAnimationFrameId)
+						ctx.emit('finish')
+						return
+					}
+					requestAnimationFrameId = requestAnimationFrame(countDown)
+				}
+				// countDown()
+
+				const start = () => {
+					if (counting.value) {
+						return
+					}
+					console.log('start>>>>>>')
+					counting.value = true
+					endTime.value = Date.now() + remainTime.value
+					countDown()
+					
+				}
+				const pause = () => {
+					console.log('pause>>>>>>')
+					counting.value = false
+					cancelAnimationFrame(requestAnimationFrameId)
+				}
+				const reset = () => {
+					console.log('reset>>>>>>')
+					pause()
+					remainTime.value = props.time
+					if (props.autoStart) {
+						start()
+					}
+				}
+				watch(props.time, () => {
+					reset()
+				}, {
+					immediate: true
+				})
+
+				return {
+					setIntervalRemain,
+					setTimeoutRemain,
+					formatTime,
+					start,
+					pause,
+					reset
+				}
+			}
+		}).mount('#app')
+	</script>
+</body>
+</html>
