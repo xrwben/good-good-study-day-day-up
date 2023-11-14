@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>picker选择器</title>
+  <style>
+    * {
+      margin: 0; padding: 0; box-sizing: border-box;
+    }
+    html {
+      font-size: 14px;
+    }
+    #app {
+      width: 100%; min-height: 100vh;
+    }
+    [v-cloak] {
+      display: none;
+    }
+    .popup-mask {
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      position: fixed;
+      left: 0;
+      top: 0;
+    }
+    .popup-container {
+      width: 100%;
+      max-height: 100%;
+      background: #fff;
+      border-radius: 10px 10px 0 0;
+      padding: 10px;
+      position: fixed;
+      left: 0;
+      bottom: 0;
+    }
+    .picker-wrapper {
+      width: 100%;
+    }
+    .picker-header {
+      padding: 2px 0 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .picker-header .title {
+      font-weight: bold;
+    }
+    .picker-content {
+      width: 100%;
+      height: 200px;
+      display: flex;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+    .picker-selected-highlight {
+      width: 100%;
+      height: 40px;
+      border-top: 1px solid #f7f8f9;
+      border-bottom: 1px solid #f7f8f9;
+      box-shadow: 0 0 5px #f7f8f9;
+      position: absolute;
+      top: 50%;
+      left: 0;
+      transform: translate3d(0, -50%, 0);
+      pointer-events: none;
+    }
+    .picker-mask {
+      width: 100%;
+      height: 100%;
+      background-image: linear-gradient(180deg, rgba(255,255,255,.9), rgba(255,255,255,.4)), linear-gradient(0deg,rgba(255,255,255,.9), rgba(255,255,255,.4));
+      background-repeat: no-repeat;
+      background-position: top,bottom;
+      background-size: 100% 80px;
+      position: absolute;
+      left: 0;
+      top: 0;
+      z-index: 1;
+      pointer-events: none;
+    }
+    .picker-list-panel {
+      flex: 1;
+    }
+    .picker-list-item {
+      height: 40px;
+      text-align: center;
+      line-height: 40px;
+    }
+  </style>
+</head>
+<body>
+  <div id="app" v-cloak>
+    <div class="demo-block">
+      <h2>单列</h2>
+      <div class="select"></div>
+    </div>
+    <div class="demo-block">
+      <h2>多列</h2>
+      <div class="select"></div>
+    </div>
+    <div class="demo-block">
+      <h2>联动</h2>
+      <div class="select"></div>
+    </div>
+
+    <div class="popup-layer">
+      <div class="popup-mask"></div>
+      <div class="popup-container">
+        <!-- picker -->
+        <div class="picker-wrapper">
+          <div class="picker-header">
+            <div class="cancel">{{ cancelText }}</div>
+            <div class="title">{{ title }}</div>
+            <div class="confirm" @click="confirm">{{ confirmText }}</div>
+          </div>
+          <div class="picker-content" :style="contentStyle">
+            <div class="picker-selected-highlight"></div>
+            <div class="picker-mask"></div>
+            <div class="picker-list-panel"
+              v-for="(list, index) in currentList"
+              :key="index"
+              @touchstart="touchStartEvent"
+              @touchmove="touchMoveEvent($event, list, index)"
+              @touchend="touchEndEvent($event, list, index)">
+              <div class="picker-list" :style="listStyle">
+                <p class="picker-list-item" v-for="item in list">{{ item.value }}</p> 
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script type="text/javascript">
+    // 判断是单列、多列、联级
+    function getColumnsType (columns, fields) {
+      const firstColumn = columns[0];
+      if (firstColumn) {
+        if (Array.isArray(firstColumn)) {
+          return 'multiple';
+        }
+        if (fields.children in firstColumn) {
+          return 'cascade';
+        }
+      }
+      return 'default';
+    }
+    function formatCascadeColumns(columns, fields, selectedValues) {
+      const formatted = [];
+
+      let cursor = {
+        [fields.children]: columns,
+      };
+      let columnIndex = 0;
+
+      while (cursor && cursor[fields.children]) {
+        const options: PickerOption[] = cursor[fields.children];
+        const value = selectedValues.value[columnIndex];
+
+        cursor = isDef(value)
+          ? findOptionByValue(options, value, fields)
+          : undefined;
+
+        if (!cursor && options.length) {
+          const firstValue = getFirstEnabledOption(options)![fields.value];
+          cursor = findOptionByValue(options, firstValue, fields);
+        }
+
+        columnIndex++;
+        formatted.push(options);
+      }
+
+      return formatted;
+    }
+    const supportTouch = 'ontouchstart' in window;
+    /*
+      惯性滑动思路：（vant）
+      手指touchstart时间和touchend结束时间 的间隔小于`LIMIT_TIME`且滑动距离大于`LIMIT_DISTANCE`时，执行惯性滑动
+      判断滑动距离是为了防止与点击事件冲突
+    */
+    const LIMIT_TIME = 300
+    const LIMIT_DISTANCE = 15
+
+    console.log('>>>', supportTouch)
+    const { createApp, ref, reactive, computed, watch, onMounted } = Vue
+    createApp({
+      props: {
+        // 传入的数据列
+        columns: {
+          type: Array,
+          default: () => []
+        },
+        columnsField: {
+          type: Object,
+          default: () => ({
+            text: 'text',
+            value: 'value',
+            children: 'children'
+          })
+        },
+        modelValue: {
+          type: Array,
+          default: () => []
+        },
+        title: {
+          type: String,
+          default: "请选择"
+        },
+        cancelText: {
+          type: String,
+          default: "取消"
+        },
+        confirmText: {
+          type: String,
+          default: "确认"
+        },
+        // 行高
+        itemHeight: {
+          type: Number,
+          default: 40
+        },
+        itemNumber: {
+          type: Number,
+          default: 5
+        },
+        defaultData: {}
+      },
+      emits: ['update:modelValue', 'change', 'cancle', 'confim'],
+      setup (props, ctx) {
+        // 容器的样式（高度）
+        const contentStyle = computed(() => {
+          return {
+            height: `${props.itemHeight * props.itemNumber}px`
+          }
+        })
+        const baseOffsetY = computed(() => (props.itemHeight * (props.itemNumber - 1)) / 2)
+        // 计算后的每列数据-二维数组
+        const currentList = computed(() => {
+          // const { columns } = props;
+          // switch (columnsType.value) {
+          //   case 'multiple':
+          //     return columns;
+          //   case 'cascade':
+          //     return formatCascadeColumns(columns, fields.value, selectedValues);
+          //   default:
+          //     return [columns];
+          // }
+          return list1.value
+        })
+        // 初始化每列数据
+        watch(() => props.columns, () => {
+          console.log(123)
+        }, { deep: true })
+        const initList
+
+        const selectedResult = reactive([]) // 选中的值
+        const startClientY = ref(0) // 每次滑动的起始点
+        const translateOffsetY = ref(0) // 滑动距离
+        const endOffsetY = ref(0) // 记录上一次滑动结束距离
+
+        const transitionDuration = ref(0) // transition动效时长
+
+        const listStyle = computed(() => {
+          return {
+            transform: `translate3d(0, ${translateOffsetY.value + baseOffsetY.value}px, 0)`,
+            transition: `all ${transitionDuration.value}s cubic-bezier(.23,1,.68,1)`,
+          }
+        })
+
+        let touchStartTime = 0 // 记录手指触碰起始时间
+        const touchStartEvent = (e) => {
+          transitionDuration.value = 0 // 触摸时清除动画执行时间
+          touchStartTime = Date.now()
+          startClientY.value = e.changedTouches[0].clientY
+        }
+        const touchMoveEvent = (e, list, index) => {
+          const slideDistance = e.changedTouches[0].clientY - startClientY.value
+          translateOffsetY.value = endOffsetY.value + slideDistance
+
+          if (translateOffsetY.value >= props.itemHeight) {
+            translateOffsetY.value = props.itemHeight
+          } else if (translateOffsetY.value <= -props.itemHeight * list.length) {
+            translateOffsetY.value = -props.itemHeight * list.length
+          }
+          // console.log(translateOffsetY.value, '-----', slideDistance)
+        }
+        const touchEndEvent = (e, list, index) => {
+          const distance = e.changedTouches[0].clientY - startClientY.value
+          const time = Date.now() - touchStartTime
+          // 判断是否惯性滑动
+          const allowMomentum = time < LIMIT_TIME && Math.abs(distance) > LIMIT_DISTANCE
+          if (allowMomentum) {
+            transitionDuration.value = 1
+            translateOffsetY.value = translateOffsetY.value + (distance / time / 0.003)
+            getCurrentIndex(list, index)
+          } else {
+            transitionDuration.value = 0.3
+            getCurrentIndex(list, index)
+          }
+          endOffsetY.value = translateOffsetY.value
+          // console.log(endOffsetY.value)
+        }
+
+        const getCurrentIndex = (list, cIndex) => {
+          let mathRound = Math.round(translateOffsetY.value / props.itemHeight)
+          // console.log(mathRound)
+          if (mathRound >= 0) {
+            mathRound = 0
+          } else if (mathRound <= -list.length) {
+            mathRound = -(list.length - 1)
+          }
+          updateTranslate(mathRound)
+
+          const rowIndex = Math.abs(mathRound)
+          getSelectedValue(rowIndex, list, cIndex)
+        }
+
+        const updateTranslate = (index) => {
+          translateOffsetY.value = index * props.itemHeight
+          console.log('最后位置>>>', translateOffsetY.value)
+        }
+
+        const getSelectedValue = (rIndex, list, cIndex) => {
+          selectedResult[cIndex] = list[rIndex]
+          // console.log(ctx)
+          ctx.emit('change', selectedResult, list, rIndex)
+        }
+        const cancel = () => {
+          ctx.emit('cancel')
+          ctx.emit('update:visible', false)
+        }
+        const confirm = () => {
+          console.log('确认', selectedResult)
+          ctx.emit('confirm', selectedResult)
+          // emit('update:visible', false)
+        }
+
+        // onMounted(() => {
+          
+        // })
+
+        const list = ref([
+          { value: '杭州' },
+          { value: '宁波' },
+          { value: '温州' },
+          { value: '肇庆' },
+          { value: '湖州' },
+          { value: '广州' },
+          { value: '杭州1' },
+          { value: '宁波1' },
+          { value: '温州1' },
+          { value: '肇庆1' },
+          { value: '湖州1' },
+          { value: '广州1' }
+        ])
+        const list1 = ref([
+          [
+            { value: '星期一' },
+            { value: '星期二' },
+            { value: '星期三' },
+            { value: '星期四' },
+            { value: '星期五' },
+            { value: '星期六' },
+            { value: '星期日' }
+          ],
+          [
+            { value: '早上' },
+            { value: '中午' },
+            { value: '晚上' }
+          ]
+        ])
+        const list2 = [
+          {
+            label: '浙江',
+            value: '浙江',
+            children: [
+              {
+                label: '杭州',
+                value: '杭州',
+                children: [
+                  { label: '西湖区', value: '西湖区' },
+                  { label: '余杭区', value: '余杭区' }
+                ]
+              },
+              {
+                label: '温州',
+                value: '温州',
+                children: [
+                  { label: '鹿城区', value: '鹿城区' },
+                  { label: '瓯海区', value: '瓯海区' }
+                ]
+              }
+            ]
+          },
+          {
+            label: '福建',
+            value: '福建',
+            children: [
+              {
+                label: '福州',
+                value: '福州',
+                children: [
+                  { label: '鼓楼区', value: '鼓楼区' },
+                  { label: '台江区', value: '台江区' }
+                ]
+              },
+              {
+                label: '厦门',
+                value: '厦门',
+                children: [
+                  { label: '思明区', value: '思明区' },
+                  { label: '海沧区', value: '海沧区' }
+                ]
+              }
+            ]
+          }
+        ]
+
+        return {
+          contentStyle,
+          listStyle,
+          currentList,
+          touchStartEvent,
+          touchMoveEvent,
+          touchEndEvent,
+          confirm
+        }
+      }
+    }).mount('#app')
+  </script>
+</body>
+</html>
