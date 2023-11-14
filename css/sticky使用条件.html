@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0">
+	<title>Document</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    #app {
+      height: 100vh;
+      overflow: auto;
+    }
+    .page {
+      /*padding-top: 200px;*/
+    }
+    .header {
+      width: 100%;
+      height: 190px;
+      background: green;
+      padding: 40px 0 20px;
+    }
+    .title {
+      height: 40px;
+      background: lightpink;
+      position: sticky;
+      top: 20px;
+    }
+    .search {
+      height: 50px;
+      background: skyblue;
+      margin-top: 30px;
+      position: sticky;
+      top: 20px;
+    }
+    .main {
+      height: 1500px;
+      margin: 20px 0;
+      background-color: aqua;
+    }
+    .nav {
+      width: 100%;
+      height: 50px;
+      background: hotpink;
+      position: sticky;
+      top: 0;
+    }
+  </style>
+</head>
+<body>
+  <!-- 
+    使用条件：
+      1、父元素不能overflow:hidden或者overflow:auto属性。
+      2、必须指定top、bottom、left、right4个值之一，否则只会处于相对定位
+      3、父元素的高度不能低于sticky元素的高度
+      4、sticky元素仅在其父元素内生效
+   -->
+	<div id="app">
+    <div class="page">
+      <div class="header">
+        <div class="title">标题</div>
+        <div class="search">搜索框</div>
+      </div>
+      <div class="main">
+        <div class="nav"></div>
+      </div>
+      <div class="main"></div>
+    </div>
+  </div>
+</body>
+</html>
