@@ -26,6 +26,30 @@
 
 	</div>
 	<script>
+		function addOne (arr) {
+			for (let i = arr.length - 1; i>= 0; i--) {
+				let record = i // 记录要加的下标
+				if (arr[i] !== 9) {
+					arr[i] += 1
+					break
+				} else {
+					arr[i] = 0
+					record = i-1
+					if (record === -1) {
+						arr.unshift(1)
+					}
+				}
+			}
+			return arr
+		}
+		console.log(addOne([1, 2, 3]))
+		console.log(addOne([1, 9, 3]))
+		console.log(addOne([2, 9, 9]))
+		console.log(addOne([9, 9, 9]))
+		console.log(addOne([1, 2, 9, 9]))
+
+		console.log('-------------')
+
 		function calcFun (arr) {
 			const len = arr.length - 1
 			for (i = len; i >= 0; i--) {
@@ -36,6 +60,7 @@
 					}
 				} else {
 					arr[i] += 1
+					break
 				}
 			}
 			return arr
