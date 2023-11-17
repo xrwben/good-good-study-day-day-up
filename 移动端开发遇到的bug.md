@@ -75,3 +75,13 @@
 24、webpack打包然后访问出现 'Provisional headers are shown' 提示，可能是地址栏https协议导致的，切换到http即可
 
 25、微信扫码链接不自动跳转，先显示链接地址，点击才能跳转，解决方法就是链接需要加上协议
+
+26、ios微信内置浏览器只能打开一个页面，使用window.open()方法跳转可能失败，解决方法就是改为location.href
+
+27、点击按钮自动触发input点击click()事件需要连续点击两次才能触发，例如:`this.$refs['takePhotoRef'].click()`,原因是fastClick插件导致，解决方法同问题6
+
+28、transfrom属性会让fixed属性全局定位失效，表现行为退化为position: absolute
+
+29、元素占满整个td单元格，解决方法：position定位，left、top、right、botttom都为0
+
+30、当父元素设置为overflow：auto时，后代position：absolute的元素依然会把父元素撑开

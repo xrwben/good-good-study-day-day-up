@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>td中absolute定位</title>
+	<style>
+		* {margin: 0; padding: 0; box-sizing: border-box;}
+		.table-container {
+			overflow-x: auto;
+			position: relative;
+		}
+		table {
+			margin: 50px 0;
+			border: 1px solid #333;
+			border-spacing: 0;
+			position: relative;
+		}
+		th {
+			min-width: 200px;
+		}
+		th, td {
+			border: 1px solid #333;
+			padding: 6px 12px;
+			border-top-width: 0;
+  		border-left-width: 0;
+  		text-align: center;
+		}
+		/*td {
+			height: 60px;
+		}*/
+		th:last-child, td:last-child {
+		  border-right-width: 0;
+		}
+		tr:last-child td {
+		  border-bottom-width: 0;
+		}
+		.position-td {
+			background: #eee;
+			padding: 0;
+			position: relative;
+		}
+		.td-con {
+			width: 100%;
+			height: 100%;
+			border: 1px solid red;
+			position: absolute;
+			left: 0;
+			top: 0;
+			right: 0;
+			bottom: 0;
+		}
+		.p-r {
+			background: pink;
+			height: 100%;
+/*			position: relative;*/
+		}
+		.p-val {
+			height: 100%;
+		}
+		.p-a {
+			width: 100%;
+			background: #fff;
+			border: 1px solid green;
+			position: absolute;
+			left: 0;
+			top: 100%;
+		}
+		.list p {
+			text-align: left;
+			line-height: 40px;
+		}
+	</style>
+</head>
+<body>
+	<!-- 
+			overflow absolute 失效？
+	 -->
+	<h2>当父元素设置为overflow：auto时，后代position：absolute的元素依然会把父元素撑开？</h2>
+
+	<div class="table-container">
+		<table>
+			<tr>
+				<th>第一列</th>
+				<th>第二列</th>
+				<th>第三列</th>
+				<th>第四列</th>
+				<th>第五列</th>
+				<th>操作</th>
+			</tr>
+			<tr>
+				<td>1-1</td>
+				<td>1-2</td>
+				<td>1-3</td>
+				<td>1-4</td>
+				<td>1-5</td>
+				<td>按钮</td>
+			</tr>
+			<tr>
+				<td>2-1</td>
+				<td>2-2</td>
+				<td>2-3</td>
+				<td>2-4</td>
+				<td>2-5</td>
+				<td>按钮</td>
+			</tr>
+			<tr>
+				<td>3-1</td>
+				<td>3-2</td>
+				<td>3-3</td>
+				<td>3-4</td>
+				<td class="position-td">
+					<div class="td-con">
+						<div class="p-r">
+							<div class="p-val">3-5</div>
+							<div class="p-a">
+								<div class="list">
+									<p>选项1</p>
+									<p>选项2</p>
+									<p>选项3</p>
+									<p>选项4</p>
+									<p>选项5</p>
+									<p>选项6</p>
+									<p>选项7</p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</td>
+				<td>按钮</td>
+			</tr>
+		</table>
+	</div>
+
+	<div style="width:200px;height:200px;overflow: auto;border:solid 1px red;position:relative;">s
+      我没有设置position
+     <div style="position:absolute;left:100px;top:100px;width:300px;height:300px;border:solid 1px blue;">我是绝对定位!父容器是红色的框框。</div>
+</div>
+</body>
+</html>

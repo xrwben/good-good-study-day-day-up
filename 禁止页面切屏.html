@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+</head>
+<body>
+	<div class="content">切屏事件 visibilitychange: <span></span></div>
+
+  <script type="text/javascript">
+    const content = document.querySelector(".content")
+    const span = document.querySelector("span")
+    let hideTime = 0
+    let showTime = 0
+    let leaveTimes = 0
+    let breakTimes = 0
+
+    const screenCheat = {
+      hideTime: 0,
+      showTime: 0,
+      leaveTimes: 0,
+      breakTimes: 0
+    }
+
+    // document.addEventListener('visibilitychange', e => {
+    //   console.log(document.visibilityState)
+    //   if (document.visibilityState === 'hidden') {
+    //     hideTime = new Date().getTime()
+    //     // console.log('hideTime>>>>>>>>', hideTime)
+    //     // alert("考试期间禁止切屏")
+    //   }
+    //   if (document.visibilityState === 'visible') {
+    //     showTime = new Date().getTime()
+    //     // console.log('showTime>>>>>>>>', showTime)
+    //     let leaveTimes = localStorage.getItem('exam-unloaded') || 0
+    //     // console.log('unloaded>>>>>>>>', leaveTimes, typeof leaveTimes)
+    //     if (showTime - hideTime > 5000) {
+    //       localStorage.setItem('exam-unloaded', ++leaveTimes)
+    //     }
+    //   }
+    //   if (document.visibilityState === 'unloaded') {
+    //      localStorage.setItem('close', Date.now())
+    //   }
+    //   console.log('出去时间>>>>>', showTime - hideTime)
+    //   span.innerHTML = showTime - hideTime + 'ms'
+    // })
+
+    // document.addEventListener('unload', () => {
+    //   alert('关闭？')
+    //   console.log('关闭页面')
+    // })
+
+    window.addEventListener('blur', () => {
+      console.log('屏幕失去焦点')
+      let leaveTimes = localStorage.getItem('exam-unloaded') || 0
+      console.log('unloaded>>>>>>>>', leaveTimes, typeof leaveTimes)
+      localStorage.setItem('exam-unloaded', ++leaveTimes)
+    })
+    
+    window.addEventListener('focus', () => {
+      console.log('屏幕中')
+      let leaveTimes = localStorage.getItem('exam-unloaded') || 0
+      console.log('unloaded>>>>>>>>', leaveTimes, typeof leaveTimes)
+      localStorage.setItem('exam-unloaded', ++leaveTimes)
+    })
+
+    const visibilityEvent = () => {
+      console.log(document.visibilityState)
+      if (document.visibilityState === 'hidden') {
+        hideTime = new Date().getTime()
+        // console.log('hideTime>>>>>>>>', hideTime)
+        // alert("考试期间禁止切屏")
+      }
+      if (document.visibilityState === 'visible') {
+        showTime = new Date().getTime()
+        // console.log('showTime>>>>>>>>', showTime)
+        let leaveTimes = sessionStorage.getItem('exam-unloaded') || 0
+        // console.log('unloaded>>>>>>>>', leaveTimes, typeof leaveTimes)
+        if (showTime - hideTime > 10000) {
+          console.log('考试中断', ++breakTimes)
+        }
+        if (showTime - hideTime > 5000 && showTime - hideTime <= 10000) {
+          sessionStorage.setItem('exam-leave', ++leaveTimes)
+        }
+      }
+      if (document.visibilityState === 'unloaded') {
+         localStorage.setItem('close', Date.now())
+      }
+    }
+
+    const forbidHideScreen = () => {
+      document.addEventListener('visibilitychange', visibilityEvent)
+    }
+
+    const removeHideScreen = () => {
+      document.removeEventListener('visibilitychange', visibilityEvent)
+    }
+
+    forbidHideScreen()
+  </script>
+</body>
+</html>

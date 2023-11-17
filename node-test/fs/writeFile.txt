@@ -1,0 +1,1 @@
+异步写入一个文件123abc追加写入 hahahahaha

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+		}
+		embed {
+			height: 100vh;
+			border: 1px solid red;
+		}
+	</style>
+</head>
+<body>
+	<h2>iframe</h2>
+	<iframe src="./css水平垂直居中.html" frameborder="0"></iframe>
+	<script>
+		window.onload = () => {
+			console.log('加载iframe完成')
+			console.log(window.top === window.self)  // 判断是否为嵌入页面
+		}
+	</script>
+	<p></p>
+	<iframe width="600" height="600" src="http://127.0.0.1:8082/"></iframe>
+</body>
+</html>

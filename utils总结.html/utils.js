@@ -1,3 +1,4 @@
+// 这种的话如果值中间有=号如何处理呢？
 export const getQueryString = (name) => {
 	if (window.location.href.indexOf("?") < 0) {
 		return;
@@ -10,9 +11,34 @@ export const getQueryString = (name) => {
 		result[key] = value;
 	})
 
-	return result[name];
+	return decodeURIComponent(result[name]);
 }
 
+export const getQueryVariable = (variable) => {
+  console.log(location)
+  const query = decodeURIComponent(window.location.search.substring(1))
+  const vars = query.split('&')
+  console.log(vars)
+  for (let i = 0; i < vars.length; i++) {
+    const pair = vars[i].split('=')
+    console.log(pair)
+    if (pair[0] === variable) {
+      let delValue = ''
+      const needList = pair.filter((item) => item !== variable)
+      console.log(needList)
+      needList.forEach((item, index) => {
+        if (index === needList.length - 1) {
+          delValue += item
+        } else {
+          delValue += `${item}=`
+        }
+      })
+      console.log(delValue)
+      return delValue
+    }
+  }
+  return ('')
+}
 
 
 export function getQueryUrl(name) {
@@ -21,6 +47,10 @@ export function getQueryUrl(name) {
     if (r != null) return unescape(r[2]);
     return null;
 }
+
+// 千分位格式化 
+const ThousandNum = num => num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+// ThousandNum(20190214) => "20,190,214"
 
 
 

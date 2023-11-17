@@ -1,0 +1,18 @@
+必要条件：非个人主体并且已认证的(微信认证)小程序
+
+方案一：普通h5调用
+
+接入jssdk，通过 config 接口注入权限验证配置并申请所需开放标签
+
+后台需要去公众号拿鉴权和签名给h5
+
+https://developers.weixin.qq.com/doc/offiaccount/OA_Web_Apps/Wechat_Open_Tag.html
+
+方案二：使用云开发静态网站托管的网页（中转跳转页）
+
+不需要签名
+
+需要小程序主体方去开通静态网站，然后创建静态中转页面和云函数，但是收费
+
+微信官方文档，修改几处即可https://developers.weixin.qq.com/miniprogram/dev/wxcloud/guide/staticstorage/jump-miniprogram.html
+

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>color-scheme系统颜色</title>
+  <style>
+    html.dark {
+      color-scheme: dark;
+    }
+  </style>
+</head>
+<body>
+  <p>莫使金樽空对月</p>
+  <label><input type="checkbox">多选</label><br>
+	<textarea rows="10" cols="100">color-scheme</textarea>
+  
+	<button class="btn">正常/暗夜模式</button>
+
+  <script>
+    const btn = document.querySelector('.btn')
+    const htmlEle = document.querySelector('html')
+    btn.addEventListener('click', () => {
+      htmlEle.classList.toggle('dark')
+    })
+  </script>
+</body>
+</html>
