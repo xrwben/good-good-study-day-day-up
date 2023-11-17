@@ -12,6 +12,8 @@
 
 * `vi index.js` 编辑index.js文件
 
+* `ip addr` 查看ip
+
 	- i 插入
 
 	- esc 退出i插入
@@ -24,7 +26,7 @@
 
 	- :w 保存
 
-## 权限
+### 权限
 
 - r: 读  w: 写  x: 执行
 
@@ -48,3 +50,28 @@
 /sbin | Linux有非常多指令是用来设定系统环境的，这些指令只有root才能够利用来『设定』系统，其他用户最多只能用来『查询』而已。 放在/sbin底下的为开机过程中所需要的，里面包括了开机、修复、还原系统所需要的指令。 至于某些服务器软件程序，一般则放置到/usr/sbin/当中。至于本机自行安装的软件所产生的系统执行文件(system binary)， 则放置到/usr/local/sbin/当中了。常见的指令包括：fdisk, fsck, ifconfig, init, mkfs等等。
 /srv | srv可以视为『service』的缩写，是一些网络服务启动之后，这些服务所需要取用的数据目录。 常见的服务例如WWW, FTP等等。举例来说，WWW服务器需要的网页数据就可以放置在/srv/www/里面。
 /tmp | 这是让一般使用者或者是正在执行的程序暂时放置文件的地方。 这个目录是任何人都能够存取的，所以你需要定期的清理一下。当然，重要数据不可放置在此目录啊！ 因为FHS甚至建议在开机时，应该要将/tmp下的数据都删除唷！
+
+
+### yum和apt-get的区别
+
+#### rpm包和deb包是两种Linux系统下最常见的安装包格式
+
+- rpm包主要应用在RedHat系列包括 Fedora、CentOS等发行版的Linux系统上
+
+- deb包主要应用于Debian系列包括现在比较流行的Ubuntu等发行版上
+
+yum可以用于运作rpm包，例如在Fedora系统上对某个软件的管理：
+
+	安装：yum install <package_name>
+
+	卸载：yum remove <package_name>
+
+	更新：yum update <package_name>
+
+apt-get可以用于运作deb包，例如在Ubuntu系统上对某个软件的管理：
+
+	安装：apt-get install <package_name>
+
+	卸载：apt-get remove <package_name>
+
+	更新：apt-get update <package_name>
