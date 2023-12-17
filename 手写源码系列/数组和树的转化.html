@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>数组与树相互转化</title>
+</head>
+<body>
+	<script type="text/javascript">
+
+		const arr = [
+		  {id:1, name: '部门A', parentId: 0},
+		  {id:2, name: '部门B', parentId: 1},
+		  {id:3, name: '部门C', parentId: 1},
+		  {id:4, name: '部门D', parentId: 2},
+		  {id:5, name: '部门E', parentId: 2},
+		  {id:6, name: '部门F', parentId: 3},
+		  {id:7, name: '部门G', parentId: 0},
+		  {id:8, name: '部门H', parentId: 4},
+		]
+
+		// 数组转树，简单来说就是利用浅拷贝
+		const arrayToTree = (arr, root) => {
+			const nodeTree = []
+			const map = {}
+
+			arr.forEach(item => {
+				const { id, parentId } = item
+				map[id] = item
+				// console.log(id, '--->>>', map[parentId], item)
+				if (map[parentId]) {
+					if (!map[parentId].children) {
+						map[parentId].children = []
+					}
+					map[parentId].children.push(item)
+				}
+
+				if (parentId === root) {
+					nodeTree.push(item)
+				}
+			})
+			console.log(nodeTree)
+			return nodeTree
+		}
+
+		arrayToTree(arr, 0)
+
+
+
+		const obj = {
+		  id: 1,
+		  name: '部门A',
+		  children: [
+		    {
+		      id: 2,
+		      name: '部门B',
+		      children: [
+		        { id: 4, name: '部门D' },
+		        { id: 5, name: '部门E' }
+		      ]
+		    },
+		    {
+		      id: 3,
+		      name: '部门C',
+		      children: [
+		        { id: 6, name: '部门F' }
+		      ]
+		    }
+		  ]
+		}
+
+		const treeToArray = (obj) => {
+			const list = []
+			let pId = 0
+			const dfs = (tree) => {
+				if (Array.isArray(tree)) {
+					tree.forEach(item => {
+						const { id, name, children = [] } = item
+						list.push({
+							id,
+							name,
+							parentId: pId
+						})
+						if (children.length) {
+							pId = id
+							dfs(children)
+						}
+					})
+				} else {
+					const { id, name, children = [] } = tree
+
+					list.push({
+						id,
+						name,
+						parentId: pId
+					})
+					if (children.length) {
+						pId = id
+						dfs(children)
+					}
+				}
+			}
+			dfs(obj)
+			console.log(list)
+
+		}
+		treeToArray(obj)
+		
+	</script>
+</body>
+</html>
