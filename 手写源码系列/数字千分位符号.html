@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>数字千分位</title>
+</head>
+<body>
+	<script type="text/javascript">
+		
+		const convert = (num) => {
+			// 只需要处理小数点前面即可
+			const arr = Math.floor(num).toString().split('').reverse()
+			// console.log(arr)
+			const str = arr.reduce((pre, cur, index) => {
+				if (index > 0 && index % 3 === 0) {
+					return pre = pre + ',' + cur
+				} else {
+					return pre = pre + cur
+				}
+			}, '')
+			console.log(str.split('').reverse())
+			return str.split('').reverse().join('')
+		}
+
+		console.log(convert(12345678))
+		
+
+		
+	</script>
+</body>
+</html>
