@@ -18,7 +18,11 @@ node包管理工具、安装node自带，文档地址：https://docs.npmjs.com/
 
 > `npm config set registry https://地址`
 
-* 设置npm源
+* 设置npm源，这是永久的
+
+> `npm install pkg --registry=https://xxxx地址`
+
+* 安装包的时候临时指定某个源，一般是安装自己公司的内部包的时候用，或者项目里面通过`.npmrc`来配置源
 
 
 
@@ -50,8 +54,17 @@ node包管理工具、安装node自带，文档地址：https://docs.npmjs.com/
 
 > `npm install cnpm -g --registry=https://registry.npmmirror.com`
 
-* 设置一个源，registry讲道理可以设置为任何源地址，使用方法为`cnpm`开头，所有参数与npm使用一致
+* 设置一个安装包的临时源，registry讲道理可以设置为任何源地址，使用方法为`cnpm`开头，所有参数与npm使用一致
 
 > `cnpm config set registry https://地址`
 
 * 设置cnpm源可以换成公司内部的
+
+
+
+### .npmrc
+
+定义：指定npm运行时的配置内容
+
+优先级： 项目内 > 用户 > 全局 > 内置配置
+
