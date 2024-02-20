@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>ClickOutside</title>
+  <style>
+    * {
+      margin: 0; padding: 0; box-sizing: border-box;
+    }
+    .drop-down {
+      margin: 50px;
+      position: relative;
+      display: inline-block;
+    }
+    .popper {
+      background: rgba(0, 0, 0, 0.5);
+      color: #fff;
+      padding: 20px 30px;
+      position: absolute;
+      top: 30px;
+      left: 0;
+      display: none;
+    }
+    .show {
+      display: block;
+    }
+    [v-cloak] {
+      display: none;
+    }
+    .popup {
+      background: rgba(0, 0, 0, 0.5);
+      color: #fff;
+      padding: 20px 30px;
+      position: absolute;
+      top: 30px;
+      left: 0;
+    }
+  </style>
+</head>
+<body>
+	<!-- <div class="drop-down">
+		<button class="btn">点击</button>
+    <div class="popper">
+      弹窗
+    </div>
+	</div>
+
+  <script>
+    const dropDown = document.querySelector('.drop-down')
+    const btn = document.querySelector('.btn')
+    const popper = document.querySelector('.popper')
+
+    btn.addEventListener('click', () => {
+      popper.classList.toggle('show')
+    })
+
+    document.addEventListener('click', (e) => {
+      // console.log(e, dropDown.contains(e.target))
+      if (dropDown.contains(e.target)) {
+        return
+      }
+      popper.classList.remove('show')
+    })
+
+  </script> -->
+
+  <!-- Vue 用指令来实现下 -->
+  <div id="app" v-cloak>
+    <div class="drop-down" v-click-outside="hidePopup">
+      <button class="btn" @click="changShow">{{ !isShow ? '显示' : '隐藏' }}</button>
+      <div class="popup" v-if="isShow">弹窗内容</div>
+    </div>
+  </div>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script>
+    const { createApp, ref } = Vue
+
+    createApp({
+      directives: {
+        clickOutside: {
+          mounted (el, binding, vnode, prevVnode) {
+            console.log(el, binding, vnode, prevVnode)
+            el.__outsideEvent__ = (e) => {
+              if (el.contains(e.target)) {
+                return
+              }
+              binding.value()
+            }
+            document.addEventListener('click', el.__outsideEvent__)
+          },
+          unmounted (el, binding, vnode, prevVnode) {
+            console.log(el, binding, vnode, prevVnode)
+            document.removeEventListener('click', el.__outsideEvent__)
+            delete el.__outsideEvent__
+          }
+        }
+      },
+      setup() {
+        const isShow = ref(false)
+
+        const changShow = () => {
+          isShow.value = !isShow.value
+        }
+        const hidePopup = () => {
+          isShow.value = false
+        }
+        return {
+          isShow,
+          changShow,
+          hidePopup
+        }
+      }
+    }).mount('#app')
+  </script>
+</body>
+</html>
