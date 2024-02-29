@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>异步输出</title>
+</head>
+<body>
+	<script type="text/javascript">
+
+		let first = new Promise((resolve, reject) =>{
+			console.log(3)
+			let p = new Promise((resolve, reject) => {
+				console.log(7)
+				setTimeout(() => {
+					console.log(5)
+					resolve(6)
+					console.log(p)
+				}, 0)
+        resolve(1)
+			})
+      resolve(2)
+      p.then((arg) => {
+        console.log(arg)
+      })
+		})
+		first.then((arg) => {
+			console.log(arg)
+		})
+		console.log(4)
+    // 结果 3 7 4 1 2 5 p(1)
+		
+	</script>
+</body>
+</html>
