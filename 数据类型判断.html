@@ -22,7 +22,7 @@
 
 		    对于基本类型，除 null 以外，均可以返回正确的结果
 		    对于引用类型，除 function 以外，一律返回 object 类型
-		    对于 null ，返回 object 类型
+		    对于 null ，返回 object 类型，原因是对象存在在计算机中，都是以000开始的二进制存储，所以检测出来的结果是对象
 		    对于 function 返回  function 类型
 		
 		*/
