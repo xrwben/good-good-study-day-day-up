@@ -15,9 +15,30 @@
 
 			思路：
 
-			1、外层循环 2、内层循环比较
+			1、外层循环 2、内层循环比较 3、从后面往前面比较
 		*/
 
+		const test1 = [5, 9, 3, 1, 2, 8, 4, 7, 6]
+
+		const maopao = (arr) => {
+			for (let i = 0; i < arr.length; i++) {
+				for (let j = arr.length - 1; j >= i; j--) {
+					if (arr[j] < arr[j - 1]) {
+						let tmp = arr[j]
+						arr[j] = arr[j - 1]
+						arr[j - 1] = tmp
+					}
+					console.log(i, '-->>>', arr)
+				}
+				// debugger
+			}
+			console.log(arr)
+			return arr
+		}
+		maopao(test1)
+
+
+		// 这种是从前往后遍历，原理实则是找到最大的放在末尾，感觉不是冒泡，是沉底
 		var arr = [3, 1, 4, 6, 5, 7, 2, 8];
 
 		function bubbleSort(arr) {
@@ -37,6 +58,7 @@
 			return arr
 		}
 		bubbleSort(arr)
+		
 	</script>
 </body>
 </html>
