@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>模拟instanceof原理</title>
+</head>
+<body>
+	<script type="text/javascript">
+		console.log(function(){} instanceof Function) // true
+		console.log(function(){} instanceof Object) // true
+		console.log(typeof function(){})  // function
+		console.log([] instanceof Object) // true
+		console.log([] instanceof Array) // true
+		console.log([] instanceof Function) // false
+
+		/*
+			原理：instanceof 运算符用于检测构造函数的 prototype 属性是否出现在某个实例对象的原型链上
+
+			typeof可以判断出function  其它对象都是object
+
+			instanceof原理：通过判断对象的原型链中是不是能找到类型的 prototype
+		*/
+		const _instanceOf = (left, right) => {
+			// console.log(left.__proto__ === right.prototype)
+
+			// 判断边界，基本数据类型直接返回false
+			if (left === null || typeof left !== 'object') {
+				return false
+			}
+			let prototype = right.prototype
+			left = left.__proto__
+			while (true) {
+				console.log(left)
+				if (left === null) {
+					return false
+				}
+				if (left === prototype) {
+					return true
+				}
+				left = left.__proto__
+			}
+
+		}
+
+		console.log(_instanceOf({}, Object))  // true
+		console.log(_instanceOf([], Object))  // true
+		console.log(_instanceOf([], Array)) // true
+		console.log(_instanceOf(function(){}, Function)) // false 这个跟第一个打印不同 所以这么写正确？
+
+	</script>
+</body>
+</html>
