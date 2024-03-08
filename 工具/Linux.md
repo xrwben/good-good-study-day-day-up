@@ -10,7 +10,7 @@
 
 * `cat index.js` 查看index.js文件
 
-* `vi index.js` 编辑index.js文件
+* `vi index.js` 编辑index.js文件，如果文件不存在则会新建
 
 * `ip addr` 查看ip
 
