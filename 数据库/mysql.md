@@ -35,8 +35,8 @@ window安装：https://www.runoob.com/w3cnote/windows10-mysql-installer.html
 * 列出所选数据库中的所有表
 
 > ```CREATE DATABASE [IF NOT EXISTS] 数据库名
-  [CHARACTER SET charset_name]
-  [COLLATE collation_name];```
+  [CHARACTER SET utf8mb4]
+  [COLLATE utf8mb4_general_ci];```
 
 * 创建数据库
 

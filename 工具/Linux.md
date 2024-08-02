@@ -10,7 +10,7 @@
 
 * `cat index.js` 查看index.js文件
 
-* `vi index.js` 编辑index.js文件
+* `vi index.js` 编辑index.js文件，如果文件不存在则会新建
 
 * `ip addr` 查看ip
 
@@ -33,6 +33,38 @@
 	- :q! 强制退出不保存
 
 	- :w 保存
+
+* `grep 'ERROR'` grep命令用于搜索文件内容，并将匹配的行打印出来
+
+* `rm [-fir] 文件或目录` 
+-f ：就是 force 的意思，忽略不存在的文件，不会出现警告信息
+-i ：互动模式，在删除前会询问使用者是否动作
+-r ：递归删除啊！最常用在目录的删除了！这是非常危险的选项！！！ 
+
+
+### 查看日志
+
+* `cat /var/log/syslog` 查看整个文件的内容。如果日志文件不是太大，可以直接使用 cat 命令查看
+
+* `less /var/log/syslog` 使用 /关键字 来搜索特定内容，使用 n 查找下一个匹配项，N 查找上一个匹配项，q 退出 less
+
+* `more /var/log/syslog` 使用空格键翻页，b 键回退，q 键退出
+
+* `tail [-n number] 文件 ` 查看文件的末尾部分(默认最后10行)，这对于查看最新的日志信息非常有用。可以使用 -n 选项指定显示的行数，或使用 -f 选项来实时查看文件的新增内容 
+
+* `tail -f /var/log/syslog | grep 'ERROR'` 配合grep搜索
+
+* `head [-n number] 文件 ` 只看头几行(默认10行)，-n ：后面接数字，代表显示几行的意思
+
+
+### 请求接口
+
+`curl`命令
+
+`curl -X POST -H "Content-Type: application/json" -H "token: 123" -d '{"key":"value"}' https://api.example.com/data`
+
+-X POST指定了请求方法为POST，-H用于添加HTTP头（这里是设置Content-Type为application/json），-d用于指定POST请求的数据体
+
 
 ### 权限
 

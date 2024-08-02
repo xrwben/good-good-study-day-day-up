@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Promise</title>
+</head>
+<body>
+	<script>
+
+	/*
+		缺点:
+		1、无法取消Promise，一旦新建它就会立即执行，无法中途取消。
+		2、如果不设置回调函数，Promise内部抛出的错误，不会反应到外部。
+		3、当处于pending状态时，无法得知目前进展到哪一个阶段（刚刚开始还是即将完成）。
+		
+		注意：
+		1、then()方法指定的回调函数，如果运行中抛出错误，也会被catch()方法捕获
+
+	*/
+
+  // function timeout(ms) {
+  //   return new Promise((resolve, reject) => {
+  //     setTimeout(resolve, ms, 'done', '123');
+  //   });
+  // }
+
+  // timeout(100).then((value) => {
+  //   console.log(value);
+  // });
+
+  // 如果没有被catch抓住的异常则会被unhandledrejection事件捕获，如果被catch捕获了则可以在其中上报
+  window.addEventListener('unhandledrejection', (e) => {
+    console.log('捕获异常>>>>', e)
+  })
+	/*
+		then()方法指定的回调函数，如果运行中抛出错误，也会被catch()方法捕获
+	*/
+  const exceptionFn = () => {
+    throw new Error('抛出异常')
+  }
+  const p = new Promise((resolve, reject) => {
+    if (Math.random() > 0.1) {
+      resolve('正常')
+    }
+    reject('异常')
+  })
+  p.then((res) => {
+    console.log(res)
+    exceptionFn()
+  })
+  // .catch(err => {
+  //   console.error(err) // exceptionFn报错，会走到catch中来
+  // })
+
+  const p1 = () => {
+    return new Promise((resolve, reject) => {
+      throw error('error')
+      setTimeout(() => {
+        // resolve('p1成功')
+        reject('p1失败')
+      }, 1000)
+    })
+  }
+  const p2 = () => {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        reject('p2失败')
+      }, 2000)
+    })
+  }
+  const p3 = () => {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        // resolve('p3成功')
+        reject('p2失败')
+      }, 2500)
+    })
+  }
+
+  /*
+    all() 如果所有都成功则走then返回所有值, 如果有一个reject则走catch返回reject值
+  */
+  // Promise.all([p1(), p2(), p3()]).then(res => {
+  //   console.log(res)
+  // }).catch(err => {
+  //   console.error(err)
+  // }).finally(() => {
+  //   console.log('finally')
+  // })
+
+  /*
+    race() 最先完成的为成功则走then返回resolve，最先失败则走catch返回reject值
+  */
+  // Promise.race([p1(), p2(), p3()]).then(res => {
+  //   console.log(res)
+  // }).catch(err => {
+  //   console.error(err)
+  // }).finally(() => {
+  //   console.log('finally')
+  // })
+
+  /*
+    allSettled() 不管成功失败 都通过then返回, 不会catch, 除非then里面有异常
+  */
+  // Promise.allSettled([p1(), p2(), p3()]).then(res => {
+  //   console.log(res)
+  //   throw new Error('异常')
+  // }).catch(err => {
+  //   console.error(err)
+  // }).finally(() => {
+  //   console.log('finally')
+  // })
+
+  /*
+    any() 最先成功的走then返回resolve值，所有都失败则走catch返回报错信息
+  */
+  // Promise.any([p1(), p2(), p3()]).then(res => {
+  //   console.log(res)
+  // }).catch(err => {
+  //   console.error(err)
+  // }).finally(() => {
+  //   console.log('finally')
+  // })
+</script>
+</body>
+</html>
