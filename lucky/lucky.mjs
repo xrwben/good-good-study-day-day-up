@@ -8,15 +8,20 @@ const list = JSON.parse(content)
 let redArr = []
 let blueArr = []
 
+// let lbTimes = 0
 list.forEach(item => {
 	const num = item.split(' ')
 	const red = num.slice(0, 5)
 	const blue = num.slice(5, 7)
+	// if (blue.join('') === '0408') {
+	// 	lbTimes = lbTimes + 1
+	// 	console.log('命定数字>>', blue, lbTimes, lbTimes / list.length * 100 + '%')
+	// }
 	redArr.push(red)
 	blueArr.push(blue)
 })
 
-console.log(redArr, blueArr)
+// console.log(redArr, blueArr)
 
 
 // ---------------------处理红球---------------------------
@@ -34,9 +39,10 @@ redFlat.forEach(num => {
 
 const redEntries = Array.from(redMap.entries())
 const redSort = redEntries.sort((a, b) => {
-	return a[0] - b[0]
+	// return a[1] - b[1]
+	return b[0] - a[0]
 })
-// console.log(redSort)
+console.log('红球排序', redSort)
 // console.log(new Map(redSort), list.length)
 
 
@@ -49,13 +55,15 @@ const redWeight = redEntries.reduce((total, current) => {
 const drawnRed = new Set()
 while (drawnRed.size < 5) {
     const randomValue = Math.random() * redWeight
-    // console.log(randomValue)
+    console.log(randomValue)
     let cumulativeWeight = 0
 
     for (const [key, value] of redSort) {
         cumulativeWeight += value
         if (randomValue <= cumulativeWeight) {
-            drawnRed.add(key)
+        	if (!drawnRed.has(key)) {
+            	drawnRed.add(key)
+        	}
             break
         }
     }
@@ -96,7 +104,9 @@ while (drawnBlue.size < 2) {
     for (const [key, value] of blueSort) {
         cumulativeWeight += value
         if (randomValue <= cumulativeWeight) {
-            drawnBlue.add(key)
+        	if (!drawnBlue.has(key)) {
+            	drawnBlue.add(key)
+        	}
             break
         }
     }
@@ -114,7 +124,9 @@ const lotteryDrawRed = () => {
 	    for (const [key, value] of redSort) {
 	        cumulativeWeight += value
 	        if (randomValue <= cumulativeWeight) {
-	            drawnRed.push(key)
+	        	if (!drawnRed.includes(key)) {
+	            	drawnRed.push(key)
+	        	}
 	            break
 	        }
 	    }
@@ -130,7 +142,9 @@ const lotteryDrawBlue = () => {
 	    for (const [key, value] of blueSort) {
 	        cumulativeWeight += value
 	        if (randomValue <= cumulativeWeight) {
-	            drawnBlue.push(key)
+	        	if (!drawnBlue.includes(key)) {
+	            	drawnBlue.push(key)
+	        	}
 	            break
 	        }
 	    }
@@ -138,11 +152,11 @@ const lotteryDrawBlue = () => {
 	return [...drawnBlue]
 }
 const moneyCome = (times = 1) => {
-	// console.log(lotteryDrawRed(), lotteryDrawBlue())
 	let _redArr = []
 	let _blueArr = []
 	let flag = true
 	while (flag) {
+		// console.log(lotteryDrawRed(), lotteryDrawBlue())
 		// console.log(`还有${times}次`)
 		_redArr = _redArr.concat(lotteryDrawRed())
 		_blueArr = _blueArr.concat(lotteryDrawBlue())
@@ -221,4 +235,4 @@ const moneyCome = (times = 1) => {
 	// }
 	// money(times)
 }
-// moneyCome(567)
+moneyCome(2065)
