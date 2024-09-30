@@ -37,7 +37,11 @@
 		then()方法指定的回调函数，如果运行中抛出错误，也会被catch()方法捕获
 	*/
   const exceptionFn = () => {
-    throw new Error('抛出异常')
+    // throw new Error('抛出异常')
+    innerExceptionFn()
+  }
+  const innerExceptionFn = () => {
+    throw new Error('内部抛出异常')
   }
   const p = new Promise((resolve, reject) => {
     if (Math.random() > 0.1) {
