@@ -8,7 +8,7 @@
 
 4. 汉化Chinese
 
-5. Auto Rename Tag -自动重命名对应标签
+5. Auto Rename Tag -自动重命名对应标签（内置）
 
 6. vetur  -（vue2）不用了 升级volar兼容
 
@@ -21,6 +21,10 @@
 10. Live Server -当前文件目录快速起个服务，类似http-server功能
 
 11. Prettier -格式化代码工具，可以手动格式化
+
+12. Path IntelliSence - 路劲提示补全（内置）
+
+13. Emmet - HTML/CSS提示（内置）
 
  
 
@@ -63,3 +67,33 @@
 ### 参考配置
 
 https://maomao.fe-mm.com/efficiency/software/vscode
+
+
+### Prettier配置说明
+
+```json
+{
+    "printWidth": 80,
+    "tabWidth": 2,
+    "useTabs": false,
+    "semi": false,
+    "singleQuote": true,
+    "quoteProps": "as-needed", // 对象属性是否添加引号
+    "jsxSingleQuote": false,
+    "trailingComma": "none", // 尾随逗号
+    "bracketSpacing": true, // 花括号前后空格
+    "jsxBracketSameLine": false, // jsx中>是否在末尾
+    "arrowParens": "always", // 箭头函数括号添加方式
+    "rangeStart": 0, // 格式化开始范围
+    "rangeEnd": Infinity, // 格式化结束范围
+    "parser": "babel", // 代码解析器
+    "filepath": null, // 文件路径
+    "requirePragma": false, // 是否文件顶部有特定注释才格式化
+    "insertPragma": false, // 是否在文件顶部插入特定注释，表示文件已格式化
+    "proseWrap": "preserve", // Markdown 文件保留原始换行
+    "htmlWhitespaceSensitivity": "css", // 控制 HTML 文件中空格的敏感度
+    "vueIndentScriptAndStyle": false, // 是否在 Vue 文件中缩进 <script> 和 <style> 标签内的代码
+    "endOfLine": "lf", // 控制文件的行尾字符
+    "embeddedLanguageFormatting": "auto" // 是否格式化嵌入在其他语言中的代码（如 HTML 中的 JavaScript）
+}
+```
