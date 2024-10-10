@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs'
 const content = readFileSync('./kuaileba.json', 'utf8')
 console.log(typeof content)
 
-const list = JSON.parse(content).slice(0, 100)
+const list = JSON.parse(content).slice(0, 30)
 console.log(list)
 
 let redArr = []
@@ -29,7 +29,8 @@ redArr.forEach(num => {
 
 const redEntries = Array.from(redMap.entries())
 const redSort = redEntries.sort((a, b) => {
-	return a[0] - b[0]
+	// return a[0] - b[0]
+	return a[1] - b[1]
 })
 console.log(redSort)
 // console.log(new Map(redSort), list.length)
