@@ -55,13 +55,19 @@
 ],
 // vue单文件html和css提示
 "emmet.includeLanguages": {
-        "vue-html": "html",
-        "vue": "html",
-        "javascript": "javascriptreact"
-    },
-    "files.associations": {
-        "*.vue": "html"
-    }
+    "vue-html": "html",
+    "vue": "html",
+    "javascript": "javascriptreact"
+},
+"files.associations": {
+    "*.vue": "html"
+}
+
+// eslint配置文件默认只在根目录生效，如果有子目录则需要配置eslint工作目录
+"eslint.workingDirectories": [
+    { "mode": "auto" },
+    // { "directory": "app", "changeProcessCWD": true }
+],
 ```
 
 ### 参考配置
