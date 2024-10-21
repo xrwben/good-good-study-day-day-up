@@ -30,7 +30,7 @@ const startSpider = () => {
         
                 // 查找表格中的行
                 const rows = table.find('tr');
-                console.log(rows.length);
+                // console.log(rows.length);
         
                 // 遍历每一行
                 rows.each((index, row) => {
@@ -74,9 +74,9 @@ const startSpider = () => {
 };
 
 const missSortByAsc = (list: Data[]) => {
-    // 最大遗漏和平均遗漏升序
+    // 最大遗漏升序
     const result = list.sort((a, b) => {
-        return (a.maxMiss + a.avgMiss) - (b.maxMiss + b.avgMiss);
+        return a.maxMiss - b.maxMiss;
     }).map(item=> {
         return item.number;
     });
@@ -100,9 +100,9 @@ const occurrenceSortByDesc = (list: Data[]) => {
 };
 
 const weightSortByDesc = (list: Data[]) => {
-    // 最大遗漏权重3， 平均遗漏权重2，出现次数权重1
+    // 最大遗漏权重1， 平均遗漏权重3，出现次数权重2
     const result = list.sort((a, b) => {
-        return (3 * a.maxMiss + 2 * a.avgMiss + a.occurrence) - (3 * b.maxMiss + 2 * b.avgMiss + b.occurrence);
+        return (a.maxMiss * 1 + a.avgMiss * 3 + a.occurrence * 2) - (b.maxMiss * 1 + b.avgMiss * 3 + b.occurrence * 2);
     }).map(item=> {
         return item.number;
     });
@@ -112,32 +112,43 @@ const weightSortByDesc = (list: Data[]) => {
 
 const getRandomNumber = (list: Data[]) => {
     // 随机获取一组号码
-    const arr = [];
-    for (let i = 0; i < 10; i++) {
-        const index = Math.floor(Math.random() * list.length);
-        arr.push(list[index]);
+    const arr: number[] = [];
+    while (arr.length < 10) {
+        const index = Math.floor(Math.random() * list.length) + 1;
+        if (!arr.includes(index)) {
+            arr.push(index);
+        }
     }
-    const result = arr.sort((a, b) => {
-        return a.number - b.number;
-    }).map(item=> {
-        return item.number;
-    });
-    // console.log(result);
-    return result;
+    return arr;
+};
+
+const getPrimeNumer = () => {
+    const list: number[] = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79];
+    const arr: number[] = [];
+    while (arr.length < 10) {
+        const index = Math.floor(Math.random() * list.length);
+        if (!arr.includes(list[index])) {
+            arr.push(list[index]);
+        }
+    }
+    return arr;
 };
 
 export const getLuckyNumber = async () => {
     const data = await startSpider();
+    // console.log(data);
     const result1 = missSortByAsc(data);
     const result2 = occurrenceSortByDesc(data);
     const result3 = weightSortByDesc(data);
     const result4 = getRandomNumber(data);
+    const result5 = getPrimeNumer();
 
     return {
         '遗漏计算': result1,
         '出现次数': result2,
         '权重计算': result3,
-        '随机获取': result4
+        '随机获取': result4,
+        '最爱质数': result5
     };
 };
 // (async () => {

@@ -6,7 +6,7 @@ import { getLuckyNumber } from './lottery';
 let timeoutId: NodeJS.Timeout | undefined;
 
 const scheduleRestReminder = async () => {
-	console.log('定时提醒');
+	// console.log('定时提醒');
 	if (timeoutId) {
 		clearTimeout(timeoutId);
 	}
@@ -19,10 +19,10 @@ const scheduleRestReminder = async () => {
 	}
 
 	const timeUntilTarget = targetTime.getTime() - now.getTime();
-	const richerNumber = await getLuckyNumber();
-
-	timeoutId = setTimeout(() => {
-		vscode.window.showInformationMessage(`今晚快乐8推荐号码为： ${JSON.stringify(richerNumber)}`);
+	
+	timeoutId = setTimeout(async () => {
+		const richerNumber = await getLuckyNumber();
+		vscode.window.showInformationMessage(`今晚（${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}）快乐8推荐号码为： ${JSON.stringify(richerNumber)}`);
 		scheduleRestReminder();
 	}, timeUntilTarget);
 };

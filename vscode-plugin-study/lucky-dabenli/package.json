@@ -2,7 +2,7 @@
   "name": "lucky-dabenli",
   "displayName": "lucky-dabenli",
   "description": "lucky",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "publisher": "lucky-dabenli",
   "engines": {
     "vscode": "^1.94.2"

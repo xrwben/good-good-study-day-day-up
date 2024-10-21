@@ -8,6 +8,6 @@
 
 https://code.visualstudio.com/api/working-with-extensions/publishing-extension#publishing-extensions
 
-1. 安装`vsce`
-2. 执行`vsce package`
-3. 上传到`vscode`市场
+1. 执行`vsce package`
+2. 执行`vsce login`
+3. 执行`vsce publish`
