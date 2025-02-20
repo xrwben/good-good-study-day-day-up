@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>WeakMap</title>
+</head>
+<body>
+	<script type="text/javascript">
+		/*
+			1、WeakMap只接受对象（null除外）和 Symbol 值作为键名
+
+			2、WeakMap 里面的键名对象和所对应的键值对会自动消失，不用手动删除引用
+		*/
+		
+		const weakMap = new WeakMap()
+
+		console.log(weakMap)
+
+		const key = {}
+		weakMap.set(key, '键为对象')
+		console.log(weakMap.get(key))
+
+		weakMap.set(Symbol(), '键为Symbol')
+
+		// weakMap.set(1, '键为数字报错')
+
+
+	</script>
+</body>
+</html>
