@@ -18,3 +18,9 @@
 - 木易杨blog：https://muyiy.cn/
 
 - 组件开发：https://monw3c.github.io/xmui/#/README
+
+- 咖啡机博客：https://www.kancloud.cn/pwstrick/fe-questions/1657739
+
+- 中国开发独立站：https://developer.hubing.online/home
+
+- 技术网站：https://www.zhihu.com/question/629894384
