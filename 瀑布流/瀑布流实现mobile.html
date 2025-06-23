@@ -6,84 +6,136 @@
 	<title>瀑布流</title>
 	<script>
     // 适配方案 
-    (function(window, document){
-      function setRem() {
-        let deviceWidth = document.documentElement.clientWidth;
-        deviceWidth = deviceWidth > 750 ? 750 : deviceWidth;
-        document.documentElement.style.fontSize = deviceWidth / 7.5 + "px";
-      }
-      setRem();
-      window.addEventListener("resize", setRem);
-      window.addEventListener('pageshow', function (e) {
-        if (e.persisted) {
-          setRem();
-        }
-      })
-    })(window, document)
+    // (function(window, document){
+    //   function setRem() {
+    //     let deviceWidth = document.documentElement.clientWidth;
+    //     deviceWidth = deviceWidth > 750 ? 750 : deviceWidth;
+    //     document.documentElement.style.fontSize = deviceWidth / 7.5 + "px";
+    //   }
+    //   setRem();
+    //   window.addEventListener("resize", setRem);
+    //   window.addEventListener('pageshow', function (e) {
+    //     if (e.persisted) {
+    //       setRem();
+    //     }
+    //   })
+    // })(window, document)
   </script>
   <style>
+  	html { font-size: calc(100vw / 7.5); }
   	* { margin: 0; padding: 0; box-sizing: border-box; }
   	#app { width: 100vw; min-height: 100vh }
+  	[v-cloak] { display: none; }
   	.waterfall-component { display: flex; padding: 0.1rem; }
   	.waterfall-col { width: 3.48rem; margin-left: 0.14rem; }
-  	.waterfall-item { width: 100%; border: 0.01rem solid rgba(5, 12, 28, 0.4); padding: 0.1rem; border-radius: 0.16rem; }
+  	.waterfall-item { width: 100%; border: 0.01rem solid rgba(5, 12, 28, 0.4); padding: 0.1rem; border-radius: 0.16rem; margin-bottom: 0.1rem; }
   	.pic { width:100%; display: flex; }
   	.pic > img { width: 100%; height: 100%; object-fit: cover; }
   	.desc { color: #050C1C; font-size: 0.26rem; line-height: 0.4rem; }
   </style>
 </head>
 <body>
-	<div id="app">
+	<div id="app" v-cloak>
 		<div class="waterfall-component">
-			<div class="waterfall-col">
-				<div class="waterfall-item">
+			<div class="waterfall-col" ref="leftColRef">
+				<div class="waterfall-item" v-for="item in leftList">
 					<div class="pic">
-						<img src="https://coss-ec.fenqile.com/ecproduct202/M00/ex/20250515174543-c8c0c634-75aa-4623-9f5e-7b5f9fb31460_348x348.jpg.webp"/>
+						<img :src="item.pic"/>
 					</div>
-					<div class="desc">中国珠宝收藏礼物足金9999黄金薄片投资金条5克AU9999财富金条金砖5g</div>
+					<!-- <div class="desc">{{ index }}-{{ item.desc }}</div> -->
 				</div>
 			</div>
-			<div class="waterfall-col"></div>
+			<div class="waterfall-col" ref="rightColRef">
+				<div class="waterfall-item" v-for="item in rightList">
+					<div class="pic">
+						<img :src="item.pic"/>
+					</div>
+					<!-- <div class="desc">{{ index }}-{{ item.desc }}</div> -->
+				</div>
+			</div>
 		</div>
 	</div>
 	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-	<script>
-		const { createApp, onBeforeMount, ref } = Vue
+	<script type="module">
+		const { createApp, onBeforeMount, ref, reactive } = Vue
 		createApp({
 			setup () {
-				const list = ref([])
+				// const list = ref([])
 				const pageSize = ref(1)
 				const leftList = ref([])
 				const rightList = ref([])
-				const columnHeight = ref([])
+				const leftColRef = ref(null)
+				const rightColRef = ref(null)
+				// const columnHeight = ref([0, 0])
 
-				const getList = () => {
-					fetch('https://m.fenqile.com/route0002/appHome/recommendFeed.json', {
-						method: 'post',
-						body: JSON.stringify({
-							data: {
-								action: 'recommendFeed',
-								app_number: 8,
-								deviceSystem: "iOS",
-								deviceSystemVersion: "13.2.3",
-								limit: 10,
-								page: pageSize.value,
-								userAction: 1
+				// const getRandomTxt = async () => {
+				// 	const response = await fetch('https://api.shadiao.pro/chp')
+				// 	const result = await response.json()
+				// 	return result.data.text
+				// }
+
+				// const getRandomImage = async () => {
+				// 	const response = await fetch(`https://picsum.photos/v2/list?page=${pageSize.value}&limit=10`);
+				// 	const result = await response.json()
+				// 	return result
+				// }
+
+				const getList = async () => {
+					const response = await fetch('./waterfall-data.json')
+					const result = await response.json()
+					// console.log(result)
+					// const mockArr = []
+					// for (let i = 0; i < 10; i++) {
+					// 	let w = Math.ceil((Math.random() * 200 + 100) / 10) * 10
+					// 	let h = Math.ceil((Math.random() * 200 + 100) / 10) * 10
+					// 	let txt = await getRandomTxt()
+					// 	// console.log(txt)
+					// 	mockArr.push({
+					// 		id: i + (pageSize.value - 1) * 10,
+					// 		pic: `https://picsum.photos/${w}/${h}`,
+					// 		width: w,
+					// 		height: h,
+					// 		desc: txt
+					// 	})
+					// }
+					const resData = result.slice((pageSize.value - 1) * 10, 10)
+					console.log(resData)
+					pageSize.value++
+
+					calculateLayout(resData)
+				}
+
+				const calculateLayout = async (listData) => {
+					for (const item of listData) {
+						console.log(item)
+						const image = new Image()
+						image.src = item.pic
+						await new Promise((resolve, reject) => {
+							image.onload = () => {
+								console.log(leftColRef.value)
+								const leftHeight = leftColRef.value?.offsetHeight || 0
+								const rightHeight = rightColRef.value?.offsetHeight || 0
+								console.log(leftHeight, rightHeight)
+								if (leftHeight <= rightHeight) {
+									leftList.value.push(item)
+								} else {
+									rightList.value.push(item)
+								}
+								resolve()
 							}
 						})
-					}).then(response => response.json()).then(res => {
-						console.log(res)
-						if (res.result === 0) {
-							const { list, page, total_page } = res.data.result_rows
-							list.value = [...list.value, ...list]
-						}
-					})
+					}
 				}
+
+
+
 				onBeforeMount(() => {
 					getList()
 				})
-				return {
 
+				return {
+					leftList,
+					rightList
 				}
 			}
 		}).mount('#app')
