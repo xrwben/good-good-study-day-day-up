@@ -1,0 +1,968 @@
+[
+  {
+    "name": "吉视传媒",
+    "code": "SH601929",
+    "price": 4.48,
+    "percent": 10.07
+  },
+  {
+    "name": "三七互娱",
+    "code": "SZ002555",
+    "price": 23.44,
+    "percent": 2.58
+  },
+  {
+    "name": "平潭发展",
+    "code": "SZ000592",
+    "price": 8.57,
+    "percent": 10.01
+  },
+  {
+    "name": "京泉华",
+    "code": "SZ002885",
+    "price": 29.32,
+    "percent": 10.02
+  },
+  {
+    "name": "浙富控股",
+    "code": "SZ002266",
+    "price": 4.66,
+    "percent": 3.1
+  },
+  {
+    "name": "佛塑科技",
+    "code": "SZ000973",
+    "price": 8.86,
+    "percent": 3.38
+  },
+  {
+    "name": "雪人集团",
+    "code": "SZ002639",
+    "price": 12.45,
+    "percent": 9.98
+  },
+  {
+    "name": "万里马",
+    "code": "SZ300591",
+    "price": 12.31,
+    "percent": 19.98
+  },
+  {
+    "name": "合力泰",
+    "code": "SZ002217",
+    "price": 3.42,
+    "percent": 4.27
+  },
+  {
+    "name": "智飞生物",
+    "code": "SZ300122",
+    "price": 21.29,
+    "percent": 2.8
+  },
+  {
+    "name": "欢瑞世纪",
+    "code": "SZ000892",
+    "price": 8.3,
+    "percent": 5.73
+  },
+  {
+    "name": "兰石重装",
+    "code": "SH603169",
+    "price": 10.54,
+    "percent": 10.02
+  },
+  {
+    "name": "柳工",
+    "code": "SZ000528",
+    "price": 11.95,
+    "percent": 2.49
+  },
+  {
+    "name": "科翔股份",
+    "code": "SZ300903",
+    "price": 15.9,
+    "percent": 9.05
+  },
+  {
+    "name": "天津普林",
+    "code": "SZ002134",
+    "price": 23.15,
+    "percent": 4.14
+  },
+  {
+    "name": "新联电子",
+    "code": "SZ002546",
+    "price": 7.88,
+    "percent": 7.21
+  },
+  {
+    "name": "厦门象屿",
+    "code": "SH600057",
+    "price": 8.85,
+    "percent": 5.11
+  },
+  {
+    "name": "赛轮轮胎",
+    "code": "SH601058",
+    "price": 15.66,
+    "percent": 0.9
+  },
+  {
+    "name": "欣龙控股",
+    "code": "SZ000955",
+    "price": 7.07,
+    "percent": 3.67
+  },
+  {
+    "name": "安泰集团",
+    "code": "SH600408",
+    "price": 3.76,
+    "percent": 9.94
+  },
+  {
+    "name": "百川能源",
+    "code": "SH600681",
+    "price": 4.82,
+    "percent": 3.88
+  },
+  {
+    "name": "西典新能",
+    "code": "SH603312",
+    "price": 53.35,
+    "percent": 2.38
+  },
+  {
+    "name": "杰瑞股份",
+    "code": "SZ002353",
+    "price": 53.23,
+    "percent": 5.11
+  },
+  {
+    "name": "南京熊猫",
+    "code": "SH600775",
+    "price": 12.55,
+    "percent": 3.89
+  },
+  {
+    "name": "厦门国贸",
+    "code": "SH600755",
+    "price": 6.72,
+    "percent": 4.51
+  },
+  {
+    "name": "三孚股份",
+    "code": "SH603938",
+    "price": 18.9,
+    "percent": 2.94
+  },
+  {
+    "name": "华映科技",
+    "code": "SZ000536",
+    "price": 5.08,
+    "percent": 2.42
+  },
+  {
+    "name": "天马科技",
+    "code": "SH603668",
+    "price": 15.61,
+    "percent": 10.01
+  },
+  {
+    "name": "星云股份",
+    "code": "SZ300648",
+    "price": 44.01,
+    "percent": 3.04
+  },
+  {
+    "name": "双杰电气",
+    "code": "SZ300444",
+    "price": 8.24,
+    "percent": 5.51
+  },
+  {
+    "name": "电科芯片",
+    "code": "SH600877",
+    "price": 14.3,
+    "percent": 3.7
+  },
+  {
+    "name": "棕榈股份",
+    "code": "SZ002431",
+    "price": 2.82,
+    "percent": 2.17
+  },
+  {
+    "name": "三变科技",
+    "code": "SZ002112",
+    "price": 14.55,
+    "percent": 7.3
+  },
+  {
+    "name": "海通发展",
+    "code": "SH603162",
+    "price": 11.4,
+    "percent": 3.83
+  },
+  {
+    "name": "华泰股份",
+    "code": "SH600308",
+    "price": 4.5,
+    "percent": 10.02
+  },
+  {
+    "name": "永福股份",
+    "code": "SZ300712",
+    "price": 29.12,
+    "percent": 5.78
+  },
+  {
+    "name": "中能电气",
+    "code": "SZ300062",
+    "price": 7.67,
+    "percent": 20.03
+  },
+  {
+    "name": "七匹狼",
+    "code": "SZ002029",
+    "price": 9.26,
+    "percent": 3.81
+  },
+  {
+    "name": "亚邦股份",
+    "code": "SH603188",
+    "price": 4.9,
+    "percent": 1.24
+  },
+  {
+    "name": "海陆重工",
+    "code": "SZ002255",
+    "price": 10.8,
+    "percent": 9.98
+  },
+  {
+    "name": "国机通用",
+    "code": "SH600444",
+    "price": 20.48,
+    "percent": 1.94
+  },
+  {
+    "name": "招标股份",
+    "code": "SZ301136",
+    "price": 15.34,
+    "percent": 20.03
+  },
+  {
+    "name": "中策橡胶",
+    "code": "SH603049",
+    "price": 55.8,
+    "percent": 3.33
+  },
+  {
+    "name": "华兰生物",
+    "code": "SZ002007",
+    "price": 16.39,
+    "percent": 1.49
+  },
+  {
+    "name": "兄弟科技",
+    "code": "SZ002562",
+    "price": 7.12,
+    "percent": 4.09
+  },
+  {
+    "name": "立达信",
+    "code": "SH605365",
+    "price": 20.57,
+    "percent": 3.73
+  },
+  {
+    "name": "亚翔集成",
+    "code": "SH603929",
+    "price": 50.3,
+    "percent": 7.69
+  },
+  {
+    "name": "冰山冷热",
+    "code": "SZ000530",
+    "price": 7.2,
+    "percent": 6.04
+  },
+  {
+    "name": "新乡化纤",
+    "code": "SZ000949",
+    "price": 4.68,
+    "percent": 4.23
+  },
+  {
+    "name": "昊创瑞通",
+    "code": "SZ301668",
+    "price": 59.9,
+    "percent": 4.54
+  },
+  {
+    "name": "宝色股份",
+    "code": "SZ300402",
+    "price": 26.22,
+    "percent": 20
+  },
+  {
+    "name": "天府文旅",
+    "code": "SZ000558",
+    "price": 5.4,
+    "percent": 2.47
+  },
+  {
+    "name": "利源股份",
+    "code": "SZ002501",
+    "price": 2.47,
+    "percent": 3.78
+  },
+  {
+    "name": "东百集团",
+    "code": "SH600693",
+    "price": 6.41,
+    "percent": 3.72
+  },
+  {
+    "name": "厦门信达",
+    "code": "SZ000701",
+    "price": 6.36,
+    "percent": 4.43
+  },
+  {
+    "name": "中科信息",
+    "code": "SZ300678",
+    "price": 35.42,
+    "percent": 4.51
+  },
+  {
+    "name": "西域旅游",
+    "code": "SZ300859",
+    "price": 41.36,
+    "percent": 5.75
+  },
+  {
+    "name": "抚顺特钢",
+    "code": "SH600399",
+    "price": 5.42,
+    "percent": 1.88
+  },
+  {
+    "name": "四川九洲",
+    "code": "SZ000801",
+    "price": 15.73,
+    "percent": 2.21
+  },
+  {
+    "name": "厦门空港",
+    "code": "SH600897",
+    "price": 17.72,
+    "percent": 6.68
+  },
+  {
+    "name": "厦门银行",
+    "code": "SH601187",
+    "price": 7.52,
+    "percent": 5.92
+  },
+  {
+    "name": "可川科技",
+    "code": "SH603052",
+    "price": 32.08,
+    "percent": 10.01
+  },
+  {
+    "name": "壹石通",
+    "code": "SH688733",
+    "price": 31.9,
+    "percent": 17.24
+  },
+  {
+    "name": "福建高速",
+    "code": "SH600033",
+    "price": 3.79,
+    "percent": 5.87
+  },
+  {
+    "name": "红相股份",
+    "code": "SZ300427",
+    "price": 6.81,
+    "percent": 2.41
+  },
+  {
+    "name": "同飞股份",
+    "code": "SZ300990",
+    "price": 74.25,
+    "percent": 9.71
+  },
+  {
+    "name": "川宁生物",
+    "code": "SZ301301",
+    "price": 11.56,
+    "percent": 1.49
+  },
+  {
+    "name": "江苏华辰",
+    "code": "SH603097",
+    "price": 27.77,
+    "percent": 5.99
+  },
+  {
+    "name": "*ST东易",
+    "code": "SZ002713",
+    "price": 12.55,
+    "percent": 5.02
+  },
+  {
+    "name": "南京证券",
+    "code": "SH601990",
+    "price": 8.57,
+    "percent": 1.54
+  },
+  {
+    "name": "南威软件",
+    "code": "SH603636",
+    "price": 12.49,
+    "percent": 2.13
+  },
+  {
+    "name": "粤高速A",
+    "code": "SZ000429",
+    "price": 12.19,
+    "percent": 3.31
+  },
+  {
+    "name": "三木集团",
+    "code": "SZ000632",
+    "price": 4.73,
+    "percent": 2.83
+  },
+  {
+    "name": "华夏幸福",
+    "code": "SH600340",
+    "price": 2.23,
+    "percent": 3.72
+  },
+  {
+    "name": "蒙草生态",
+    "code": "SZ300355",
+    "price": 4.52,
+    "percent": 7.62
+  },
+  {
+    "name": "新天科技",
+    "code": "SZ300259",
+    "price": 4.6,
+    "percent": 11.92
+  },
+  {
+    "name": "北部湾港",
+    "code": "SZ000582",
+    "price": 8.95,
+    "percent": 1.36
+  },
+  {
+    "name": "麦克奥迪",
+    "code": "SZ300341",
+    "price": 18.88,
+    "percent": 7.27
+  },
+  {
+    "name": "万邦达",
+    "code": "SZ300055",
+    "price": 7.7,
+    "percent": 3.91
+  },
+  {
+    "name": "金逸影视",
+    "code": "SZ002905",
+    "price": 11.37,
+    "percent": 2.8
+  },
+  {
+    "name": "国统股份",
+    "code": "SZ002205",
+    "price": 14.96,
+    "percent": 4.76
+  },
+  {
+    "name": "恒实科技",
+    "code": "SZ300513",
+    "price": 10.81,
+    "percent": 7.67
+  },
+  {
+    "name": "亚士创能",
+    "code": "SH603378",
+    "price": 8.15,
+    "percent": 0.49
+  },
+  {
+    "name": "西昌电力",
+    "code": "SH600505",
+    "price": 14.12,
+    "percent": 1.22
+  },
+  {
+    "name": "光大嘉宝",
+    "code": "SH600622",
+    "price": 3.12,
+    "percent": 9.86
+  },
+  {
+    "name": "恒锋信息",
+    "code": "SZ300605",
+    "price": 16.76,
+    "percent": 3.33
+  },
+  {
+    "name": "清源股份",
+    "code": "SH603628",
+    "price": 14.29,
+    "percent": 3.93
+  },
+  {
+    "name": "北京科锐",
+    "code": "SZ002350",
+    "price": 8.09,
+    "percent": 3.19
+  },
+  {
+    "name": "炬华科技",
+    "code": "SZ300360",
+    "price": 15.76,
+    "percent": 0.9
+  },
+  {
+    "name": "国安达",
+    "code": "SZ300902",
+    "price": 21.88,
+    "percent": 2.96
+  },
+  {
+    "name": "广东鸿图",
+    "code": "SZ002101",
+    "price": 13.16,
+    "percent": 0.92
+  },
+  {
+    "name": "粤传媒",
+    "code": "SZ002181",
+    "price": 12.75,
+    "percent": 10.01
+  },
+  {
+    "name": "欧亚集团",
+    "code": "SH600697",
+    "price": 13.81,
+    "percent": 2.75
+  },
+  {
+    "name": "云南城投",
+    "code": "SH600239",
+    "price": 2.68,
+    "percent": 1.52
+  },
+  {
+    "name": "帝奥微",
+    "code": "SH688381",
+    "price": 25.44,
+    "percent": 2.87
+  },
+  {
+    "name": "通光线缆",
+    "code": "SZ300265",
+    "price": 9.58,
+    "percent": 2.79
+  },
+  {
+    "name": "佛燃能源",
+    "code": "SZ002911",
+    "price": 12.7,
+    "percent": 3
+  },
+  {
+    "name": "新农股份",
+    "code": "SZ002942",
+    "price": 21.09,
+    "percent": 3.28
+  },
+  {
+    "name": "朗玛信息",
+    "code": "SZ300288",
+    "price": 14.83,
+    "percent": 3.27
+  },
+  {
+    "name": "海象新材",
+    "code": "SZ003011",
+    "price": 23.8,
+    "percent": 3.7
+  },
+  {
+    "name": "东亚机械",
+    "code": "SZ301028",
+    "price": 14.76,
+    "percent": 6.49
+  },
+  {
+    "name": "闽东电力",
+    "code": "SZ000993",
+    "price": 11.67,
+    "percent": 9.99
+  },
+  {
+    "name": "和远气体",
+    "code": "SZ002971",
+    "price": 37.88,
+    "percent": 8.6
+  },
+  {
+    "name": "太阳电缆",
+    "code": "SZ002300",
+    "price": 6.58,
+    "percent": 2.02
+  },
+  {
+    "name": "三峡旅游",
+    "code": "SZ002627",
+    "price": 6.12,
+    "percent": 2.68
+  },
+  {
+    "name": "泰永长征",
+    "code": "SZ002927",
+    "price": 15.97,
+    "percent": 1.72
+  },
+  {
+    "name": "兴通股份",
+    "code": "SH603209",
+    "price": 15.69,
+    "percent": 2.21
+  },
+  {
+    "name": "广安爱众",
+    "code": "SH600979",
+    "price": 4.88,
+    "percent": 1.04
+  },
+  {
+    "name": "*ST新研",
+    "code": "SZ300159",
+    "price": 3.11,
+    "percent": 3.67
+  },
+  {
+    "name": "狄耐克",
+    "code": "SZ300884",
+    "price": 14.18,
+    "percent": 3.5
+  },
+  {
+    "name": "苏交科",
+    "code": "SZ300284",
+    "price": 8.65,
+    "percent": 2.25
+  },
+  {
+    "name": "华人健康",
+    "code": "SZ301408",
+    "price": 13.69,
+    "percent": 1.33
+  },
+  {
+    "name": "中闽能源",
+    "code": "SH600163",
+    "price": 5.74,
+    "percent": 9.96
+  },
+  {
+    "name": "隆达股份",
+    "code": "SH688231",
+    "price": 22.81,
+    "percent": 8.31
+  },
+  {
+    "name": "德艺文创",
+    "code": "SZ300640",
+    "price": 7.19,
+    "percent": 3.6
+  },
+  {
+    "name": "绿茵生态",
+    "code": "SZ002887",
+    "price": 9.81,
+    "percent": 2.19
+  },
+  {
+    "name": "新天绿能",
+    "code": "SH600956",
+    "price": 8.15,
+    "percent": 2.64
+  },
+  {
+    "name": "凯旺科技",
+    "code": "SZ301182",
+    "price": 37.96,
+    "percent": 1.82
+  },
+  {
+    "name": "劲嘉股份",
+    "code": "SZ002191",
+    "price": 4.59,
+    "percent": 2.23
+  },
+  {
+    "name": "好莱客",
+    "code": "SH603898",
+    "price": 11.07,
+    "percent": 0.09
+  },
+  {
+    "name": "宁夏建材",
+    "code": "SH600449",
+    "price": 13.89,
+    "percent": 3.04
+  },
+  {
+    "name": "福鞍股份",
+    "code": "SH603315",
+    "price": 13.18,
+    "percent": 0.61
+  },
+  {
+    "name": "宝利国际",
+    "code": "SZ300135",
+    "price": 4.35,
+    "percent": 3.08
+  },
+  {
+    "name": "西安旅游",
+    "code": "SZ000610",
+    "price": 12.48,
+    "percent": 1.55
+  },
+  {
+    "name": "西部建设",
+    "code": "SZ002302",
+    "price": 6.78,
+    "percent": 2.11
+  },
+  {
+    "name": "三友联众",
+    "code": "SZ300932",
+    "price": 12.48,
+    "percent": 4.52
+  },
+  {
+    "name": "ST英飞拓",
+    "code": "SZ002528",
+    "price": 3.23,
+    "percent": 2.54
+  },
+  {
+    "name": "蜀道装备",
+    "code": "SZ300540",
+    "price": 19.29,
+    "percent": 0.84
+  },
+  {
+    "name": "勤上股份",
+    "code": "SZ002638",
+    "price": 2.88,
+    "percent": 6.27
+  },
+  {
+    "name": "华统股份",
+    "code": "SZ002840",
+    "price": 11.05,
+    "percent": 1.84
+  },
+  {
+    "name": "百邦科技",
+    "code": "SZ300736",
+    "price": 14.35,
+    "percent": 3.31
+  },
+  {
+    "name": "摩恩电气",
+    "code": "SZ002451",
+    "price": 7.79,
+    "percent": 10.03
+  },
+  {
+    "name": "ST新华锦",
+    "code": "SH600735",
+    "price": 7.7,
+    "percent": 0.13
+  },
+  {
+    "name": "合兴包装",
+    "code": "SZ002228",
+    "price": 3.57,
+    "percent": 2.29
+  },
+  {
+    "name": "盛泰集团",
+    "code": "SH605138",
+    "price": 8.66,
+    "percent": 10.04
+  },
+  {
+    "name": "美信科技",
+    "code": "SZ301577",
+    "price": 67.9,
+    "percent": 9.13
+  },
+  {
+    "name": "鹭燕医药",
+    "code": "SZ002788",
+    "price": 8.73,
+    "percent": 1.99
+  },
+  {
+    "name": "汇金通",
+    "code": "SH603577",
+    "price": 9.97,
+    "percent": 6.06
+  },
+  {
+    "name": "聚合顺",
+    "code": "SH605166",
+    "price": 11.57,
+    "percent": 4.61
+  },
+  {
+    "name": "鼎汉技术",
+    "code": "SZ300011",
+    "price": 8.19,
+    "percent": 2.12
+  },
+  {
+    "name": "罗普斯金",
+    "code": "SZ002333",
+    "price": 6.15,
+    "percent": 10.02
+  },
+  {
+    "name": "晨光新材",
+    "code": "SH605399",
+    "price": 13.54,
+    "percent": 1.96
+  },
+  {
+    "name": "*ST名家",
+    "code": "SZ300506",
+    "price": 4.55,
+    "percent": 10.44
+  },
+  {
+    "name": "创识科技",
+    "code": "SZ300941",
+    "price": 25.65,
+    "percent": 2.19
+  },
+  {
+    "name": "威高血净",
+    "code": "SH603014",
+    "price": 46.53,
+    "percent": 10
+  },
+  {
+    "name": "昇兴股份",
+    "code": "SZ002752",
+    "price": 6.38,
+    "percent": 10
+  },
+  {
+    "name": "*ST星光",
+    "code": "SZ002076",
+    "price": 2.23,
+    "percent": 3.24
+  },
+  {
+    "name": "国科恒泰",
+    "code": "SZ301370",
+    "price": 10.93,
+    "percent": 2.53
+  },
+  {
+    "name": "信通电子",
+    "code": "SZ001388",
+    "price": 46.57,
+    "percent": 1.31
+  },
+  {
+    "name": "*ST万方",
+    "code": "SZ000638",
+    "price": 7.9,
+    "percent": 4.77
+  },
+  {
+    "name": "永吉股份",
+    "code": "SH603058",
+    "price": 9.37,
+    "percent": 1.52
+  },
+  {
+    "name": "凌霄泵业",
+    "code": "SZ002884",
+    "price": 17.56,
+    "percent": 0.86
+  },
+  {
+    "name": "中远通",
+    "code": "SZ301516",
+    "price": 17.14,
+    "percent": 1.42
+  },
+  {
+    "name": "华塑科技",
+    "code": "SZ301157",
+    "price": 52.32,
+    "percent": 4.89
+  },
+  {
+    "name": "贝隆精密",
+    "code": "SZ301567",
+    "price": 43.2,
+    "percent": 2.35
+  },
+  {
+    "name": "常润股份",
+    "code": "SH603201",
+    "price": 18.05,
+    "percent": 4.34
+  },
+  {
+    "name": "众智科技",
+    "code": "SZ301361",
+    "price": 33.92,
+    "percent": 1.59
+  },
+  {
+    "name": "*ST建艺",
+    "code": "SZ002789",
+    "price": 11.88,
+    "percent": 1.19
+  },
+  {
+    "name": "优德精密",
+    "code": "SZ300549",
+    "price": 19.97,
+    "percent": 2.31
+  },
+  {
+    "name": "众捷汽车",
+    "code": "SZ301560",
+    "price": 38.43,
+    "percent": 7.05
+  },
+  {
+    "name": "海螺新材",
+    "code": "SZ000619",
+    "price": 6.43,
+    "percent": 1.9
+  }
+]

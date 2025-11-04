@@ -31,21 +31,23 @@ const filterResult = () => {
         const stock = stockMap[key]
         const len = stock.length
         if (len < 2) {
-            break
+            continue
         }
         const pre = stock[len - 2]
         const cur = stock[len - 1]
 
         // 成交额2倍 成交量2倍 当日(最低价-开盘)/卡盘 < 0.1
-        if ((cur.amount / pre.amount) > 2 && (cur.volume / pre.volume) > 2) {
+        if ((cur.amount / pre.amount) > 2 && (cur.volume / pre.volume) > 2 && cur.pricechange > 0 && cur.trade <= 30 && cur.symbol.indexOf('bj') === -1) {
             list.push({
                 name: key,
-                price: cur.trade
+                code: cur.code,
+                price: cur.trade,
+                changepercent: cur.changepercent
             })
             // console.log(list)
         }
     }
-    console.log(list)
+    console.log(list, list.length)
 
     writeFileSync('filter.json', JSON.stringify(list, null, 2), 'utf-8')
 }
