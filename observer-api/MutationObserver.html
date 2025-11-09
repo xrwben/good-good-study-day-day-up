@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MutationObserver</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    #app {
+      height: 500px;
+      border: 10px solid palegreen;
+      overflow-y: auto;
+    }
+    .list {
+      overflow: hidden;
+    }
+    .item {
+      background: pink;
+      padding: 10px 20px;
+      margin: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <h2>监听DOM变化，可以包括子节点增删和属性</h2>
+  <div id="app">
+    <div class="list">
+      <p class="item default-item">默认数据</p>
+    </div>
+  </div>
+  <button class="btn">增加一行</button>
+  <button class="btn-attributtes">监听属性</button>
+  <button class="btn-sub1">监听子节点属性</button>
+  <button class="btn-sub2">监听子节点字符</button>
+
+
+  <script>
+    const app = document.querySelector('#app')
+    const list = document.querySelector('.list')
+    const btn = document.querySelector('.btn')
+    const btnAttributtes = document.querySelector('.btn-attributtes')
+    const defaultItem = document.querySelector('.default-item')
+    let i = 0
+
+    btn.addEventListener('click', () => {
+      const fragment = document.createDocumentFragment()
+      const p = document.createElement('p')
+      p.classList.add('item')
+      p.innerText = `第${i++}行`
+      fragment.append(p)
+      list.append(fragment)
+    })
+
+    btnAttributtes.addEventListener('click', () => {
+      app.classList.add('main')
+    })
+
+    document.querySelector('.btn-sub1').addEventListener('click', () => {
+      defaultItem.classList.add('list-item')
+    })
+
+    document.querySelector('.btn-sub2').addEventListener('click', () => {
+      defaultItem.innerText = '字符变化'
+    })
+
+
+    const mutationObserver = new MutationObserver((entries) => {
+      console.log(entries)
+      // for (const entry of entries) {
+      //   console.log(entry)
+        
+      // }
+    })
+    mutationObserver.observe(app, {
+      attributes: true, // 属性变化
+      // characterData: true,
+      childList: true,
+      subtree: true, // 监听节点及所有子元素
+    })
+  </script>
+</body>
+</html>

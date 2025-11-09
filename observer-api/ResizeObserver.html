@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ResizeObserver</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    #app {
+      height: 500px;
+      border: 10px solid palegreen;
+      overflow-y: auto;
+    }
+    .list {
+      overflow: hidden;
+    }
+    .item {
+      background: pink;
+      padding: 10px 20px;
+      margin: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <H2>监听元素尺寸变化</H2>
+  <div id="app">
+    <div class="list">
+      <p class="item">默认数据</p>
+      <p class="item">默认数据</p>
+      <p class="item">默认数据</p>
+      <p class="item">默认数据</p>
+      <p class="item">默认数据</p>
+      <p class="item">默认数据</p>
+      <p class="item">默认数据</p>
+      <p class="item">默认数据</p>
+      <p class="item">默认数据</p>
+      <p class="item">默认数据</p>
+      <p class="item">默认数据</p>
+      <p class="item">默认数据</p>
+      <p class="item">默认数据</p>
+      <p class="item">默认数据</p>
+      <p class="item">默认数据</p>
+    </div>
+  </div>
+  <button class="btn">增加一行</button>
+
+  <!-- 
+    ResizeObserver 构造函数创建一个新的 ResizeObserver 对象，它可以用于监听 Element 内容盒或边框盒或者 SVGElement 边界尺寸的大小。
+  
+  -->
+
+  <script>
+    const app = document.querySelector('#app')
+    const list = document.querySelector('.list')
+    const btn = document.querySelector('.btn')
+    let i = 0
+
+    btn.addEventListener('click', () => {
+      const fragment = document.createDocumentFragment()
+      const p = document.createElement('p')
+      p.classList.add('item')
+      p.innerText = `第${i++}行`
+      fragment.append(p)
+      list.append(fragment)
+    })
+
+
+    const resizeObserver = new ResizeObserver((entries) => {
+      // console.log(entries)
+      for (const entry of entries) {
+        console.log(entry)
+        if (entry.borderBoxSize) {
+          const rect = Array.isArray(entry.borderBoxSize) ? entry.borderBoxSize[0] : entry.borderBoxSize
+          console.log(`宽：${rect.inlineSize}，高：${rect.blockSize}`)
+          entry.target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'end',
+            inline: 'nearest'
+          })
+        }
+      }
+    })
+    resizeObserver.observe(list)
+  </script>
+</body>
+</html>
