@@ -37,7 +37,16 @@ const filterResult = () => {
         const cur = stock[len - 1]
 
         // 成交额2倍 成交量2倍 当日(最低价-开盘)/卡盘 < 0.1
-        if ((cur.amount / pre.amount) > 2 && (cur.volume / pre.volume) > 2 && cur.pricechange > 0 && cur.trade <= 30 && cur.symbol.indexOf('bj') === -1) {
+        if ((cur.amount / pre.amount) > 2 && 
+            (cur.volume / pre.volume) > 3 &&
+            pre.changepercent > 0 &&
+            cur.pricechange > 0 && 
+            // cur.trade <= 25 && 
+            cur.trade > cur.open &&
+            pre.trade > pre.open &&
+            // pre.trade > (cur.high + cur.low) / 2 && 
+            // cur.turnoverratio > 10 &&
+            cur.symbol.indexOf('bj') === -1) {
             list.push({
                 name: key,
                 code: cur.code,
