@@ -26,6 +26,10 @@ const mergeData = (date) => {
             ...item,
             date: fDate
         })
+        const len = stockMap[item.name].length
+        if (len > 5) {
+            stockMap[item.name] = stockMap[item.name].slice(len - 5)
+        }
     })
     // console.log(stockMap, typeof JSON.stringify(stockMap))
 

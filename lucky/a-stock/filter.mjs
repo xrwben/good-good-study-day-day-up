@@ -33,25 +33,35 @@ const filterResult = () => {
         if (len < 2) {
             continue
         }
+
+        // const stock1 = stock[1]
+        // const stock2 = stock[2]
+        // const stock3 = stock[3]
+        // const stock4 = stock[4]
+
+        const isUP = stock.every(item => item.changepercent > 0)
+
         const pre = stock[len - 2]
         const cur = stock[len - 1]
 
         // 成交额2倍 成交量2倍 当日(最低价-开盘)/卡盘 < 0.1
-        if ((cur.amount / pre.amount) > 2 && 
-            (cur.volume / pre.volume) > 3 &&
+        if ((cur.amount / pre.amount) > 3 && 
+            (cur.volume / pre.volume) > 1 &&
             pre.changepercent > 0 &&
-            cur.pricechange > 0 && 
-            // cur.trade <= 25 && 
+            cur.changepercent > 0 && 
+            cur.trade <= 20 && 
             cur.trade > cur.open &&
-            pre.trade > pre.open &&
+            // pre.trade > pre.open &&
             // pre.trade > (cur.high + cur.low) / 2 && 
             // cur.turnoverratio > 10 &&
+            isUP &&
             cur.symbol.indexOf('bj') === -1) {
             list.push({
                 name: key,
                 code: cur.code,
                 price: cur.trade,
-                changepercent: cur.changepercent
+                changepercent: cur.changepercent,
+                date: cur.date
             })
             // console.log(list)
         }
