@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PerformanceObserver</title>
+</head>
+<body>
+  <h2>PerformanceObserver: 性能观察者</h2>
+  <img src="https://huyaimg.msstatic.com/cdnimage/gamebanner/phpj0Gchu1760691077.jpg?x-oss-process=image/resize,m_fill,w_750,h_246/quality,q_90/sharpen,80&spformat=png,webp" alt="">
+  <script>
+    const observer = new PerformanceObserver((list, obj) => {
+      list.getEntries().forEach((entry) => {
+        // 处理“mark”和“measure”事件
+        console.log(entry)
+      })
+    })
+    observer.observe({
+      entryTypes: [
+        'mark', 
+        'measure', 
+        'navigation', 
+        'resource', // 监听'resource'（资源加载）事件
+        'paint', // 监听 'paint'（绘制）事件
+        'longtask', // 监听长任务（Long Tasks）事件
+      ] 
+    })
+  </script>
+</body>
+</html>
