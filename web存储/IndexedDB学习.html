@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IndexedDB</title>
+</head>
+<body>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+  <div id="app">
+    <div class="creat-toto">
+      <div class="title">TODO</div>
+    </div>
+    <div class="plan-list">
+      <ul>
+        <li class="header">
+          <p></p>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    const { createApp, ref } = Vue
+
+    createApp({
+      setup() {
+        const message = ref('Hello vue!')
+        let db = null;
+        // 打开数据库open()
+        const request = indexedDB.open('study_db', 2)
+        console.log('request>>>', request)
+        request.onerror = (event) => {
+          console.log('onerror>>>>>', event)
+        }
+        request.onsuccess = (event) => {
+          console.log('onsuccess>>>>', event)
+          db = event.target.result
+          console.log(db)
+        }
+
+        const user = {
+          username: 'liben',
+          age: 28,
+          sex: '男'
+        }
+
+        // 创建或更新数据版本时执行
+        request.onupgradeneeded = (event) => {
+          db = event.target.result
+          console.log('onupgradeneeded>>>>>', db)
+          // if (db.objectStoreNames.contains('username')) {
+          //   db.deleteObjectStore('person')
+          // }
+          // 创建表
+          db.createObjectStore('person', { keyPath: 'id' })
+        }
+        console.log('db-----------------------------', db);
+
+        function add () {
+          const transaction = db.transaction(['person'], 'readwrite')
+          console.log(transaction)
+          const store = transaction.objectStore('person')
+          // const request = store.get('liben')
+          store.add(users)
+
+        }
+        return {
+          message
+        }
+      }
+    }).mount('#app')
+  </script>
+</body>
+</html>
