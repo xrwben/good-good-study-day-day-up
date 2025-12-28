@@ -26,6 +26,8 @@
 
 13. Emmet - HTML/CSS提示（内置）
 
+14. EditorConfig for VS Code - 编辑器格式
+
  
 
 
