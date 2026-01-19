@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>下拉刷新组件</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html {
+        font-size: 13.333333333333333vw;
+      }
+      #app {
+        height: 100vh;
+        background: #e5e5e5;
+        overflow: auto;
+      }
+      .pull-refresh {
+        overflow: hidden;
+      }
+      .pull-refresh-track {
+        height: 100%;
+        position: relative;
+      }
+      .refresh-head {
+        width: 100%;
+        color: #999;
+        font-size: 0.24rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: 1px solid red;
+        position: absolute;
+        top: 0;
+        left: 0;
+        transform: translate3d(0, -100%, 0);
+      }
+      .list {
+        background: #fff;
+        overflow: auto;
+      }
+      .item {
+        height: 1.6rem;
+        background-color: paleturquoise;
+        font-size: 0.48rem;
+        text-align: center;
+        line-height: 1.6rem;
+        margin-bottom: 0.2rem;
+      }
+      .item:nth-of-type(2n) {
+        background-color: pink;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <!-- 下拉刷新组件 -->
+      <div class="pull-refresh" ref="refreshRef">
+        <div class="pull-refresh-track" ref="trackRef" :style="trackStyle">
+          <div class="refresh-head" :style="headStyle">
+            <slot>{{ refreshText }}</slot>
+          </div>
+          <slot slot="content">
+            <div class="list">
+              <p class="item" v-for="message in messages" :key="message">{{ message }}</p>
+            </div>
+          </slot>
+        </div>
+      </div>
+    </div>
+
+    <script type="module">
+      import {
+        createApp,
+        ref,
+        reactive,
+        computed,
+        onMounted,
+        useTemplateRef,
+        nextTick
+      } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js'
+
+      createApp({
+        props: {
+          // 下拉刷新时的文本
+          pullingText: {
+            type: String,
+            default: '下拉刷新'
+          },
+          // 释放刷新时的文本
+          releasingText: {
+            type: String,
+            default: '释放刷新'
+          },
+          // 正在刷新时的文本
+          refreshingText: {
+            type: String,
+            default: '刷新中...'
+          },
+          // 刷新触发高度，通常与头部高度一致
+          refreshHeight: {
+            type: Number,
+            default: 50
+          },
+          // 刷新时间
+          refreshTime: {
+            type: Number,
+            default: 1000
+          },
+          // 刷新收起过度时间
+          duration: {
+            type: Number,
+            default: 300
+          }
+        },
+        setup(props) {
+          const refreshRef = useTemplateRef('refreshRef')
+          const trackRef = useTemplateRef('trackRef')
+          const touchState = reactive({
+            startY: 0,
+            endY: 0
+          })
+          const transitionDuration = ref(0)
+          const pullDistance = ref(0)
+          const state = ref('') // 当前状态pulling releasing refreshing finished
+          const scrollElement = ref(null)
+
+          const trackStyle = computed(() => {
+            return {
+              transform: `translate3d(0, ${pullDistance.value}px, 0)`,
+              transition: `transform ${transitionDuration.value}ms ease-in-out`
+            }
+          })
+          const headStyle = computed(() => {
+            return {
+              height: `${props.refreshHeight}px`
+            }
+          })
+
+          const refreshText = ref('下拉刷新')
+          const messages = ref([])
+          const size = 10
+          const getList = async () => {
+            const len = messages.value.length
+            for (let i = len; i < len + size; i++) {
+              messages.value.push(`消息${i}`)
+            }
+          }
+
+          // 获取可滚动元素
+          const getScroller = () => {
+            let node = trackRef.value.parentElement
+            while (node && node.tagName !== 'HTML' && node.tagName !== 'BODY' && node.nodeType === 1) {
+              const { overflowY } = window.getComputedStyle(node)
+              // console.log(node, overflowY)
+              if (/scroll|auto/i.test(overflowY)) {
+                scrollElement.value = node
+                // console.log(scrollElement.value, node)
+                return
+              }
+              node = node.parentNode
+            }
+            scrollElement.value = window
+            // console.log('scrollElement.value', scrollElement.value)
+          }
+
+          // 获取滚动元素的滚动距离
+          const getScrollTop = (el) => {
+            const scrollTop = 'scrollTop' in el ? el.scrollTop : el.pageYOffset
+            return Math.max(scrollTop, 0)
+          }
+
+          const refreshEvent = () => {
+            setTimeout(() => {
+              state.value = 'finished'
+              pullDistance.value = 0
+            }, props.refreshTime)
+          }
+
+          // 设置刷新状态与文案
+          const setState = (isTouching) => {
+            if (pullDistance.value > 0) {
+              state.value = 'pulling'
+              refreshText.value = props.pullingText
+            }
+            if (pullDistance.value >= props.refreshHeight) {
+              if (isTouching) {
+                console.log('pullDistance.value', pullDistance.value, '释放刷新')
+                state.value = 'releasing'
+                refreshText.value = props.releasingText
+              } else {
+                console.error('pullDistance.value', pullDistance.value, '刷新中...')
+                state.value = 'refreshing'
+                refreshText.value = props.refreshingText
+                pullDistance.value = props.refreshHeight
+                refreshEvent()
+              }
+            }
+          }
+
+          const isCanRefresh = () => {
+            if (getScrollTop(scrollElement.value) === 0) {
+              return true
+            }
+            return false
+          }
+
+          const touchStartEvent = (e) => {
+            if (!isCanRefresh()) {
+              return
+            }
+            console.log(e.changedTouches[0])
+            transitionDuration.value = 0
+            pullDistance.value = 0
+            touchState.startY = e.changedTouches[0].clientY
+          }
+          const touchMoveEvent = (e) => {
+            if (!isCanRefresh()) {
+              touchState.startY = e.changedTouches[0].clientY
+            }
+            // console.log('move>>', e.changedTouches[0])
+            pullDistance.value = e.changedTouches[0].clientY - touchState.startY
+            console.log('startY', touchState.startY, 'move>>', e.changedTouches[0], pullDistance.value)
+            setState(true)
+          }
+          const touchEndEvent = (e) => {
+            if (!isCanRefresh()) {
+              return
+            }
+            console.log('touchend>>', e.changedTouches[0])
+            transitionDuration.value = props.duration
+            setState(false)
+          }
+
+          const initTouchEvent = () => {
+            nextTick(() => {
+              console.log(trackRef.value)
+              trackRef.value.addEventListener('touchstart', touchStartEvent)
+              trackRef.value.addEventListener('touchmove', touchMoveEvent)
+              trackRef.value.addEventListener('touchend', touchEndEvent)
+            })
+          }
+
+          onMounted(() => {
+            initTouchEvent()
+            getScroller()
+            getList()
+          })
+
+          return {
+            trackStyle,
+            headStyle,
+            refreshText,
+            messages
+          }
+        }
+      }).mount('#app')
+    </script>
+  </body>
+</html>
