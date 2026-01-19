@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>滚动穿透</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html {
+        font-size: 13.333333333333333vw;
+      }
+      #app {
+        min-height: 100vh;
+      }
+      .list {
+        overflow: auto;
+      }
+      .item {
+        height: 1.6rem;
+        background-color: paleturquoise;
+        font-size: 0.48rem;
+        text-align: center;
+        line-height: 1.6rem;
+        margin-bottom: 0.2rem;
+      }
+      .item:nth-of-type(2n) {
+        background-color: pink;
+      }
+      .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.6);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overscroll-behavior: contain;
+      }
+      .content {
+        width: 80%;
+        max-height: 80%;
+        background-color: #fff;
+        border-radius: 10px;
+        font-size: 0.4rem;
+        padding: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <!-- 列表 -->
+      <div class="list">
+        <p class="item" v-for="message in messages" :key="message">{{ message }}</p>
+      </div>
+      <!-- 弹窗 -->
+      <div class="modal">
+        <div class="content">
+          滚动穿透是指在移动端页面中，当一个元素（例如一个弹窗或一个下拉菜单）
+          被打开时，用户同时也可以滚动页面。然而，在某些情况下，用户滚动页面时
+          会意外地触发元素内部的滚动，导致页面滚动的同时也触发了元素内部的滚动。 这就形成了滚动穿透的问题。
+        </div>
+      </div>
+    </div>
+
+    <script type="module">
+      import { createApp, ref, onMounted } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js'
+
+      createApp({
+        setup() {
+          const messages = ref([])
+
+          const size = 10
+          const getList = async () => {
+            const len = messages.value.length
+            for (let i = len; i < len + size; i++) {
+              messages.value.push(`消息${i}`)
+            }
+          }
+
+          onMounted(() => {
+            getList()
+          })
+
+          return {
+            messages
+          }
+        }
+      }).mount('#app')
+    </script>
+  </body>
+</html>
