@@ -1,9 +1,23 @@
 [
   {
-    "name": "东百集团",
-    "code": "600693",
-    "price": "11.700",
-    "changepercent": 6.364,
-    "date": "2025-11-17"
+    "name": "通鼎互联",
+    "code": "002491",
+    "price": "7.850",
+    "changepercent": 9.944,
+    "date": "2026-01-30"
+  },
+  {
+    "name": "ST京蓝",
+    "code": "000711",
+    "price": "2.120",
+    "changepercent": 1.923,
+    "date": "2026-01-30"
+  },
+  {
+    "name": "金牛化工",
+    "code": "600722",
+    "price": "8.730",
+    "changepercent": 1.394,
+    "date": "2026-01-30"
   }
 ]

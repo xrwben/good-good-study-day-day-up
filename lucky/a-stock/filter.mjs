@@ -1,4 +1,4 @@
-import { writeFileSync, readFileSync } from 'node:fs'
+import { writeFileSync, readFileSync } from "node:fs";
 
 /*
     "symbol": "sz300071",
@@ -24,14 +24,14 @@ import { writeFileSync, readFileSync } from 'node:fs'
     "date": "2025-10-31"
 */
 const filterResult = () => {
-  const data = readFileSync(`data.json`, 'utf-8')
-  const stockMap = JSON.parse(data)
-  const list = []
+  const data = readFileSync(`data.json`, "utf-8");
+  const stockMap = JSON.parse(data);
+  const list = [];
   for (let key in stockMap) {
-    const stock = stockMap[key]
-    const len = stock.length
+    const stock = stockMap[key];
+    const len = stock.length;
     if (len < 2) {
-      continue
+      continue;
     }
 
     // const stock1 = stock[1]
@@ -39,39 +39,39 @@ const filterResult = () => {
     // const stock3 = stock[3]
     // const stock4 = stock[4]
 
-    const isUP = stock.every((item) => item.changepercent > 0)
+    const isUP = stock.every((item) => item.changepercent > 0);
 
-    const pre = stock[len - 2]
-    const cur = stock[len - 1]
+    const pre = stock[len - 2];
+    const cur = stock[len - 1];
 
     // 成交额2倍 成交量2倍 当日(最低价-开盘)/卡盘 < 0.1
     if (
-      cur.amount / pre.amount > 3 &&
-      cur.volume / pre.volume > 2 &&
+      // cur.amount / pre.amount > 3 &&
+      // cur.volume / pre.volume > 2 &&
       //   pre.changepercent > 0 &&
-      cur.changepercent > 5 &&
+      // cur.changepercent > 5 &&
       cur.trade <= 20 &&
       //   cur.trade > cur.open &&
       // pre.trade > pre.open &&
       // pre.trade > (cur.high + cur.low) / 2 &&
       cur.turnoverratio > 8 &&
       cur.turnoverratio < 20 &&
-      //   isUP &&
-      !cur.code.startsWith('300') &&
-      cur.symbol.indexOf('bj') === -1
+      isUP &&
+      !cur.code.startsWith("300") &&
+      cur.symbol.indexOf("bj") === -1
     ) {
       list.push({
         name: key,
         code: cur.code,
         price: cur.trade,
         changepercent: cur.changepercent,
-        date: cur.date
-      })
+        date: cur.date,
+      });
       // console.log(list)
     }
   }
-  console.log(list, list.length)
+  console.log(list, list.length);
 
-  writeFileSync('filter.json', JSON.stringify(list, null, 2), 'utf-8')
-}
-filterResult()
+  writeFileSync("filter.json", JSON.stringify(list, null, 2), "utf-8");
+};
+filterResult();
