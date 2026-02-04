@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>IntersectionObserver交叉观察器</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+		body {
+			width: 100%;
+			height: 100vh;
+			display: flex;
+			flex-direction: column;
+		}
+		.header {
+			width: 100%;
+			height: 60px;
+			line-height: 60px;
+			text-align: center;
+			background: yellowgreen;
+		}
+		.container {
+			flex: 1;
+			overflow: auto;
+		}
+		.inner {
+			width: 100px;
+			height: 100px;
+			background: red;
+			margin: 200px auto;
+		}
+		.bottom {
+			width: 100%;
+			height: 2000px;
+			background: burlywood;
+		}
+	</style>
+</head>
+
+<body>
+	<h3 class="header">intersectionRatio: 0.1</h3>
+	<div class="container">
+		<div class="inner"></div>
+		<div class="bottom"></div>
+	</div>
+	<script>
+		/*
+			【应用场景】
+			1、在页面滚动时“懒加载”图像或其他内容。
+			2、实现“无限滚动”网站，在滚动过程中加载和显示越来越多的内容，这样用户就不必翻页了。
+			3、报告广告的可见度，以便计算广告收入。
+			4、根据用户是否能看到结果来决定是否执行任务或动画进程。
+
+			【回调函数】
+			回调函数会在目标元素与视口的交叉状态发生变化时被调用，回调函数的参数是一个包含交叉信息的数组，数组中的每个元素都是一个 IntersectionObserverEntry 对象，包含以下属性：
+			1、target：被观察的目标元素。
+			2、isIntersecting：一个布尔值，表示目标元素是否与视口相交。
+			3、intersectionRatio：一个浮点数，表示目标元素与视口的交叉比例，取值范围是 0 到 1。
+			4、intersectionRect：一个 DOMRect 对象，表示目标元素与视口的交叉区域的矩形边界。
+			5、rootBounds：一个 DOMRect 对象，表示根元素（视口）的矩形边界。
+		  */
+
+		
+		const root = document.querySelector(".container");
+		const target = document.querySelector(".inner");
+		const observer = new IntersectionObserver((entries) => {
+			// 回调函数会在目标元素与视口的交叉状态发生变化时被调用，回调函数的参数是一个包含交叉信息的数组。
+			entries.forEach((entry) => {
+				console.log(entry);
+			});
+		});
+		observer.observe(target, {
+			root,
+			rootMargin: "0px",
+			threshold: [0.1, 0.5, 1],
+		});
+	</script>
+</body>
+
+</html>
