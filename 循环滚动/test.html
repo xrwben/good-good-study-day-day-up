@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+  <!-- <link rel="stylesheet" href="https://unpkg.com/swiper@8/swiper-bundle.css">   -->
+  <link rel="stylesheet" href="https://unpkg.com/swiper@8/swiper-bundle.min.css">    
+  <!-- <script src="https://unpkg.com/swiper@8/swiper-bundle.js"> </script>   -->
+  <!-- <script src="https://unpkg.com/swiper@8/swiper-bundle.min.js"> </script> -->
+  <!-- <script src="https://unpkg.com/swiper@8/swiper-bundle.min.js.map"> </script> -->
+  
+	<script>
+    // 适配方案 
+    (function(window, document){
+      function setRem() {
+        let deviceWidth = document.documentElement.clientWidth;
+        deviceWidth = deviceWidth > 750 ? 750 : deviceWidth;
+        document.documentElement.style.fontSize = deviceWidth / 7.5 + "px";
+      }
+      setRem();
+      window.addEventListener("resize", setRem);
+      window.addEventListener('pageshow', function (e) {
+        if (e.persisted) {
+          setRem();
+        }
+      })
+    })(window, document)
+  </script>
+	<style type="text/css">
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+		/* [v-cloak] {
+			display: none;
+		} */
+		html, body {
+			overflow: hidden;
+		}
+		#app {
+			min-height: 100vh;
+		  margin: 0 auto;
+		  /*overflow: hidden;*/
+		}
+    .swiper {
+      /* border: 1px solid black; */
+      width: 100%;
+      /* height: 200px; */
+    } 
+    .swiper-wrapper {
+      transition-timing-function: linear !important;
+    }
+    .swiper-slide {
+      width: 200%;
+      /* border: 1px solid green; */
+      background: pink;
+    }
+    .swiper-slide img {
+      height: 150px;
+      display: block;
+    }
+	</style>
+</head>
+<body>
+	<div id="app" v-cloak>
+		<div class="swiper">
+      <div class="swiper-wrapper">
+          <div class="swiper-slide">
+            <img src="./test.jpg" alt="">
+          </div>
+          <div class="swiper-slide">
+            <img src="./test.jpg" alt="">
+          </div>
+          <!-- <div class="swiper-slide">Slide 2</div>
+          <div class="swiper-slide">Slide 3</div> -->
+      </div>
+      <!-- 如果需要分页器 -->
+      <!-- <div class="swiper-pagination"></div> -->
+      
+      <!-- 如果需要导航按钮 -->
+      <!-- <div class="swiper-button-prev"></div>
+      <div class="swiper-button-next"></div> -->
+      
+      <!-- 如果需要滚动条 -->
+      <!-- <div class="swiper-scrollbar"></div> -->
+    </div>
+	</div>
+
+	<!-- <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script> -->
+  <script type="module">
+    import Swiper from 'https://unpkg.com/swiper@8/swiper-bundle.esm.browser.min.js'
+    // import Swiper from 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.mjs'
+    const swiper = new Swiper ('.swiper', {
+      // direction: 'vertical', // 垂直切换选项
+      loop: true, // 循环模式选项
+      freeMode: {
+        enabled: true,
+        momentum: false,
+      },
+      slidesPerView: 375 / 750,
+      // centeredSlides: true,
+      speed: 6000,
+      autoplay: {
+        delay: 0,
+        disableOnInteraction: false,
+      },
+      // shortSwipes: false,
+      // simulateTouch: false,
+      // observer: true,
+      // observeParents: true,
+      // autoplayDisableOnInteraction: false,
+      // 如果需要分页器
+      // pagination: {
+      //   el: '.swiper-pagination',
+      // },
+      
+      // 如果需要前进后退按钮
+      // navigation: {
+      //   nextEl: '.swiper-button-next',
+      //   prevEl: '.swiper-button-prev',
+      // },
+      
+      // 如果需要滚动条
+      // scrollbar: {
+      //   el: '.swiper-scrollbar',
+      // },
+    })        
+  </script>
+</body>
+</html>

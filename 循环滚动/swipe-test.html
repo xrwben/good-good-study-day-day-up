@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Swiper demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1" />
+
+  <style>
+    html,
+    body {
+      position: relative;
+      height: 100%;
+    }
+
+    body {
+      background: #eee;
+      font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+      font-size: 14px;
+      color: #000;
+      margin: 0;
+      padding: 0;
+    }
+
+    swiper-container {
+      width: 100%;
+      height: 200px;
+    }
+
+    swiper-slide {
+      text-align: center;
+      font-size: 18px;
+      background: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    swiper-slide img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+	.swiper-wrapper {
+		transition-timing-function: linear !important;
+	}
+  </style>
+</head>
+
+<body>
+
+  <swiper-container class="mySwiper"
+  	init="false">
+    <!-- <swiper-slide>
+		<img src="./test.jpg" alt="">
+	</swiper-slide> -->
+    <!-- <swiper-slide>
+		<img src="./test.jpg" alt="">
+	</swiper-slide> -->
+    <swiper-slide>
+		<img src="./test.jpg" alt="">
+	</swiper-slide>
+    <swiper-slide>
+		<img src="./test.jpg" alt="">
+	</swiper-slide>
+  </swiper-container>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-element-bundle.js"></script>
+  <script>
+	// swiper element
+	const swiperEl = document.querySelector('swiper-container');
+  
+	// swiper parameters
+	const swiperParams = {
+	  	// slidesPerView: 'auto',
+	  	slidesPerView: 0.5,
+		loop: true,
+		// loopAdditionalSlides: 2,
+		speed: 5000,
+		shortSwipers: false,
+		// initialSlide: 2,
+		freeMode: {
+			enabled: true,
+			momentum: false,
+			sticky: false,
+		},
+		autoplay: {
+			delay: 0,
+			disableOnInteraction: true,
+			// reverseDirection: true,
+		},
+		on: {
+			init() {
+				console.log('init')
+			},
+			touchStart () {
+				console.log(111)
+				// swiperEl.swiper.autoplay.stop()
+			},
+			touchEnd () {
+				console.log(333, swiperEl.swiper.autoplay)
+				swiperEl.swiper.autoplay.start()
+				// setTimeout(() => {
+				// }, 1000)
+			}
+		},
+		injectStyles: [`
+			.swiper-wrapper {
+				transition-timing-function: linear !important;
+			}
+		`]
+	};
+  
+	// now we need to assign all parameters to Swiper element
+	Object.assign(swiperEl, swiperParams);
+  
+	// and now initialize it
+	swiperEl.initialize();
+  </script>
+
+</body>
+
+</html>

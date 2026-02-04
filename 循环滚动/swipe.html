@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<script>
+    // 适配方案 
+    (function(window, document){
+      function setRem() {
+        let deviceWidth = document.documentElement.clientWidth;
+        deviceWidth = deviceWidth > 750 ? 750 : deviceWidth;
+        document.documentElement.style.fontSize = deviceWidth / 7.5 + "px";
+      }
+      setRem();
+      window.addEventListener("resize", setRem);
+      window.addEventListener('pageshow', function (e) {
+        if (e.persisted) {
+          setRem();
+        }
+      })
+    })(window, document)
+  </script>
+	<style type="text/css">
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+		[v-cloak] {
+			display: none;
+		}
+		html, body {
+			overflow: hidden;
+		}
+		#app {
+			width: 302px;
+			/*min-height: 100vh;*/
+		  margin: 0 auto;
+		  /*overflow: hidden;*/
+		  border: 1px solid black;
+		}
+		.swiper-container {
+			width: 100%;
+		  height: 3rem;
+		  position: relative;
+			/*overflow: hidden;*/
+		}
+		.swiper-wrapper {
+			width: auto;
+			height: 100%;
+			/*position: absolute;
+			left: 0;
+			top: 0;*/
+			display: flex;
+		}
+		.swiper-item {
+			width: 100%;
+			height: 100%;
+			flex-shrink: 0;
+			position: relative;
+		}
+		.swiper-item.active {
+			display: block;
+			transform: translate3d(0, 0, 0);
+		}
+		.content {
+			height: 100%;
+			font-size: 30px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+		.content-1 {
+			background: green;
+			color: #fff;
+		}
+		.content-2 {
+			background: pink;
+			color: #fff;
+		}
+		.content-3 {
+			background: skyblue;
+			color: #fff;
+		}
+		.content-4 {
+			background: yellowgreen;
+			color: #fff;
+		}
+		.swiper-indicators {
+			width: 100%;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			position: absolute;
+			left: 0;
+			bottom: 10px;
+			z-index: 100;
+		}
+		.indicator {
+			width: 8px;
+			height: 8px;
+			background: rgba(255, 255, 255, 0.5);
+			border-radius: 50%;
+			margin: 0 3px;
+		}
+		.indicator.active {
+			background: #fff;
+		}
+		.swiper-btn .prev {
+			position: absolute;
+			left: 0;
+			top: 50%;
+			transform: translateY(-50%);
+		}
+		.swiper-btn .next {
+			position: absolute;
+			right: 0;
+			top: 50%;
+			transform: translateY(-50%);
+		}
+	</style>
+</head>
+<body>
+	<div id="app" v-cloak>
+		<div class="swiper-container" ref="swiper">
+			<div class="swiper-wrapper" ref="wrapper" :style="wrapperStyle">
+				<div class="swiper-item" :class="{'active': i===currentIndex}" v-for="(item, i) in swiperList">
+					<div :class="['content', 'content-'+(i+1)]" @click="clickItem(i)">{{ i + 1 }}</div>
+				</div>
+			</div>
+			<div class="swiper-indicators" v-if="indicator">
+				<div :class="['indicator', {'active': i===currentIndex}]" v-for="(item, i) in swiperList" @click.stop="slideTo(i)"></div>
+			</div>
+			<div class="swiper-btn" v-if="true">
+				<div class="prev" @click="slidePrev"><</div>
+				<div class="next" @click="slideNext">></div>
+			</div>
+		</div>
+	</div>
+
+	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script> 
+	<script>
+		console.log(Vue)
+		const App = {
+			props: {
+				disabled: { // 禁止拖动
+					type: Boolean,
+					default: false
+				},
+				loop: { // 是否循环
+					type: Boolean,
+					default: true
+				},
+				autoplay: { // 自动播放时间间隔
+					type: Number,
+					default: 4000
+				},
+				vertical: {
+					type: Boolean,
+					default: false
+				},
+				speed: { // 过度时间
+					type: Number,
+					default: 500
+				},
+				threshold: { // 移动超过百分比则换页
+					type: Number,
+					default: 0.5
+				},
+				// 是否显示索引
+				indicator: {
+					type: Boolean,
+					default: true
+				},
+				// 默认索引
+				defaultIndex: {
+					type: Number,
+					default: 0
+				}
+			},
+			data () {
+				return {
+					swiperList: [
+						{ type: 1, name: 'slid-1', pic: 'https://i1.mifile.cn/a4/xmad_15535933141925_ulkYv.jpg' },
+						{ type: 2, name: 'slid-2', pic: 'https://i1.mifile.cn/a4/xmad_15532384207972_iJXSx.jpg' },
+						{ type: 3, name: 'slid-3', pic: 'https://i1.mifile.cn/a4/xmad_15517939170939_oiXCK.jpg' },
+						// { type: 4, name: 'slid-4', pic: 'https://i1.mifile.cn/a4/xmad_15532384207972_iJXSx.jpg' },
+					],
+					pageList: [], // 轮播列表
+					draging: false, // 是否正在拖动
+					currentIndex: 0, // 当前项索引
+					currentOffset: 0, // 当前容器偏移量
+					dragState: {}, // 拖动详情
+					timerIns: null, // 定时器
+				}
+			},
+			computed: {
+				// swiper页数
+				count () {
+					return this.pageList.length
+				},
+				// 容器宽
+				swiperWidth () {
+					return this.$refs.swiper.getBoundingClientRect().width;
+				},
+				// 偏移的最小值
+				minOffset () {
+					return -this.swiperWidth * (this.pageList.length - 1)
+				},
+				wrapperStyle () {
+					return {
+						transform: `translate${this.vertical ? 'Y' : 'X'}(${this.currentOffset}px)`,
+						transition: `transform ${this.draging ? 0 : this.speed}ms ease`
+					}
+				},
+				// 是否循环
+				isLoop () {
+					return this.loop && this.pageList.length > 1;
+				}
+			},
+			mounted () {
+				this.$nextTick(() => {
+					this.init()
+				})
+			},
+			beforeDestroy() {
+				this.timerIns && clearInterval(this.timeIns);
+			},
+			methods: {
+				clickItem (i) {
+					console.log("click>>>", i)
+				},
+				init () {
+					const swiper = this.$refs.swiper;
+					const wrapper = this.$refs.wrapper;
+
+					// 获取所有轮播列表
+					const children = wrapper.querySelectorAll('.swiper-item');
+					this.pageList = children;
+
+					// 处理默认索引
+					this.draging = true;
+					this.currentIndex = this.defaultIndex;
+					this.currentOffset = -this.defaultIndex * this.swiperWidth
+
+					// 自动轮播
+					this.startAutoplay();
+
+					// 禁止拖动
+					if (this.disabled || this.pageList.length <= 1) {
+						return
+					}
+					wrapper.addEventListener('touchstart', this.dragStartEvent);
+					wrapper.addEventListener('touchmove', this.dragMoveEvent);
+					wrapper.addEventListener('touchend', this.dragEndEvent);
+					// wrapper.addEventListener('transitionend', this.transitionEndEvent)
+
+					// swiper.addEventListener('mousedown', this.dragStartEvent);
+					// swiper.addEventListener('mousemove', this.dragMoveEvent);
+					// swiper.addEventListener('mouseup', this.dragEndEvent);
+
+					window.addEventListener('visibilitychange', this.onVisibilityChange)
+				},
+				startAutoplay () {
+					console.log('start开始播放')
+					if (this.autoplay) {
+						this.timerIns && clearTimeout(this.timerIns)
+						this.timerIns = setTimeout(() => {
+							this.slideNext();
+							this.startAutoplay()
+						}, this.autoplay)
+					}
+				},
+				stopAutoplay () {
+					this.timerIns && clearTimeout(this.timerIns)
+					console.log('stop自动播放')
+				},
+				// 页面可见性
+				onVisibilityChange () {
+					console.log(document.visibilityState);
+					if (document.visibilityState === 'visible') {
+						this.startAutoplay()
+					} else {
+						this.stopAutoplay()
+					}
+				},
+				dragStartEvent (e) {
+					console.log(e, this.currentIndex, this.currentOffset)
+					// 开始拖动则停止自动轮播
+					this.stopAutoplay()
+
+					const touch = e.changedTouches ? e.changedTouches[0] : e;
+
+					// 开始拖动标志
+					this.draging = true;
+					// 记录开始时间
+					this.dragState.startTime = Date.now();
+					// 记录开始X坐标
+					this.dragState.startX = touch.pageX;
+				},
+				dragMoveEvent (e) {
+					const touch = e.changedTouches ? e.changedTouches[0] : e;
+
+					// 记录移动的当前坐标x
+					this.dragState.endX = touch.pageX;
+
+					const distance = this.dragState.endX - this.dragState.startX;
+					// 拖动
+					this.translate(distance);
+				},
+				dragEndEvent (e) {
+					const touch = e.changedTouches ? e.changedTouches[0] : e;
+					// 结束拖动标志
+					this.draging = false;
+					// 记录结束坐标x
+					this.dragState.endX = touch.pageX;
+					// console.log(this.dragState);
+
+					const dragDuration = Date.now() - this.dragState.startTime;
+
+					const distance = this.dragState.endX - this.dragState.startX;
+
+					// if (this.dragState.startX === this.dragState.endX) {
+					// 	return
+					// }
+					// 满足切换条件
+					if (Math.abs(distance/dragDuration) >= 0.25 || Math.abs(distance) >= this.swiperWidth * this.threshold) {
+						distance < 0 ? this.currentIndex++ : this.currentIndex--
+						this.translate(0)
+					} else {
+						// 不满足还原
+						this.translate(0);	
+					}
+					this.startAutoplay()
+				},
+				translate (distance) {
+					// 目标索引
+					let targetIndex = (this.currentIndex + this.pageList.length) % this.pageList.length
+					// 滑动的目标距离
+					let targetOffset = -(this.currentIndex * this.swiperWidth) + distance
+
+					// 循环处理
+					if (this.isLoop) {
+						if (targetOffset <= this.minOffset) {
+							this.pageList[0].style = `transform: translateX(${this.pageList.length * this.swiperWidth}px`
+						} else {
+							this.pageList[0].removeAttribute('style')
+						}
+						if (targetOffset >= 0) {
+							this.pageList[this.pageList.length - 1].style = `transform: translateX(-${this.pageList.length * this.swiperWidth}px`
+						} else {
+							this.pageList[this.pageList.length - 1].removeAttribute('style')
+						}
+					} else {
+						// 不循环时偏移和当前索引的边界处理
+						targetOffset = targetOffset >= 0 ? 0 : (targetOffset <= this.minOffset ? this.minOffset : targetOffset)
+						targetIndex = this.currentIndex > this.pageList.length - 1 ? this.pageList.length - 1 : (this.currentIndex < 0 ? 0 : targetIndex)
+					}
+
+					// console.log("targetIndex>>", targetIndex)
+					this.currentIndex = targetIndex
+					this.currentOffset = targetOffset
+				},
+				// 修改偏移位置
+				correctionPosition () {
+					// console.log("correctionPosition>>>", this.currentIndex, this.currentOffset)
+					if (this.currentOffset === this.swiperWidth || this.currentOffset === -this.swiperWidth * this.pageList.length) {
+						this.draging = true
+						let targetOffset = -this.currentIndex * this.swiperWidth
+						this.currentOffset = targetOffset
+						this.pageList[0].removeAttribute('style')
+						this.pageList[this.pageList.length - 1].removeAttribute('style')
+					}
+				},
+				// 点击跳转到指定位置
+				slideTo (i) {
+					if (this.currentIndex === i) {
+						return
+					}
+
+					this.correctionPosition()
+					this.currentIndex = i
+					requestAnimationFrame(() => {
+						this.draging = false
+						this.translate(0)
+					})
+				},
+				// 上一张
+				slidePrev () {
+					this.correctionPosition()
+					this.currentIndex--
+					requestAnimationFrame(() => {
+						this.draging = false
+						this.translate(0)
+					})	
+				},
+				// 下一张
+				slideNext () {
+					this.correctionPosition()
+					this.currentIndex++
+					requestAnimationFrame(() => {
+						requestAnimationFrame(() => {
+							this.draging = false
+							this.translate(0)
+						})
+					})
+				}
+			}
+		}
+		Vue.createApp(App).mount('#app')
+	</script>
+</body>
+</html>

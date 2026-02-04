@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    * {
+      margin: 0; padding: 0;
+    }
+    #app {
+      width: 100%;
+    }
+    .super-width {
+      width: 100%;
+      margin: 0 auto;
+      /* overflow-y: auto; */
+      overflow: hidden;
+      position: relative;
+    }
+    .scroll-wrap {
+      /* width: 1500px; */
+      display: flex;
+      /* position: absolute;
+      left: 0;
+      top: 0; */
+      /* animation-name: loopScroll; */
+      /* animation-timing-function: linear;
+      animation-iteration-count: infinite;
+      animation-fill-mode: both; */
+    }
+    .animation-name {
+      animation-name: loopScroll;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+      animation-fill-mode: forwards;
+    }
+    .pause-animation {
+      animation-play-state: paused;
+    }
+    .pic img {
+      /* width: 800px; */
+      /* height: 150px; */
+      display: block;
+    }
+    /* @keyframes loopScroll {
+      0% {
+        transform: translate3d(0 , 0, 0);
+      }
+      100% {
+        transform: translate3d(-750px, 0, 0);
+      }
+    } */
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="super-width" ref="superWidth" @touchstart="touchstartEvent" @touchmove="touchmoveEvent" @touchend="touchendEvent">
+      <div class="scroll-wrap" ref="scrollWrap" :style="scollStyle" @transitionend="transitionendEvent">
+        <div class="pic">
+          <img src="./test.jpg" alt="" :style="{width: `${picWidth}px`}">
+        </div>
+        <div class="pic">
+          <img src="./test.jpg" alt="" :style="{width: `${picWidth}px`}">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script>
+    const { createApp, ref, reactive, computed, onMounted, nextTick } = Vue
+    createApp({
+      setup() {
+        const superWidth = ref(null)
+        const scrollWrap = ref(null)
+        const currentOffset = ref(0) // 当前容器偏移位置
+        const timerIns = ref(0) // 定时器实例
+        const state = reactive({
+          speed: 0, // 过度效果时间
+          startX: 0,
+          endX: 0,
+          isContinue: false, // 是否继续
+        })
+        const pageList = ref([]) // 获取节点
+        const scollStyle = computed(() => {
+          // console.log('停止了', currentOffset.value)
+          return {
+            // width: `${picWidth.value}px`,
+            transform: `translate3d(${currentOffset.value}px, 0, 0)`,
+            transition: `transform ${state.speed}s linear`,
+          }
+        })
+        const picWidth = computed(() => { // 图片宽度固定
+          return 400
+        })
+        const isLeft = computed(() => {
+          return false
+        })
+        onMounted(() => {
+          nextTick(() => {
+            console.log('start >>>')
+            pageList.value = scrollWrap.value.childNodes
+            startScroll()
+          })
+        })
+        const startScroll = () => {
+          setTimeout(() => {
+            // 向左滚动
+            if (isLeft.value) {
+              state.speed = 5
+              currentOffset.value = -picWidth.value
+            } else {
+              translate()
+              state.speed = 5
+              currentOffset.value = picWidth.value
+            }
+            // console.log('滚动位置>>>>>', currentOffset.value)
+            // 如果是拖动后继续滚动计算时间来维持速度
+            if (state.isContinue) {
+              state.isContinue = false
+              const remainTranslate = Math.abs(currentOffset.value) - Math.abs(getCurrentLeft())
+              const remainTime = remainTranslate / Math.abs(currentOffset.value) * state.speed
+              // console.log(remainTranslate, remainTime)
+              state.speed = Math.abs(remainTime)
+            }
+          }, 10)
+        }
+        const transitionendEvent = () => {
+          console.log('>>>>>transition end')
+          state.speed = 0
+          currentOffset.value = 0
+          startScroll()
+        }
+        // 触摸事件
+        const touchstartEvent = (e) => {
+          state.speed = 0
+          currentOffset.value = getCurrentLeft()
+
+          state.startX = e.changedTouches[0].pageX
+        }
+        const touchmoveEvent = (e) => {
+          const distance = e.changedTouches[0].pageX - state.startX
+          state.startX = e.changedTouches[0].pageX
+          
+          currentOffset.value = currentOffset.value + distance
+          
+          translate()
+        }
+        const touchendEvent = (e) => {
+          // state.endX = currentOffset.value
+          state.isContinue = true
+          correctionPosition()
+          startScroll()
+        }
+        // 移动判断
+        const translate = () => {
+          const _superWidth = superWidth.value.getBoundingClientRect().width
+          const minOffset = -(pageList.value.length * picWidth.value - _superWidth)
+          // 向左移动超过最大移动界限把第一张图移到后面
+          if (currentOffset.value <= minOffset) {
+            pageList.value[0].style = `transform: translate3d(${pageList.value.length * picWidth.value}px, 0, 0)`
+          } else {
+            pageList.value[0].removeAttribute('style')
+          }
+          // 向右拖动如果左边没有图了则把第二张图片移过去
+          if (currentOffset.value >= 0) {
+						pageList.value[pageList.value.length - 1].style = `transform: translate3d(-${pageList.value.length * picWidth.value}px, 0, 0)`
+            // 向右滚动然后再向右拖动超过挪过去的第二张图还需把第一张图移到左边
+            if (currentOffset.value >= picWidth.value) {
+              pageList.value[0].style = `transform: translate3d(-${pageList.value.length * picWidth.value}px, 0, 0)`
+            }
+          } else {
+            pageList.value[pageList.value.length - 1].removeAttribute('style')
+          }
+        }
+        // 手动拖动后修正偏移位置
+				const correctionPosition = () => {
+          pageList.value[0].removeAttribute('style')
+          pageList.value[pageList.value.length - 1].removeAttribute('style')
+          // console.log('yidongweizhi', currentOffset.value)
+          if (currentOffset.value >= 0) {
+            currentOffset.value = currentOffset.value % picWidth.value
+            if (isLeft.value) {
+              currentOffset.value = currentOffset.value - picWidth.value
+            }
+            if (!isLeft.value) {
+              translate()
+            }
+          }
+          // 如果是向左移动的且移动超过第一张图则定位到第一张的相对位置
+          if (currentOffset.value < 0) {
+            currentOffset.value = currentOffset.value % -picWidth.value
+            if (!isLeft.value) {
+              currentOffset.value = currentOffset.value + picWidth.value
+              translate()
+            }
+          }
+          console.log('修正位置', currentOffset.value)
+				}
+        // 获取当前滚动容器偏移量
+        const getCurrentLeft = () => {
+          const extraSpace = superWidth.value?.getBoundingClientRect()?.x // 组件与页面侧间距
+          const wrapperLeft = scrollWrap.value?.getBoundingClientRect()?.x
+          // console.log(extraSpace, wrapperLeft)
+          return wrapperLeft
+        }
+        return {
+          picWidth,
+          superWidth,
+          scrollWrap,
+          scollStyle,
+          transitionendEvent,
+          touchstartEvent,
+          touchmoveEvent,
+          touchendEvent
+        }
+      }
+    }).mount('#app')
+  </script>
+</body>
+</html>
