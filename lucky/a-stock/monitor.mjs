@@ -18,8 +18,9 @@ const getStockFilterList = () => {
 }
 
 const decodeGBK = (data) => {
+  const utf8Buffer = Buffer.from(data, 'utf8')
   const decoder = new TextDecoder('gbk')
-  return decoder.decode(data)
+  return decoder.decode(utf8Buffer)
 }
 
 /**
@@ -273,7 +274,7 @@ const fetchData = (codeList) => {
       method: 'GET',
       headers: {
         Referer: 'https://qt.gtimg.cn',
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json; charset=utf-8',
         'User-Agent':
           'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
       },
@@ -331,13 +332,17 @@ const getAllData = async (codeList) => {
 const filterStock = (compareStocks, realTimeStocks) => {
   const list = realTimeStocks.filter(stock => {
     const compare = compareStocks.find(c => c.code === stock.code)
-    return stock.innerVolume > stock.outerVolume  && stock.amount > compare.amount && stock.volumeRatio > 1.5
+    // console.log(compare.name)
+    return stock.amount > compare.amount
+      // stock.volumeRatio > 1.5 &&
+      && stock.changePercent > 1
+      // stock.innerVolume > stock.outerVolume
   }).map(stock => {
     return {
       name: stock.name,
       code: stock.code,
       price: stock.price,
-      change: stock.change
+      changePercent: stock.changePercent
     }
   })
   console.log(list, list.length)
@@ -354,7 +359,7 @@ const start = async () => {
     console.log('>>>>>当前时间', curHours + ':' + curMin)
     if (curHours < 9 || (curHours === 9 && curMin < 30) || (curHours === 11 && curMin > 30) || (curHours > 11 && curHours < 13) || curHours >= 15) {
       console.log('=======非交易时间======')
-      // return
+      return
     } 
     if (timerIns) {
       clearTimeout(timerIns)
