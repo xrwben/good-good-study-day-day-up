@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <!-- 
+    现在有两个模块，a模块有个按钮可以点击，b模块显示点击的次数
+  -->
+
+  <button class="btn">点击</button>
+  <div class="num"></div>
+
+  <script>
+    // 订阅-发布对象
+    const Event = (() => {
+      const list = {} // 订阅中心
+      const on = (type, fn) => {
+        if (!list[type]) {
+          list[type] = []
+        }
+        list[type].push(fn)
+      }
+      const emit = (type, ...rest) => {
+        list[type].forEach(fn => {
+          fn(...rest)
+        })
+      }
+      return {
+        on,
+        emit
+      }
+    })()
+
+    // a模块
+    const a = (() => {
+      let num = 0
+      const btn = document.querySelector('.btn')
+      btn.addEventListener('click', () => {
+        Event.emit('count', ++num)
+      })
+    })()
+
+    const b = (() => {
+      const num = document.querySelector('.num')
+      Event.on('count', (n) => {
+        num.innerHTML = n
+      })
+    })()
+  </script>
+</body>
+</html>
