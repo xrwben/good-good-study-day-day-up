@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Map</title>
+</head>
+<body>
+	<script type="text/javascript">
+
+		/*
+			1、如果key已经有值，则set键值会被更新
+			2、set方法返回的是当前的Map对象，因此可以采用链式写法
+			3、get如果找不到key，返回undefined
+
+			4、不是数组，不能使用length属性
+		*/ 
+		
+		let map = new Map()
+
+		map.set('age', 30)
+		map.set(null, 'null值')
+		map.set({name: 'dabenli'}, 'dabenli')
+		map.set(['arr'], [1, 2])
+		map.set(undefined, 'undefined值')
+		map.set(function(){}, () => {console.log('函数类型')})
+
+		// 存储对象，需要用一个变量引用一下
+		const obj = {name: 'dabenli'}
+		map.set(obj, {name: 'liben'})
+
+		console.log(map)
+
+		console.log('-----get方法------')
+
+		console.log(map.get('age'))
+		console.log(map.get(null))
+		console.log(map.get({name: 'dabenli'}))
+		console.log(map.get(obj))
+
+		// map.set(-0, 123);
+		// map.get(+0) // 123
+
+		// map.set(true, 1);
+		// map.set('true', 2);
+		// map.get(true) // 1
+
+		// map.set(undefined, 3);
+		// map.set(null, 4);
+		// map.get(undefined) // 3
+
+		// map.set(NaN, 123);
+		// map.get(NaN) // 123
+
+		console.log(map.size)
+
+		let res = map.set(1, '数字')
+		console.log(res) // 返回map对象，所以可以链式调用
+
+		console.log('-------has方法---------')
+
+		console.log(map.has(1))
+		console.log(map.has('abc'))
+
+		console.log('---------delete--------------')
+
+		map.delete(1) // 返回true或者 false
+		console.log(map.has(1))
+
+
+		const keys = map.keys()
+		console.log(keys, keys.length) // MapIterator 返回一个迭代器对象，不是数组
+		/* 这两种方法都法执行
+		for (let i = 0; i < keys.length; i++) {
+			console.log(keys[i])
+		}
+		keys.forEach(key => {
+			console.log(key)
+		})
+		*/ 
+		for (let key of keys) {
+			console.log(key)
+		}
+
+		const values = map.values()
+		console.log(values)
+		for (let value of values) {
+			console.log(value)
+		}
+
+		for (let [key, value] of map.entries()) {
+			console.log(key + ':' + value)
+		}
+
+		console.log('-------forEach方法--------')
+		/*
+			类似数组的方法，但是参数含义不一样, 数组为（item, index, array）
+		*/
+		map.forEach((value, key, map) => {
+			console.log((value, key))
+		})
+
+	</script>
+</body>
+</html>
