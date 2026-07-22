@@ -26,3 +26,7 @@
 - 中国开发独立站：https://developer.hubing.online/home
 
 - 技术网站：https://www.zhihu.com/question/629894384
+
+- Evan's blog: https://xugaoyi.com/pages/8045759ec4ad3c01/#%E5%9F%BA%E7%A1%80%E7%A4%BA%E4%BE%8B
+
+- 前端躬行记：https://www.kancloud.cn/pwstrick/fe-questions/1867915 
