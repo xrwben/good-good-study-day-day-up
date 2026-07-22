@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>页面引导功能</title>
+	<script src="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.js.iife.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.css"/>
+</head>
+<body>
+	<!-- 
+		字节：https://github.com/bytedance/guide.git
+	 -->
+	<script>
+		const driver = window.driver.js.driver
+	    const driverObj = driver()
+	    
+	    driverObj.highlight({
+	      element: "#some-element",
+	      popover: {
+	        title: "Title",
+	        description: "Description"
+	      }
+	    })
+	</script>
+
+	<!--
+		introjs
+
+		https://introjs.com/ 
+
+		https://github.com/usablica/intro.js
+
+		遮罩层原理是使用div实现，获取元素位置，然后通过设置阴影的方式实现，后者通过border来实现也可以
+	-->
+</body>
+</html>
