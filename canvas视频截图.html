@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+</head>
+<body>
+	<button class="btn">选择视频截图</button>
+	<script type="module">
+		const videoData = {}
+		// 截屏方法
+		const getScreenshot = (el, width = 0, height = 0, quality = 0.8) => {
+		    const max = 256
+		    const canvas = document.createElement('canvas')
+		    if (height > max || width > max) {
+		      const radio = height / width
+		      if (radio > 1) {
+		        height = max
+		        width = height / radio
+		      } else {
+		        width = max
+		        height = width * radio
+		      }
+		    }
+		    canvas.height = height
+		    canvas.width = width
+
+		    const ctx = canvas.getContext('2d')
+		    ctx?.drawImage(el, 0, 0, canvas.width, canvas.height)
+		    
+		    const url = canvas.toDataURL('image/jpeg', quality)
+
+		    const img = document.createElement('img')
+		    img.src = url
+
+		    document.body.appendChild(img)
+		}
+
+		// 加载视频并且显示在
+		const loadMedia = (file) => {
+			console.log(file)
+			const video = document.createElement('video')
+			const url = URL.createObjectURL(file)
+			video.setAttribute('muted', true)
+			video.setAttribute('src', url)
+
+			video.addEventListener('loadedmetadata', () => {
+				console.log('loadedmetadata>>>>')
+				videoData.width = video.videoWidth
+				videoData.height = video.videoHeight
+				videoData.duration = video.duration
+				video.currentTime = 0.5 // 将视频定位到第一帧
+			})
+			video.addEventListener('seeked', () => {
+				getScreenshot(video, videoData.width, videoData.height)
+			})
+			video.addEventListener('canplay', () => {
+				console.log('可以播放了', videoData)
+				// video.play()
+				// setTimeout(() => {
+					// getScreenshot(video, videoData.width, videoData.height)
+				// }, 100)
+			})
+
+			document.body.appendChild(video)
+		}
+
+		// 选择视频
+		const chooseVideo = () => {
+			const input = document.createElement('input')
+			input.setAttribute('id', 'inputVideo')
+			input.setAttribute('type', 'file')
+			input.setAttribute('accept', 'video/*')
+
+			input.addEventListener('change', (e) => {
+				console.log('change>>>>>', e)
+				const file = e.target.files[0]
+				if (file) {
+					loadMedia(file)
+					document.body.removeChild(input)
+				}
+			})
+
+			input.addEventListener('cancel', () => {
+				console.log('取消')
+				document.body.removeChild(input)
+			})
+
+			document.body.append(input)
+			input.click()
+
+			new Promise((resolve, reject) => {
+
+			}).finally(() => {
+
+			})
+		}
+
+		const btn = document.querySelector('.btn')
+		btn.addEventListener('click', () => {
+			chooseVideo()
+		})
+	</script>		
+	
+</body>
+</html>
