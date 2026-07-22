@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>snapDom</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+		.container {
+			width: 100px;
+			height: 100px;
+			background: greenyellow;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+		}
+	</style>
+	<script src="https://unpkg.com/@zumer/snapdom@latest/dist/snapdom.min.js"></script>
+</head>
+<body>
+	<div class="container">
+		<img src="https://coss-platform.fenqile.com/platformresource200/M00/ex/20260304150142-b8386cee-fd13-4190-8f58-84ecd2ba86e6.png" alt="" >
+		<p>警告</p>
+	</div>
+	<br>
+
+	<script type="module">
+		import { snapdom } from 'https://cdn.jsdelivr.net/npm/@zumer/snapdom/dist/snapdom.mjs'
+
+		const container = document.querySelector('.container')
+		const img = await snapdom.toPng(container)
+		document.body.appendChild(img)
+	</script>
+</body>
+</html>
