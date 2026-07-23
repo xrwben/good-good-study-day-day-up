@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>装饰器</title>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script>
+    Babel.registerPreset("env-plus", {
+      // presets: [[Babel.availablePresets["env"], { loose: true }]],
+      plugins: [
+        [
+          Babel.availablePlugins["proposal-decorators"],
+          { version: "2023-05" },
+        ],
+        // [
+        //   Babel.availablePlugins["transform-class-properties"],
+        //   { loose: true },
+        // ],
+      ],
+    });
+    console.log(Babel)
+  </script>
+</head>
+<body>
+  <script type="text/babel" data-presets="env-plus">
+   
+    /* 
+      装饰器本质是一种函数，它接受一个函数为参数，然后经过装饰的处理返回一个新的函数
+    */
+
+    @testable
+    class MyTestableClass {
+      // ...
+    }
+
+    function testable(target) {
+      target.isTestable = true;
+    }
+
+    MyTestableClass.isTestable // true
+
+    // 现在我们想要不改变add代码的情况下让值翻倍
+    // function loggerDecorator (fn) {
+    //   return function () {
+    //     const double = fn.apply(this, arguments)
+    //     return double * 2
+    //   }
+    // }
+    // class Test {
+    //   @loggerDecorator
+    //   add (a, b) {
+    //     return a + b
+    //   }
+    // }
+    // const test = new Test()
+    // console.log(test.add(1, 2))
+
+
+  </script>
+</body>
+</html>
