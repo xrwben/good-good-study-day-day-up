@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Object标准内置对象</title>
+</head>
+<body>
+	<script>
+		console.log('--------对象ES6扩展----------')
+
+		// 属性和简写，定义 getter 与 setter
+		const name = 'dabenli'
+		const obj = {
+			age: 32,
+			name,
+			getAge: function () {
+				return this.age
+			},
+			getName () {
+				return this.name
+			},
+			get dd () {
+				return 'liben'
+			},
+			set dd (n) {
+				this.age = n
+			}
+		}
+		console.log(obj.getAge(), obj.getName(), obj.dd)
+
+
+		// 对象解构，可以指定默认值，可以别名，定义后只能使用冒号后面的别名
+		const obj1 = {
+			a: 1,
+			b: 2,
+			c () {
+				return 3
+			},
+			bm: 'bm'
+		}
+		const { a, b, c, d = 5, bm: bm1 } = obj1
+		console.log(a, b, c, d, bm1)
+
+
+
+		console.log('---------构造函数------------')
+
+		/*
+			如果该值是 null 或者 undefined，它会生成并返回一个空对象。
+			如果该值已经是一个对象，则返回该值。
+			否则，它将返回与给定值对应的类型的对象。例如，传递 BigInt 基本类型会返回一个 BigInt 封装对象。
+		*/
+		const o = new Object(1)
+		console.log(o, typeof o) // Number {1} 'object'
+
+		const o1 = new Object(undefined)
+		console.log(o1, typeof o1) // {} 'object'
+
+
+
+		console.log('---------静态方法-----------')
+
+		// Object.assign() 静态方法将一个或者多个源对象中所有可枚举的自有属性复制到目标对象，并返回修改后的目标对象
+		const assign = Object.assign({a: 1}, {b: 2})
+		console.log('静态方法assign：', assign) // {a: 1, b: 2}
+
+		// Object.create() 静态方法以一个现有对象作为原型，创建一个新对象。现有对象在Prototype中
+		const ct = {
+			name: 'dabenli'
+		}
+		const create = Object.create(ct)
+		console.log('静态方法create', create, create.name) // {} dabenli
+
+		// Object.defineProperties() 静态方法直接在一个对象上定义新的属性或修改现有属性，并返回该对象。
+		const dps = {}
+		Object.defineProperties(dps, {
+		  property1: {
+		    value: 42,
+		    writable: true // 默认false不能更改
+		  },
+		  property2: {}
+		})
+		dps.property1 = 24
+		dps.property2 = 'dabenli'
+		console.log('静态方法defineProperties', dps.property1, dps.property2) // 24 undefined
+
+		// Object.entries() 静态方法返回一个数组，包含给定对象自有的可枚举字符串键属性的键值对。
+		const eOb = {
+			age: 32,
+			name: 'dabenli',
+			sex: '男'
+		}
+		const entries = Object.entries(eOb)
+		console.log('静态方法entries', entries) // [Array(2), Array(2), Array(2)]
+
+		// Object.fromEntries() 静态方法将键值对列表（可迭代对象，例如 Array 或者 Map）转换为一个对象。多的丢弃，少的补undefined
+		const map = new Map([
+			['age', 32],
+			[1, 2],
+			['a', 'b', 'c'],
+			['aa']
+		])
+		const fromEntries = Object.fromEntries(map)
+		console.log('静态方法fromEntries', fromEntries) // {1: 2, age: 32, a: 'b', aa: undefined}
+
+		// Object.getOwnPropertyDescriptor() 静态方法返回一个描述属性的对象
+		const getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor({property1: 1}, 'property1')
+		console.log('静态方法getOwnPropertyDescriptor', getOwnPropertyDescriptor) // {value: 1, writable: true, enumerable: true, configurable: true}
+
+		// Object.getOwnPropertyDescriptors() 静态方法返回给定对象的所有自有属性描述符。
+		const getOwnPropertyDescriptors = Object.getOwnPropertyDescriptors({a: 1, b: 2})
+		console.log(getOwnPropertyDescriptors) // {a: {value: 1, writable: true, enumerable: true, configurable: true}, b: {value: 1, writable: true, enumerable: true, configurable: true}}
+
+		// Object.getOwnPropertyNames() 静态方法返回一个数组，其包含给定对象中所有自有属性，原型链上的属性不会被列出
+
+
+		// Object.getPrototypeOf() 静态方法返回指定对象的原型（即内部 [[Prototype]] 属性的值）
+		const prototype = {}
+		const object = Object.create(prototype)
+		console.log('静态方法getPrototypeof', Object.getPrototypeOf(object) === prototype) // true
+
+		// Object.is() 静态方法确定两个值是否为相同值。
+
+		// Object.keys() 静态方法返回一个由给定对象自身的可枚举的字符串键属性名组成的数组
+
+		//Object.values() 静态方法返回一个给定对象的自有可枚举字符串键属性值组成的数组
+
+		// Object.freeze() 静态方法可以使一个对象被冻结。所有属性配置不能再更改
+
+		// Object.seal() 静态方法密封一个对象。所有属性不能配置，只有值可写
+
+		// Object.hasOwn() 判断指定的对象自身有指定的属性，返回true或false
+
+		// Object.prototype.hasOwnProperty() 同上，建议使用 Object.hasOwn()
+
+
+
+	</script>
+</body>
+</html>
