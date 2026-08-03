@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>深拷贝</title>
+</head>
+<body>
+	<script>
+		
+		const deepClone = (obj, map = new WeakMap()) => {
+			// 处理基本类型
+			if (typeof obj !== 'object' || obj === null) {
+				return obj
+			}
+
+			// 处理循环引用
+			// if (map.has(obj)) {
+			// 	return map.get(obj)
+			// }
+
+			// 处理日期
+
+			// 处理正则
+
+			let _obj = Array.isArray(obj) ? [] : {}
+			map.set(obj, _obj)  // 先存起来，防止循环引用
+
+			for (let key in obj) {
+				if (Object.hasOwn(obj, key)) {
+					_obj[key] = deepClone(obj[key], map)
+				}
+			}
+			return _obj
+
+		}
+
+		const data1 = {
+			a: 1,
+			b: {
+				c: 2
+			},
+			d: null,
+			e: undefined,
+			f: [111, 222],
+			g: function () {
+				return '一个方法'
+			}
+		}
+
+		const copyData1 = deepClone(data1)
+		console.log(copyData1)
+
+		data1.a = 11
+		console.log(data1, copyData1)
+
+	</script>
+</body>
+</html>
