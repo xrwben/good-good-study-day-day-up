@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>EventBus原理</title>
+</head>
+<body>
+	<script>
+		class EventEmitter {
+
+			constructor () {
+				this.events = {}
+			}
+
+			on (eventName, callBack) {
+				if (!this.events[eventName]) {
+					this.events[eventName] = []
+				}
+				// 合并事件回调
+				this.events[eventName] = [...this.events[eventName], callBack]
+				console.log('this.events', this.events)
+			}
+
+			emit (eventName, ...args) {
+				if (!this.events[eventName]) {
+					return
+				}
+				this.events[eventName].forEach(callback => callback(...args))
+			}
+
+			// 注意 这里callBack必须是同一个引用才能删除 我觉得是不是直接清理名称就行了，约定callBack不传，一个事件只有一个回调？
+			off (eventName, callBack) {
+				if (!this.events[eventName]) {
+					return
+				}
+				if (!callBack) {
+					delete this.events[eventName]
+					return
+				}
+				this.events[eventName] = this.events[eventName].filter(cb => {
+					return cb !== callBack
+				})
+				console.log('调用off --->', eventName, this.events)
+			}
+
+			once (eventName, callBack) {
+				const on = (...args) => {
+					callBack(...args)
+					this.off(eventName, on)
+				}
+				this.on(eventName, on)
+			}
+
+		}
+
+		const eventBus = new  EventEmitter()
+
+		eventBus.on('printLog', (...data) => {
+			console.log('监听打印----->', ...data)
+		})
+		eventBus.on('printLog', (...data) => {
+			console.log('监听打印2----->', ...data)
+		})
+		eventBus.on('test1', () => {
+			console.log('test1----->')
+		})
+
+		window.addEventListener('load', () => {
+			eventBus.emit('printLog', 1, 2, { name: 'dabenli'})
+
+			setTimeout(() => {
+				// 这里清理不掉，因为匿名方法是不相等找不到的
+				eventBus.off('printLog', (...data) => {
+					console.log('监听打印2----->', ...data)
+				})
+			}, 2000)
+		})
+
+	</script>
+</body>
+</html>
